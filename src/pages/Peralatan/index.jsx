@@ -6,9 +6,11 @@ import {
   MenuItem,
   Select,
   TextField,
-
 } from "@mui/material";
 import React, { useRef, useState } from "react";
+import PeralatanRow from "../../components/PeralatanRow";
+import PeralatanHeader from "../../components/PeralatanHeader";
+import Heading from "../../components/base/Heading";
 function Peralatan() {
   const searchItem = useRef();
   const [searchCategory, setSearchCategory] = useState("");
@@ -23,12 +25,12 @@ function Peralatan() {
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'email', headerName: 'Email', width: 200 },
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "name", headerName: "Name", width: 150 },
+    { field: "email", headerName: "Email", width: 200 },
     {
-      field: 'action',
-      headerName: 'Action',
+      field: "action",
+      headerName: "Action",
       width: 120,
       renderCell: (params) => (
         <Button
@@ -41,10 +43,10 @@ function Peralatan() {
       ),
     },
   ];
-  
+
   const rows = [
-    { id: 1, name: 'John Doe', email: 'john.doe@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane.smith@example.com' },
+    { id: 1, name: "John Doe", email: "john.doe@example.com" },
+    { id: 2, name: "Jane Smith", email: "jane.smith@example.com" },
     // Add more rows as needed
   ];
 
@@ -55,8 +57,12 @@ function Peralatan() {
 
   return (
     <div className="w-full">
-      <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-24">
-        <div className="w-full flex items-center my-8">
+      <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-28">
+        <div>
+          <Heading title="List Perlatan"></Heading>
+        </div>
+
+        <div className="w-full flex items-center my-8 shadow-md px-8 py-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -79,8 +85,8 @@ function Peralatan() {
             />
           </div>
         </div>
-        <div className="w-full flex flex-col md:flex-row mb-12">
-          <div className="w-full md:w-1/4 p-4 md:p-8 shadow-xl">
+        <div className="w-full flex flex-col xl:flex-row mb-12">
+          <div className="w-full xl:w-1/4 p-4 md:p-8 shadow-xl">
             <div className="w-full">
               <Button variant="contained" size="large" fullWidth>
                 + Tambah Peralatan
@@ -134,10 +140,13 @@ function Peralatan() {
               </div>
             </div>
           </div>
-          <div className="w-full md:w-3/4 p-4 shadow-xl mt-4 md:mt-0 md:ml-4">
-            {/* <div style={{ height: 400, width: '100%' }}>
-                <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
-            </div> */}
+          <div className="w-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 md:ml-4">
+            <PeralatanHeader></PeralatanHeader>
+            <PeralatanRow></PeralatanRow>
+            <PeralatanRow></PeralatanRow>
+            <PeralatanRow></PeralatanRow>
+            <PeralatanRow></PeralatanRow>
+            <PeralatanRow></PeralatanRow>
           </div>
         </div>
       </div>
