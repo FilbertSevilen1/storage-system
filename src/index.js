@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 const initialState = {
   user:{
     id: "",
+    name:"TEST",
   },
   count: 5
 }
@@ -19,6 +20,7 @@ function reducers(state = initialState, action) {
         ...state,
         user:{
           id: action.payload.id,
+          name: action.payload.name
         },
       }
     case 'LOGOUT':
