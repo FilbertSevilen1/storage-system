@@ -13,7 +13,7 @@ function App() {
       <Navbar>
 
       </Navbar>
-      <div className='mt-16'>
+      <div className='pt-16'>
       <Routes>
         <Route path="/" element={<Login />}></Route>
 

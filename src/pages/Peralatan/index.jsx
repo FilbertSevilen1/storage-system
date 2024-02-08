@@ -62,7 +62,7 @@ function Peralatan() {
           <Heading title="List Perlatan"></Heading>
         </div>
 
-        <div className="w-full flex items-center my-8 shadow-md px-8 py-4">
+        <div className="w-full flex items-center mt-8 shadow-md px-8 py-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -86,7 +86,7 @@ function Peralatan() {
           </div>
         </div>
         <div className="w-full flex flex-col xl:flex-row mb-12">
-          <div className="w-full xl:w-1/4 p-4 md:p-8 shadow-xl">
+          <div className="w-full h-fit xl:w-1/4 p-4 md:p-8 shadow-xl">
             <div className="w-full">
               <Button variant="contained" size="large" fullWidth>
                 + Tambah Peralatan
