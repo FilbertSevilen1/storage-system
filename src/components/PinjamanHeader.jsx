@@ -5,7 +5,7 @@ function PinjamanHeader(props){
     const [endDate, setEndDate] = useState(props.endDate)
     const [status, setStatus] = useState(props.status)
     return(
-        <div className="my-2 w-full h-auto sm:h-36 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
+        <div className="transition-all active:scale-95 cursor-pointer  my-2 w-full h-auto sm:h-36 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
             <div className="w-full h-24 sm:w-48 sm:h-full bg-gray-700 rounded-lg">
             </div>
             <div className="w-full sm:w-2/3 flex flex-row p-2 items-center">

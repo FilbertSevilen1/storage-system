@@ -19,7 +19,7 @@ function Dashboard() {
     setOpen(false);
   };
   return (
-    <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-28">
+    <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
       <div className="w-full xl:w-1/2 flex flex-col px-8">
         <div className="mb-8">
           <Heading title="Pinjaman Saya"></Heading>
