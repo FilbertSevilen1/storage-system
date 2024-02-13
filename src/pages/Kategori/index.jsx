@@ -111,7 +111,10 @@ function Kategori() {
     return setErrorAddKategoriNama(false);
   };
 
-
+  const resetAddDialog = () =>{
+    addKategoriName.current.value = ""
+    setAddKategoriType("");
+  }
   const onSubmit = () =>{
     if (addKategoriName.current.value == "") {
       setSnackbar(true);
@@ -120,13 +123,16 @@ function Kategori() {
       }, 3000);
       return setSnackbarMessage("Nama Kategori tidak boleh kosong");
     }
-    if (addKategoriType.current.value == "") {
+    if (addKategoriType == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Tipe Kategori tidak boleh kosong");
     }
+    
+    resetAddDialog();
+    return closeAddDialog()
   }
 
   return (
@@ -164,7 +170,7 @@ function Kategori() {
                 <InputLabel id="demo-simple-select-label">Tipe Kategori</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  id="kategori"
                   value={addKategoriType}
                   label="Kategori"
                   onChange={handleInputKategori}

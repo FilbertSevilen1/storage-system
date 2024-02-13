@@ -263,7 +263,7 @@ function Peralatan() {
                 error={errorAddPeralatanNama}
                 onChange={checkPeralatanNama}
                 margin="dense"
-                id="name"
+                id="peralatanName"
                 name="name"
                 label="Nama Peralatan"
                 type="text"
@@ -280,7 +280,7 @@ function Peralatan() {
                 error={errorAddPeralatanGambar}
                 onChange={checkPeralatanGambar}
                 margin="dense"
-                id="name"
+                id="peralatanImage"
                 name="name"
                 label="Gambar"
                 type="password"
@@ -301,7 +301,7 @@ function Peralatan() {
                   error={errorAddPeralatanKategori}
                   onchange={checkPeralatanKategori}
                   labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  id="peralatanType"
                   value={addPeralatanKategori}
                   label="Jenis Peralatan"
                   onChange={handleInputCategory}
@@ -422,7 +422,7 @@ function Peralatan() {
                 <TextField
                   inputRef={searchCount}
                   type="number"
-                  id="standard-basic"
+                  id="jumlahMinimum"
                   label="Jumlah Minimum"
                   variant="outlined"
                   fullWidth

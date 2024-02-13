@@ -24,15 +24,6 @@ function KategoriRow(props) {
 
   const [editDialog, setEditDialog] = useState(false);
 
-  const openEditDialog = (name, type) => {
-    setEditKategoriNamaDefault(name);
-    setEditKategoriType(type);
-    setEditDialog(true);
-  };
-  const closeEditDialog = () => {
-    setEditDialog(false);
-  };
-
   const editKategoriNama = useRef("");
   const [editKategoriNamaDefault, setEditKategoriNamaDefault] = useState("");
   const [editKategoriType, setEditKategoriType] = useState("");
@@ -43,6 +34,23 @@ function KategoriRow(props) {
 
   const handleInputKategori = (event) => {
     setEditKategoriType(event.target.value);
+  };
+
+  const resetErrorMessage = () =>{
+    setErrorEditKategoriNamaMessage("");
+    setErrorEditKategoriNama(false);
+  }
+
+  const openEditDialog = (name, type) => {
+    setEditKategoriNamaDefault(name);
+    setEditKategoriType(type);
+
+    resetErrorMessage();
+
+    return setEditDialog(true);
+  };
+  const closeEditDialog = () => {
+    setEditDialog(false);
   };
 
   const checkKategoriNama = () => {
@@ -64,6 +72,7 @@ function KategoriRow(props) {
       }, 3000);
       return setSnackbarMessage("Nama Kategori tidak boleh kosong");
     }
+    return closeEditDialog()
   };
 
   return (
@@ -142,12 +151,12 @@ function KategoriRow(props) {
         <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
           <div
             onClick={() => openEditDialog(name, type)}
-            className="mx-1 p-1 rounded-md cursor-pointer transition-all active:scale-90 hover:scale-110 hover:shadow-md"
+            className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
             >
               <path
@@ -156,11 +165,11 @@ function KategoriRow(props) {
               />
             </svg>
           </div>
-          <div className="mx-1 p-1 rounded-md cursor-pointer transition-all active:scale-90 hover:scale-110 hover:shadow-md">
+          {/* <div className="mx-1 p-1 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
             >
               <path
@@ -168,7 +177,7 @@ function KategoriRow(props) {
                 d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"
               />
             </svg>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
