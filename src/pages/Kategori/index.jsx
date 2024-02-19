@@ -31,6 +31,11 @@ function Kategori() {
   const [AddDialog, setAddDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");
 
+  const [listTipe, setListTipe] = useState([
+    'Berseri',
+    'Tidak Berseri',
+  ])
+
   const searchItem = useRef();
   const [listKategori, setListKategori] = useState([
     {
@@ -41,10 +46,10 @@ function Kategori() {
   ]);
 
   useEffect(() => {
-    getPeralatanList();
+    getKategoriList();
   }, [page]);
 
-  const getPeralatanList = () => {
+  const getKategoriList = () => {
     if (listKategori.length % 10 === 0) {
       setMaxPage(Math.floor(listKategori.length / 5));
     } else setMaxPage(Math.floor(listKategori.length / 5) + 1);
@@ -86,7 +91,7 @@ function Kategori() {
   };
 
   const addKategoriName = useRef("");
-  const [addKategoriType, setAddKategoriType] = useState("")
+  const [addKategoriType, setAddKategoriType] = useState("");
 
   const [errorAddKategoriNama, setErrorAddKategoriNama] = useState(false);
   const [errorAddKategoriNamaMessage, setErrorAddKategoriNamaMessage] =
@@ -96,26 +101,34 @@ function Kategori() {
   const [errorAddKategoriTypeMessage, setErrorAddKategoriTypeMessage] =
     useState("");
 
-  const handleInputKategori = (event) => {
+  const handleInputKategoriType = (event) => {
     setAddKategoriType(event.target.value);
   };
 
   const checkKategoriNama = () => {
     if (addKategoriName.current.value == "") {
       setErrorAddKategoriNama(true);
-      return setErrorAddKategoriNamaMessage(
-        "Nama Kategori tidak boleh kosong"
-      );
+      return setErrorAddKategoriNamaMessage("Nama Kategori tidak boleh kosong");
     }
     setErrorAddKategoriNamaMessage("");
     return setErrorAddKategoriNama(false);
   };
 
-  const resetAddDialog = () =>{
-    addKategoriName.current.value = ""
-    setAddKategoriType("");
+  const generateSelectKategoriTipeList = () =>{
+    if(listTipe){
+      return listTipe.map((tipe,index)=>{
+        return(
+          <MenuItem value={tipe}>{tipe}</MenuItem>
+        )
+      })
+    }
   }
-  const onSubmit = () =>{
+
+  const resetAddDialog = () => {
+    addKategoriName.current.value = "";
+    setAddKategoriType("");
+  };
+  const onSubmit = () => {
     if (addKategoriName.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
@@ -130,10 +143,10 @@ function Kategori() {
       }, 3000);
       return setSnackbarMessage("Tipe Kategori tidak boleh kosong");
     }
-    
+
     resetAddDialog();
-    return closeAddDialog()
-  }
+    return closeAddDialog();
+  };
 
   return (
     <div className="w-full">
@@ -161,29 +174,28 @@ function Kategori() {
                 variant="outlined"
                 inputRef={addKategoriName}
               />
-               <div className="text-red-500 text-md">
+              <div className="text-red-500 text-md">
                 {errorAddKategoriNamaMessage}
               </div>
             </div>
             <div className="mx-2 w-96 mt-2">
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Tipe Kategori</InputLabel>
+                <InputLabel id="demo-simple-select-label">
+                  Tipe Kategori
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="kategori"
                   value={addKategoriType}
                   label="Kategori"
-                  onChange={handleInputKategori}
+                  onChange={handleInputKategoriType}
                   placeholder="Kategori"
                   fullWidth
                 >
-                  <MenuItem value={"Berseri"}>Berseri</MenuItem>
-                  <MenuItem value={"Tidak Berseri"}>Tidak Berseri</MenuItem>
+                 {generateSelectKategoriTipeList()}
                 </Select>
               </FormControl>
-              <div className="text-red-500 text-md">
-                {errorAddKategoriType}
-              </div>
+              <div className="text-red-500 text-md">{errorAddKategoriType}</div>
             </div>
           </div>
         </DialogContent>
@@ -223,8 +235,8 @@ function Kategori() {
             />
           </div>
         </div>
-        <div className="w-full flex flex-col xl:flex-row mb-12">
-          <div className="w-full h-fit xl:w-1/4 p-4 md:p-8 shadow-md">
+        <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
+          <div className="w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full">
               <Button
                 onClick={openAddDialog}

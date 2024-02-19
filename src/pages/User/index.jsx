@@ -21,6 +21,7 @@ import KategoriHeader from "../../components/KategoriHeader";
 import KategoriRow from "../../components/KategoriRow";
 import UserRow from "../../components/UserRow";
 import UserHeader from "../../components/UserHeader";
+import HorizontalDivider from "../../components/base/HorizontalDivider";
 function User() {
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -34,6 +35,12 @@ function User() {
   const [dialogTitle, setDialogTitle] = useState("");
 
   const searchItem = useRef();
+  const [listRole, setListRole] = useState([
+    'Admin', 'User'
+  ])
+  const [listGender,setListGender] = useState([
+    'Laki-laki', 'Perempuan'
+  ])
   const [listUser, setListUser] = useState([
     {
       user_id: "1",
@@ -102,6 +109,25 @@ function User() {
     }
   };
 
+  const generateRoleData = () =>{
+    if(listRole){
+      return listRole.map((role,index)=>{
+        return(
+          <MenuItem value={role}>{role}</MenuItem>
+        )
+      })
+    }
+  }
+  const generateGenderData = () =>{
+    if(listGender){
+      return listGender.map((gender,index)=>{
+        return(
+          <MenuItem value={gender}>{gender}</MenuItem>
+        )
+      })
+    }
+  }
+
   const openAddDialog = () => {
     resetErrorMessage();
     setAddDialog(true);
@@ -109,6 +135,11 @@ function User() {
   const closeAddDialog = () => {
     setAddDialog(false);
   };
+
+  // Search
+  const [searchUserRole, setSearchUserRole] = useState("");
+  const [searchUserGender, setSearchUserGender] = useState("");
+
 
   const addUserName = useRef("");
   const addUserPassword = useRef("");
@@ -330,8 +361,7 @@ function User() {
                   placeholder="Jenis Kelamin"
                   fullWidth
                 >
-                  <MenuItem value={"Laki-laki"}>Laki-laki</MenuItem>
-                  <MenuItem value={"Perempuan"}>Perempuan</MenuItem>
+                  {generateGenderData()}
                 </Select>
               </FormControl>
               <div className="text-red-500 text-md">
@@ -376,8 +406,8 @@ function User() {
             />
           </div>
         </div>
-        <div className="w-full flex flex-col xl:flex-row mb-12">
-          <div className="w-full h-fit xl:w-1/4 p-4 md:p-8 shadow-md">
+        <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
+          <div className="w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full">
               <Button
                 onClick={openAddDialog}
@@ -387,6 +417,45 @@ function User() {
               >
                 + Tambah User
               </Button>
+            </div>
+            <HorizontalDivider>
+
+            </HorizontalDivider>
+            <div className="w-full mt-4">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Jabatan
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={searchUserRole}
+                  label="Jabatan"
+                  onChange={handleInputGender}
+                  placeholder="Jabatan"
+                  fullWidth
+                >
+                  {generateRoleData()}
+                </Select>
+              </FormControl>
+            </div>
+            <div className="w-full mt-4">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Jenis Kelamin
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={searchUserGender}
+                  label="Jenis Kelamin"
+                  onChange={handleInputGender}
+                  placeholder="Jenis Kelamin"
+                  fullWidth
+                >
+                  {generateGenderData()}
+                </Select>
+              </FormControl>
             </div>
           </div>
           <div className="w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">

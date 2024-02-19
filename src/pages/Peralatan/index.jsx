@@ -17,6 +17,7 @@ import React, { useEffect, useRef, useState } from "react";
 import PeralatanRow from "../../components/PeralatanRow";
 import PeralatanHeader from "../../components/PeralatanHeader";
 import Heading from "../../components/base/Heading";
+import HorizontalDivider from "../../components/base/HorizontalDivider";
 function Peralatan() {
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -39,6 +40,7 @@ function Peralatan() {
       peralatanDescription: "Ini Komputer",
       peralatanStock: "15",
       peralatanAvailable: "20",
+      peralatanImage:"Test"
     },
     {
       peralatanId: "0",
@@ -48,6 +50,7 @@ function Peralatan() {
       peralatanDescription: "Ini Komputer",
       peralatanStock: "15",
       peralatanAvailable: "20",
+      peralatanImage:"Test"
     },
     {
       peralatanId: "0",
@@ -57,6 +60,7 @@ function Peralatan() {
       peralatanDescription: "Ini Komputer",
       peralatanStock: "15",
       peralatanAvailable: "20",
+      peralatanImage:"Test"
     },
     {
       peralatanId: "0",
@@ -66,29 +70,44 @@ function Peralatan() {
       peralatanDescription: "Ini Komputer",
       peralatanStock: "15",
       peralatanAvailable: "20",
+      peralatanImage:"Test"
     },
     {
       peralatanId: "0",
       peralatanName: "Komputer",
-      peralatanType: "Berseri",
+      peralatanType: "Tidak Berseri",
       peralatanCategory: "Elektronik",
       peralatanDescription: "Ini Komputer",
       peralatanStock: "15",
       peralatanAvailable: "20",
+      peralatanImage:"Test"
     },
     {
       peralatanId: "0",
       peralatanName: "Komputer",
-      peralatanType: "Berseri",
+      peralatanType: "Tidak Berseri",
       peralatanCategory: "Elektronik",
       peralatanDescription: "Ini Komputer",
       peralatanStock: "15",
       peralatanAvailable: "20",
+      peralatanImage:"Test"
     },
   ]);
 
+  const [listKategori, setListKategori] = useState([
+    'Elektronik',
+    'Alat Tulis',
+    'Lainnya'
+  ])
+
+  const [listTipe, setListTipe] = useState([
+    'Berseri',
+    'Tidak Berseri',
+  ])
+
+
   useEffect(() => {
-    getPeralatanList();
+    getPeralatanData();
   }, [page]);
 
   const handleSearchCategory = (event) => {
@@ -97,6 +116,10 @@ function Peralatan() {
   const handleSearchType = (event) => {
     setSearchType(event.target.value);
   };
+
+  const getPeralatanData = () =>{
+    getPeralatanList()
+  }
 
   const getPeralatanList = () => {
     if (listPeralatan.length % 10 === 0) {
@@ -129,12 +152,33 @@ function Peralatan() {
               peralatanDescription={peralatan.peralatanDescription}
               peralatanStock={peralatan.peralatanStock}
               peralatanAvailable={peralatan.peralatanAvailable}
+              peralatanImage={peralatan.peralatanImage}
               page={page}
             ></PeralatanRow>
           );
       });
     }
   };
+
+  const generateSelectPeralatanKategoryList = () =>{
+    if(listKategori){
+      return listKategori.map((kategori,index)=>{
+        return(
+          <MenuItem value={kategori}>{kategori}</MenuItem>
+        )
+      })
+    }
+  }
+
+  const generateSelectPeralatanTipeList = () =>{
+    if(listTipe){
+      return listTipe.map((tipe,index)=>{
+        return(
+          <MenuItem value={tipe}>{tipe}</MenuItem>
+        )
+      })
+    }
+  }
 
   const [addDialog, setAddDialog] = useState("");
 
@@ -295,7 +339,7 @@ function Peralatan() {
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">
-                  Jenis Peralatan
+                  Kategori
                 </InputLabel>
                 <Select
                   error={errorAddPeralatanKategori}
@@ -303,13 +347,13 @@ function Peralatan() {
                   labelId="demo-simple-select-label"
                   id="peralatanType"
                   value={addPeralatanKategori}
-                  label="Jenis Peralatan"
+                  label="Kategori"
                   onChange={handleInputCategory}
-                  placeholder="Jenis Peralatan"
+                  placeholder="Kategori"
                   fullWidth
                 >
-                  <MenuItem value={"Berseri"}>Berseri</MenuItem>
-                  <MenuItem value={"Tidak Berseri"}>Tidak Berseri</MenuItem>
+                  <MenuItem value={"Berseri"}>{"Elektronik (Berseri)"}</MenuItem>
+                  <MenuItem value={"Tidak Berseri"}>{"Alat Tulis (Tidak Berseri)"}</MenuItem>
                 </Select>
               </FormControl>
               <div className="text-red-500 text-md">
@@ -368,8 +412,8 @@ function Peralatan() {
             />
           </div>
         </div>
-        <div className="w-full flex flex-col xl:flex-row mb-12">
-          <div className="w-full h-fit xl:w-1/4 p-4 md:p-8 shadow-md">
+        <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
+          <div className="w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full">
               <Button
                 onClick={() => {
@@ -381,6 +425,9 @@ function Peralatan() {
               >
                 + Tambah Peralatan
               </Button>
+              <HorizontalDivider>
+
+              </HorizontalDivider>
               <div className="w-full mt-8">
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">
@@ -395,9 +442,7 @@ function Peralatan() {
                     placeholder="Kategori"
                     fullWidth
                   >
-                    <MenuItem value={"Elektronik"}>Elektronik</MenuItem>
-                    <MenuItem value={"Alat Tulis"}>Alat Tulis</MenuItem>
-                    <MenuItem value={"Lainnya"}>Lainnya</MenuItem>
+                    {generateSelectPeralatanKategoryList()}
                   </Select>
                 </FormControl>
               </div>
@@ -413,8 +458,7 @@ function Peralatan() {
                     placeholder="Tipe"
                     fullWidth
                   >
-                    <MenuItem value={"Berseri"}>Berseri</MenuItem>
-                    <MenuItem value={"Tidak Berseri"}>Tidak Berseri</MenuItem>
+                    {generateSelectPeralatanTipeList()}
                   </Select>
                 </FormControl>
               </div>
@@ -427,6 +471,11 @@ function Peralatan() {
                   variant="outlined"
                   fullWidth
                 />
+              </div>
+              <div className="w-full mt-8">
+                <Button onClick={()=>getPeralatanData()} variant="contained" size="large" fullWidth>
+                  Cari
+                </Button>
               </div>
             </div>
           </div>

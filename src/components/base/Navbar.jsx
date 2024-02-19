@@ -13,7 +13,7 @@ function Navbar() {
     navigate("/");
   };
   return (
-    <div className="top-0 w-full h-16 shadow-2xl fixed px-4 md:px-8 flex justify-between bg-white z-50">
+  <div className="top-0 w-full h-16 shadow-2xl fixed px-4 md:px-8 flex justify-between bg-white z-50">
       <div
         className="flex h-16 items-center cursor-pointer text-2xl font-bold"
         onClick={() => navigate("/home")}
@@ -45,9 +45,9 @@ function Navbar() {
             <button className="dropbtn w-[200px] text-2xl">Pinjam</button>
             <div className="dropdown-content">
               <div>Buat Pinjaman Baru</div>
-              <div>Pinjaman Saya</div>
+              <div onClick={()=>navigate("/pinjamansaya")}>Pinjaman Saya</div>
               <div>Lapor Kerusakan</div>
-              <div>Lihat List Pinjaman -Admin-</div>
+              <div onClick={()=>navigate("/pinjaman")}>Lihat List Pinjaman -Admin-</div>
             </div>
           </div>
           <div className="h-12 w-0.5 bg-gray-200"></div>

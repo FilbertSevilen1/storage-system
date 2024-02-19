@@ -8,6 +8,8 @@ import Login from './pages/Login/index.jsx';
 import Peralatan from './pages/Peralatan/index.jsx';
 import Kategori from './pages/Kategori/index.jsx';
 import User from './pages/User/index.jsx';
+import ListPinjaman from './pages/Pinjaman/List/index.jsx';
+import PinjamanSaya from './pages/Pinjaman/PinjamanSaya/index.jsx';
 
 function App() {
   return (
@@ -22,6 +24,9 @@ function App() {
         <Route path="/home" element={<Dashboard />}></Route>
         <Route path="/peralatan" element={<Peralatan />}></Route>
         <Route path="/kategori" element={<Kategori />}></Route>
+
+        <Route path="/pinjaman" element={<ListPinjaman/>}></Route>
+        <Route path="/pinjamansaya" element={<PinjamanSaya/>}></Route>
 
         <Route path="/user" element={<User />}></Route>
       </Routes>

@@ -41,6 +41,10 @@ function UserRow(props) {
     setEditDialog(false);
   };
 
+  const [listRole, setListRole] = useState([
+    'Admin', 'User'
+  ])
+
   const editUserName = useRef("");
   const [editUserNameDefault, setEditUserNameDefault] = useState("");
   const editUserEmail = useRef("");
@@ -170,6 +174,16 @@ function UserRow(props) {
     return closeEditDialog();
   }
 
+  const generateRoleData = () =>{
+    if(listRole){
+      return listRole.map((role,index)=>{
+        return(
+          <MenuItem value={role}>{role}</MenuItem>
+        )
+      })
+    }
+  }
+
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
        <Snackbar
@@ -215,8 +229,7 @@ function UserRow(props) {
                   fullWidth
                   defaultValue={editUserRole}
                 >
-                  <MenuItem value={"Admin"}>Admin</MenuItem>
-                  <MenuItem value={"User"}>User</MenuItem>
+                  {generateRoleData()}
                 </Select>
               </FormControl>
               <div className="text-red-500 text-md">

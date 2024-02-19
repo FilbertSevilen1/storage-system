@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Heading from "../components/base/Heading";
-import PinjamanHeader from "../components/PinjamanHeader";
+import PinjamanCard from "../components/PinjamanCard";
 
 function Dashboard() {
   const [open, setOpen] = React.useState(false);
@@ -25,11 +25,11 @@ function Dashboard() {
           <Heading title="Pinjaman Saya"></Heading>
         </div>
 
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanHeader>
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanHeader>
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanHeader>
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanHeader>
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanHeader>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
 
         <div className="w-full my-8">
           <Button variant="contained" size="large">
@@ -41,9 +41,9 @@ function Dashboard() {
         <div className="mb-8">
           <Heading title="Riwayat Pinjaman"></Heading>
         </div>
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanHeader>
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanHeader>
-        <PinjamanHeader title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanHeader>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
+        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
         <div className="w-full my-8">
           <Button variant="contained" size="large">
             Lihat Selengkapnya
