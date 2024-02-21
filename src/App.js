@@ -10,6 +10,9 @@ import Kategori from './pages/Kategori/index.jsx';
 import User from './pages/User/index.jsx';
 import ListPinjaman from './pages/Pinjaman/List/index.jsx';
 import PinjamanSaya from './pages/Pinjaman/PinjamanSaya/index.jsx';
+import PeralatanDetail from './pages/Peralatan/Detail/index.jsx';
+import CreatePinjaman from './pages/Pinjaman/Create/index.jsx';
+import DetailPinjaman from './pages/Pinjaman/Details/index.jsx';
 
 function App() {
   return (
@@ -17,14 +20,17 @@ function App() {
       <Navbar>
 
       </Navbar>
-      <div className='pt-16'>
+      <div className='pt-16 bg-gray-200'>
       <Routes>
         <Route path="/" element={<Login />}></Route>
 
         <Route path="/home" element={<Dashboard />}></Route>
         <Route path="/peralatan" element={<Peralatan />}></Route>
+        <Route path="/peralatan/:id" element={<PeralatanDetail/>}></Route>
         <Route path="/kategori" element={<Kategori />}></Route>
 
+        <Route path="/buatpinjaman" element={<CreatePinjaman />}></Route>
+        <Route path="/detailpinjaman/:id" element={<DetailPinjaman />}></Route>
         <Route path="/pinjaman" element={<ListPinjaman/>}></Route>
         <Route path="/pinjamansaya" element={<PinjamanSaya/>}></Route>
 

@@ -36,7 +36,7 @@ function Login() {
 
     dispatch({
       type: "USER_LOGIN",
-      payload: { id: 1, name: username.current.value },
+      payload: { id: 1, name: username.current.value, role: "User" },
     });
     navigate("/home");
   };

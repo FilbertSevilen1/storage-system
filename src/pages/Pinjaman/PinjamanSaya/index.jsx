@@ -120,7 +120,7 @@ function PinjamanSaya() {
         </div>
 
 
-        <div className="w-full flex items-center mt-8 shadow-md px-8 py-4">
+        <div className="bg-white w-full flex items-center mt-8 shadow-md px-8 py-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -144,7 +144,7 @@ function PinjamanSaya() {
           </div>
         </div>
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
-          <div className="w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
+          <div className="bg-white w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full mb-4">
               <Button variant="contained" size="large" fullWidth>
                 + Buat Pinjaman
@@ -197,7 +197,7 @@ function PinjamanSaya() {
               </Button>
             </div>
           </div>
-          <div className="w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
+          <div className="bg-white w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
             <PinjamanHeader></PinjamanHeader>
             {generatePinjamanData()}
             <div className="w-full justify-end items-center mt-4 flex">

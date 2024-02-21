@@ -13,7 +13,12 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router";
 function PeralatanRow(props) {
+  const navigate = useNavigate();
+
+  let [showAdd, setShowAdd] = useState(props.showAdd||false);
+
   let [id, setID] = useState(props.peralatanId);
   let [name, setName] = useState(props.peralatanName);
   let [image, setImage] = useState(props.peralatanImage);
@@ -37,7 +42,7 @@ function PeralatanRow(props) {
     setAddPeralatanNamaDefault(name);
     setAddPeralatanGambarDefault(Gambar);
     setAddPeralatanDeskripsiDefault(description);
-    setAddPeralatanKategori(type)
+    setAddPeralatanKategori(type);
     // addPeralatanGambar.current.value = Gambar,
     // setAddDialogType(type);
     // addPeralatanDeskripsi.current.value = description
@@ -53,10 +58,12 @@ function PeralatanRow(props) {
   const [addPeralatanNamaDefault, setAddPeralatanNamaDefault] = useState("");
 
   const addPeralatanGambar = useRef("");
-  const [addPeralatanGambarDefault, setAddPeralatanGambarDefault] = useState("");
+  const [addPeralatanGambarDefault, setAddPeralatanGambarDefault] =
+    useState("");
   const [addPeralatanKategori, setAddPeralatanKategori] = useState("");
   const addPeralatanDeskripsi = useRef("");
-  const [addPeralatanDeskripsiDefault, setAddPeralatanDeskripsiDefault] = useState("");
+  const [addPeralatanDeskripsiDefault, setAddPeralatanDeskripsiDefault] =
+    useState("");
 
   const addPeralatanNomorSeri = useRef("");
   const addPeralatanJumlah = useRef("");
@@ -189,14 +196,14 @@ function PeralatanRow(props) {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
-    if (!addPeralatanNomorSeri.current.value && addDialogType == "Berseri"){
+    if (!addPeralatanNomorSeri.current.value && addDialogType == "Berseri") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Nomor Seri tidak boleh kosong");
     }
-    if (!addPeralatanJumlah.current.value && addDialogType == "Tidak Berseri"){
+    if (!addPeralatanJumlah.current.value && addDialogType == "Tidak Berseri") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -323,19 +330,6 @@ function PeralatanRow(props) {
                 </div>
               )}
             </div>
-            {/* <div className="p-2 w-full">
-              <TextareaAutosize
-                onchange={checkPeralatanDeskrispi}
-                className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
-                minRows={4}
-                aria-label="empty textarea"
-                placeholder="Deskripsi"
-                ref={addPeralatanDeskripsi}
-              />
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanDeskripsiMessage}
-              </div>
-            </div> */}
             <div className="p-2 w-1/2 mt-2"></div>
           </div>
         </DialogContent>
@@ -347,9 +341,7 @@ function PeralatanRow(props) {
         </DialogActions>
       </Dialog>
       <div className="w-full md:w-24 h-24 sm:w-24 md:h-full bg-gray-700 rounded-lg">
-        <img src={image} className="w-full h-full">
-
-        </img>
+        <img src={image} className="w-full h-full"></img>
       </div>
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
@@ -377,8 +369,28 @@ function PeralatanRow(props) {
           {available}
         </div>
         <div className="w-full md:w-1/12 flex md:mx-2 p-2 rounded-xl flex justify-center items-center">
+          {showAdd ? (
+            <button
+              onClick={() => openAddDialog(name, image, type, description)}
+              className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M11 13H6q-.425 0-.712-.288T5 12q0-.425.288-.712T6 11h5V6q0-.425.288-.712T12 5q.425 0 .713.288T13 6v5h5q.425 0 .713.288T19 12q0 .425-.288.713T18 13h-5v5q0 .425-.288.713T12 19q-.425 0-.712-.288T11 18z"
+                />
+              </svg>
+            </button>
+          ) : (
+            <div></div>
+          )}
           <button
-            onClick={() => openAddDialog(name, image, type, description)}
+            onClick={() => navigate(`/peralatan/${id}`)}
             className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
           >
             <svg
@@ -389,20 +401,7 @@ function PeralatanRow(props) {
             >
               <path
                 fill="currentColor"
-                d="M11 13H6q-.425 0-.712-.288T5 12q0-.425.288-.712T6 11h5V6q0-.425.288-.712T12 5q.425 0 .713.288T13 6v5h5q.425 0 .713.288T19 12q0 .425-.288.713T18 13h-5v5q0 .425-.288.713T12 19q-.425 0-.712-.288T11 18z"
-              />
-            </svg>
-          </button>
-          <button className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="black"
-                d="M4 14v-2h7v2zm0-4V8h11v2zm0-4V4h11v2zm9 14v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55q0 .275-.1.563t-.325.512l-5.5 5.5zm6.575-5.6l.925-.975l-.925-.925l-.95.95z"
+                d="M6.4 18L5 16.6L14.6 7H6V5h12v12h-2V8.4z"
               />
             </svg>
           </button>

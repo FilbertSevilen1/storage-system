@@ -7,8 +7,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Heading from "../components/base/Heading";
 import PinjamanCard from "../components/PinjamanCard";
+import { useNavigate } from "react-router";
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -24,15 +26,45 @@ function Dashboard() {
         <div className="mb-8">
           <Heading title="Pinjaman Saya"></Heading>
         </div>
-
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Dalam Peminjaman"></PinjamanCard>
+        <div onClick={() => navigate("/detailpinjaman/1")}>
+          <PinjamanCard
+            title="Pinjaman 001"
+            startDate="01 Januari 2024"
+            endDate="29 Februari 2024"
+            status="Selesai"
+          ></PinjamanCard>
+        </div>
+        <PinjamanCard
+          title="Pinjaman 001"
+          startDate="01 Januari 2024"
+          endDate="29 Februari 2024"
+          status="Dalam Peminjaman"
+        ></PinjamanCard>
+        <PinjamanCard
+          title="Pinjaman 001"
+          startDate="01 Januari 2024"
+          endDate="29 Februari 2024"
+          status="Dalam Peminjaman"
+        ></PinjamanCard>
+        <PinjamanCard
+          title="Pinjaman 001"
+          startDate="01 Januari 2024"
+          endDate="29 Februari 2024"
+          status="Dalam Peminjaman"
+        ></PinjamanCard>
+        <PinjamanCard
+          title="Pinjaman 001"
+          startDate="01 Januari 2024"
+          endDate="29 Februari 2024"
+          status="Dalam Peminjaman"
+        ></PinjamanCard>
 
         <div className="w-full my-8">
-          <Button variant="contained" size="large">
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => navigate("/pinjaman")}
+          >
             Lihat Selengkapnya
           </Button>
         </div>
@@ -41,41 +73,34 @@ function Dashboard() {
         <div className="mb-8">
           <Heading title="Riwayat Pinjaman"></Heading>
         </div>
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
-        <PinjamanCard title="Pinjaman 001" startDate="01 Januari 2024" endDate="29 Februari 2024" status="Selesai"></PinjamanCard>
+        <PinjamanCard
+          title="Pinjaman 001"
+          startDate="01 Januari 2024"
+          endDate="29 Februari 2024"
+          status="Selesai"
+        ></PinjamanCard>
+        <PinjamanCard
+          title="Pinjaman 001"
+          startDate="01 Januari 2024"
+          endDate="29 Februari 2024"
+          status="Selesai"
+        ></PinjamanCard>
+        <PinjamanCard
+          title="Pinjaman 001"
+          startDate="01 Januari 2024"
+          endDate="29 Februari 2024"
+          status="Selesai"
+        ></PinjamanCard>
         <div className="w-full my-8">
-          <Button variant="contained" size="large">
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => navigate("/pinjamansaya")}
+          >
             Lihat Selengkapnya
           </Button>
         </div>
       </div>
-      {/* <Button variant="contained">Disabled</Button>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open alert dialog
-      </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
-          </Button>
-        </DialogActions>
-      </Dialog> */}
     </div>
   );
 }

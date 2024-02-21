@@ -10,6 +10,7 @@ const initialState = {
   user:{
     id: "",
     name:"TEST",
+    role:"Admin"
   },
   count: 5
 }
@@ -20,7 +21,8 @@ function reducers(state = initialState, action) {
         ...state,
         user:{
           id: action.payload.id,
-          name: action.payload.name
+          name: action.payload.name,
+          role: action.payload.role
         },
       }
     case 'LOGOUT':

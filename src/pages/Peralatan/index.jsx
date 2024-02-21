@@ -33,7 +33,7 @@ function Peralatan() {
   const [searchCount, setSearchCount] = useState("");
   const [listPeralatan, setListPeralatan] = useState([
     {
-      peralatanId: "0",
+      peralatanId: "1",
       peralatanName: "Komputer",
       peralatanType: "Berseri",
       peralatanCategory: "Elektronik",
@@ -145,6 +145,7 @@ function Peralatan() {
             <PeralatanRow
               index={index}
               key={index}
+              showAdd={true}
               peralatanId={peralatan.peralatanId}
               peralatanName={peralatan.peralatanName}
               peralatanType={peralatan.peralatanType}
@@ -361,13 +362,14 @@ function Peralatan() {
               </div>
             </div>
             <div className="p-2 w-1/2"></div>
-            <div className="p-2 w-full">
+            <div className="p-2 w-full flex flex-col">
+              <div className="mt-2">Deskripsi</div>
               <TextareaAutosize
                 onchange={checkPeralatanDeskrispi}
                 className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
                 minRows={4}
                 aria-label="empty textarea"
-                placeholder="Deskripsi"
+                placeholder="..."
                 ref={addPeralatanDeskripsi}
               />
               <div className="text-red-500 text-md">
@@ -389,7 +391,7 @@ function Peralatan() {
           <Heading title="List Peralatan"></Heading>
         </div>
 
-        <div className="w-full flex items-center mt-8 shadow-md px-8 py-4">
+        <div className="bg-white w-full flex items-center mt-8 shadow-md px-8 py-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -413,7 +415,7 @@ function Peralatan() {
           </div>
         </div>
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
-          <div className="w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
+          <div className="w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md bg-white">
             <div className="w-full">
               <Button
                 onClick={() => {
@@ -479,7 +481,7 @@ function Peralatan() {
               </div>
             </div>
           </div>
-          <div className="w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
+          <div className="w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between bg-white">
             <PeralatanHeader></PeralatanHeader>
             {generatePeralatanData()}
             <div className="w-full justify-end items-center mt-4 flex">
