@@ -1,10 +1,27 @@
 import React, { useEffect, useRef, useState } from "react";
 import Heading from "../../../components/base/Heading";
-import { Button, Input, TextField, TextareaAutosize } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Input,
+  InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import SubHeading from "../../../components/base/SubHeading";
 import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
 import { useNavigate } from "react-router";
+import PeralatanHeader from "../../../components/PeralatanHeader";
+import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
+import AddPeralatanRow from "../../../components/AddPeralatanRow";
 function CreatePinjaman() {
   const navigate = useNavigate();
 
@@ -16,37 +33,124 @@ function CreatePinjaman() {
   const vertical = "top";
   const horizontal = "center";
 
-  const createStartDate = useRef("")
-  const createEndDate = useRef("")
-  const createReason = useRef("")
+  const createStartDate = useRef("");
+  const createEndDate = useRef("");
+  const createReason = useRef("");
 
-  const [listPinjamPeralatan, setListPinjamPeralatan] = useState([
-    // {
-    //   peralatan_id: "1",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   peralatan_type: "Berseri",
-    //   peralatan_category: "Elektronik",
-    //   peralatan_total: 2,
-    //   peralatan_available: 4,
-    //   peralatan_detail: [
-    //     {
-    //       peralatan_serial_no: "KOMP001-0001",
-    //     },
-    //     {
-    //       peralatan_serial_no: "KOMP001-0002",
-    //     },
-    //   ],
-    // },
-    // {
-    //   peralatan_id: "2",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   peralatan_type: "Tidak Berseri",
-    //   peralatan_category: "Elektronik",
-    //   peralatan_total: 5,
-    //   peralatan_available: 2,
-    // },
+  const [addDialog, setAddDialog] = useState(false);
+  const searchAddNama = useRef();
+  const [searchAddCategory, setSearchAddCategory] = useState("");
+
+  const [listAddPeralatan, setListAddPeralatan] = useState([
+    {
+      peralatan_id: "1",
+      peralatan_image: "test",
+      peralatan_name: "Komputer",
+      peralatan_type: "Berseri",
+      peralatan_category: "Elektronik",
+      peralatan_total: 2,
+      peralatan_available: 1,
+      peralatan_detail: [
+        {
+          peralatan_detail_id: "1",
+          peralatan_serial_no: "KOMP001-0001",
+          peralatan_status: "Siap Dipinjam",
+        },
+        {
+          peralatan_detail_id: "2",
+          peralatan_serial_no: "KOMP001-0002",
+          peralatan_status: "Siap Dipinjam",
+        },
+      ],
+    },
+    {
+      peralatan_id: "2",
+      peralatan_image: "test",
+      peralatan_name: "Komputer",
+      peralatan_type: "Tidak Berseri",
+      peralatan_category: "Elektronik",
+      peralatan_total: 5,
+      peralatan_available: 2,
+    },
+  ]);
+
+  const [listCariAddPeralatan, setListCariAddPeralatan] = useState([
+    {
+      peralatan_id: "1",
+      peralatan_image: "test",
+      peralatan_name: "Komputer",
+      peralatan_type: "Berseri",
+      peralatan_category: "Elektronik",
+      peralatan_total: 2,
+      peralatan_available: 1,
+      peralatan_detail: [
+        {
+          peralatan_detail_id: "1",
+          peralatan_serial_no: "KOMP001-0001",
+          peralatan_status: "Siap Dipinjam",
+        },
+        {
+          peralatan_detail_id: "2",
+          peralatan_serial_no: "KOMP001-0002",
+          peralatan_status: "Siap Dipinjam",
+        },
+        {
+          peralatan_detail_id: "3",
+          peralatan_serial_no: "KOMP001-0003",
+          peralatan_status: "Siap Dipinjam",
+        },
+      ],
+    },
+    {
+      peralatan_id: "2",
+      peralatan_image: "test",
+      peralatan_name: "Komputer",
+      peralatan_type: "Tidak Berseri",
+      peralatan_category: "Elektronik",
+      peralatan_total: 5,
+      peralatan_available: 2,
+    },
+    {
+      peralatan_id: "3",
+      peralatan_image: "test",
+      peralatan_name: "Monitor",
+      peralatan_type: "Tidak Berseri",
+      peralatan_category: "Elektronik",
+      peralatan_total: 3,
+      peralatan_available: 4,
+    },
+    {
+      peralatan_id: "4",
+      peralatan_image: "test",
+      peralatan_name: "Mobil",
+      peralatan_type: "Berseri",
+      peralatan_category: "Otomotif",
+      peralatan_total: 3,
+      peralatan_available: 3,
+      peralatan_detail: [
+        {
+          peralatan_detail_id: "1",
+          peralatan_serial_no: "MOB001-0001",
+          peralatan_status: "Siap Dipinjam",
+        },
+        {
+          peralatan_detail_id: "2",
+          peralatan_serial_no: "MOB001-0002",
+          peralatan_status: "Siap Dipinjam",
+        },
+        {
+          peralatan_detail_id: "3",
+          peralatan_serial_no: "MOB001-0003",
+          peralatan_status: "Siap Dipinjam",
+        },
+      ],
+    },
+  ]);
+
+  const [listKategori, setListKategori] = useState([
+    "Elektronik",
+    "Alat Tulis",
+    "Lainnya",
   ]);
 
   useEffect(() => {
@@ -58,9 +162,9 @@ function CreatePinjaman() {
   };
 
   const getPinjamPeralatanList = () => {
-    if (listPinjamPeralatan.length % 10 === 0) {
-      setMaxPage(Math.floor(listPinjamPeralatan.length / 5));
-    } else setMaxPage(Math.floor(listPinjamPeralatan.length / 5) + 1);
+    if (listCariAddPeralatan.length % 10 === 0) {
+      setMaxPage(Math.floor(listCariAddPeralatan.length / 5));
+    } else setMaxPage(Math.floor(listCariAddPeralatan.length / 5) + 1);
   };
 
   const prevPage = () => {
@@ -73,21 +177,199 @@ function CreatePinjaman() {
     setPage(page + 1);
   };
 
+  const addPinjamPeralatanDataBerseri = (alat, detail) => {
+    alat = { ...alat, peralatan_detail: [detail] };
+
+    let found = false;
+    listAddPeralatan.forEach((item) => {
+      if (item.peralatan_id == alat.peralatan_id) {
+        let detailFound = false;
+        item.peralatan_detail.forEach((itemdetail) => {
+          if (itemdetail.peralatan_detail_id == detail.peralatan_detail_id) {
+            detailFound = true;
+            console.log(
+              itemdetail.peralatan_detail_id == detail.peralatan_detail_id
+            );
+            setAddDialog(false);
+            setSnackbar(true);
+            setTimeout(() => {
+              setSnackbar(false);
+            }, 3000);
+            return setSnackbarMessage("Alat sudah ada di List");
+          }
+        });
+        if (!detailFound) {
+          item.peralatan_detail.push(detail);
+          console.log(item);
+
+          listCariAddPeralatan.forEach((itemalat) => {
+            if (itemalat.peralatan_id == alat.peralatan_id) {
+              itemalat.peralatan_total++;
+              itemalat.peralatan_available--;
+            }
+          });
+          listAddPeralatan.forEach((itemalat) => {
+            if (itemalat.peralatan_id == alat.peralatan_id) {
+              itemalat.peralatan_total--;
+              itemalat.peralatan_available--;
+            }
+          });
+
+          setAddDialog(false);
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          setSnackbarMessage("Tambah Stok Alat Sukses");
+        }
+        found = true;
+      }
+    });
+    if (!found) {
+      alat = {
+        ...alat,
+        peralatan_total: 1,
+        peralatan_available: alat.peralatan_available - 1,
+      };
+      listAddPeralatan.push(alat);
+      listCariAddPeralatan.forEach((item) => {
+        if (item.peralatan_id == alat.peralatan_id) {
+          item.peralatan_total++;
+          item.peralatan_available--;
+        }
+      });
+      setAddDialog(false);
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Tambah Alat Sukses");
+    } else {
+    }
+  };
+
+  const addPinjamPeralatanDataTidakBerseri = (alat) => {
+    let found = false;
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (alat.peralatan_id == listAddPeralatan[i].peralatan_id) {
+        found = true;
+      }
+    }
+
+    if (!found) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      listAddPeralatan.push({
+        ...alat,
+        peralatan_total: 1,
+        peralatan_available: alat.peralatan_available - 1,
+      });
+      listCariAddPeralatan.forEach((item) => {
+        if (item.peralatan_id == alat.peralatan_id) {
+          item.peralatan_available--;
+        }
+      });
+      setAddDialog(false);
+      return setSnackbarMessage("Tambah Alat Sukses");
+    } else {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Alat sudah ada di List");
+    }
+  };
+
   const deletePinjamPeralatanData = (index) => {
-    // Use setListPinjamPeralatan to update the state
-    setListPinjamPeralatan((prevList) => {
+    // Use setListCariAddPeralatan to update the state
+    listAddPeralatan.forEach((item) => {
+      if (item.peralatan_id == listAddPeralatan[index].peralatan_id) {
+        item.peralatan_available++;
+      }
+    });
+    setListAddPeralatan((prevList) => {
       const newList = [...prevList];
       newList.splice(index, 1);
       return newList;
     });
+    for(let i=0;i<listCariAddPeralatan.length;i++){
+      if(listCariAddPeralatan[i].peralatan_id == listAddPeralatan[index].peralatan_id){
+        setListCariAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].peralatan_available+=1;
+          return newList;
+        });
+      }
+    }
   };
 
+  const deletePinjamPeralatanBerseri = (alat, detail) =>{
+    console.log(alat,detail)
+    listAddPeralatan.forEach(item => {
+      console.log(item.peralatan_id, alat.peralatan_id)
+      if(item.peralatan_id == alat.peralatan_id){
+        for(let i=0;i<item.peralatan_detail.length;i++){
+          console.log(item.peralatan_detail[i].peralatan_detail_id,detail.peralatan_detail_id)
+          if(item.peralatan_detail[i].peralatan_detail_id == detail.peralatan_detail_id){
+            item.peralatan_detail.splice(i,1);
+          }
+        }
+      }
+    });
+    for(let i=0;i<listAddPeralatan.length;i++){
+      if(listAddPeralatan[i].peralatan_id == alat.peralatan_id && listAddPeralatan[i].peralatan_detail.length<=0){
+        setListAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList.splice(i, 1);
+          return newList;
+        });
+      }
+    }
+    for(let i=0;i<listCariAddPeralatan.length;i++){
+      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
+        setListCariAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].peralatan_available+=1;
+          return newList;
+        });
+      }
+    }
+  }
+
+  const incrementTotal = (alat) =>{
+    for(let i=0;i<listCariAddPeralatan.length;i++){
+      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
+        setListCariAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].peralatan_available-=1;
+          return newList;
+        });
+      }
+    }
+  }
+  const decrementTotal = (alat) =>{
+    for(let i=0;i<listCariAddPeralatan.length;i++){
+      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
+        setListCariAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].peralatan_available+=1;
+          return newList;
+        });
+      }
+    }
+  }
+
   const generatePinjamPeralatan = () => {
-    if (listPinjamPeralatan) {
-      return listPinjamPeralatan.map((peralatan, index) => {
+    console.log(listCariAddPeralatan)
+    if (listAddPeralatan) {
+      return listAddPeralatan.map((peralatan, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
           return (
             <PinjamPeralatanRow
+              listPeralatan={listCariAddPeralatan}
+              peralatan={peralatan}
               editable={true}
               index={index}
               key={index}
@@ -97,20 +379,118 @@ function CreatePinjaman() {
               peralatanCategory={peralatan.peralatan_category}
               peralatanTotal={peralatan.peralatan_total}
               peralatanAvailable={peralatan.peralatan_available}
-              peralatanDetail={peralatan.peralatanDetail}
+              peralatanDetail={peralatan.peralatan_detail}
               page={page}
+              addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
+              deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
               deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
+              incrementTotal={incrementTotal}
+              decrementTotal={decrementTotal}
             ></PinjamPeralatanRow>
           );
       });
     }
   };
 
-  const batalkanPinjaman = () =>{
-    navigate("/home")
-  }
+  const batalkanPinjaman = () => {
+    navigate("/home");
+  };
+
+  const handleSearchAddCategory = (event) => {
+    setSearchAddCategory(event.target.value);
+  };
+
+  const generateSearchAddCategoryList = () => {
+    if (listKategori) {
+      return listKategori.map((kategori, index) => {
+        return <MenuItem value={kategori}>{kategori}</MenuItem>;
+      });
+    }
+  };
+
+  const openAddDialog = () => {
+    setAddDialog(true);
+  };
+
+  const generateAddPeralatanList = () => {
+    if (listCariAddPeralatan) {
+      return listCariAddPeralatan.map((peralatan, index) => {
+        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5) {
+          return (
+            <AddPeralatanRow
+              index={index}
+              key={index}
+              peralatan={peralatan}
+              peralatanImage={peralatan.peralatan_image}
+              peralatanName={peralatan.peralatan_name}
+              peralatanType={peralatan.peralatan_type}
+              peralatanCategory={peralatan.peralatan_category}
+              peralatanTotal={peralatan.peralatan_total}
+              peralatanAvailable={peralatan.peralatan_available}
+              peralatanDetail={peralatan.peralatan_detail}
+              page={page}
+              addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
+              addPinjamPeralatanDataTidakBerseri={() =>
+              addPinjamPeralatanDataTidakBerseri(peralatan)
+              }
+            ></AddPeralatanRow>
+          );
+        }
+      });
+    }
+  };
+
   return (
     <div className="w-full">
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={snackbar}
+        autoHideDuration={3000}
+        message={snackbarMessage}
+        key={"top" + "center"}
+      />
+      <Dialog
+        open={addDialog}
+        onClose={() => setAddDialog(false)}
+        maxWidth="[500px]"
+      >
+        <DialogTitle>Tambah Peralatan</DialogTitle>
+        <DialogContent>
+          <div className="flex flex-col md:flex-row w-full">
+            <div className="w-full md:w-[400px] md:mr-2">
+              <TextField
+                margin="dense"
+                id="peralatanName"
+                name="peralatanName"
+                label="Nama Peralatan"
+                type="text"
+                fullWidth
+                variant="outlined"
+                inputRef={searchAddNama}
+              />
+            </div>
+            <div className="w-full md:w-[400px] md:ml-2 pt-2">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={searchAddCategory}
+                  label="Kategori"
+                  onChange={handleSearchAddCategory}
+                  placeholder="Kategori"
+                  fullWidth
+                >
+                  {generateSearchAddCategoryList()}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+          <AddPeralatanHeader></AddPeralatanHeader>
+          {generateAddPeralatanList()}
+        </DialogContent>
+        <DialogActions></DialogActions>
+      </Dialog>
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
           <Heading title="Buat Pinjaman Baru"></Heading>
@@ -137,7 +517,7 @@ function CreatePinjaman() {
                   type="date"
                   variant="outlined"
                   className="w-full"
-                  value={createStartDate}
+                  inputRef={createStartDate}
                 />
               </div>
             </div>
@@ -162,7 +542,7 @@ function CreatePinjaman() {
                   variant="outlined"
                   className="w-full"
                   placeholder="Cari Barang di sini"
-                  value={createEndDate}
+                  inputRef={createEndDate}
                 />
               </div>
             </div>
@@ -173,7 +553,7 @@ function CreatePinjaman() {
                   minRows={4}
                   aria-label="empty textarea"
                   placeholder="Alasan Peminjaman"
-                  value={createReason}
+                  ref={createReason}
                 />
               </div>
             </div>
@@ -183,7 +563,11 @@ function CreatePinjaman() {
           <div className="w-full flex items-center mb-4">
             <SubHeading title="Keranjang"></SubHeading>
             <div className="ml-4">
-              <Button variant="contained" size="large">
+              <Button
+                onClick={() => openAddDialog()}
+                variant="contained"
+                size="large"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -228,7 +612,12 @@ function CreatePinjaman() {
         </div>
         <div className="w-full flex justify-end mb-8">
           <div>
-            <Button onClick={()=>batalkanPinjaman()} color="error" variant="contained" size="large">
+            <Button
+              onClick={() => batalkanPinjaman()}
+              color="error"
+              variant="contained"
+              size="large"
+            >
               Batal
             </Button>
           </div>

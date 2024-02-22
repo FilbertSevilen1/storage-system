@@ -13,7 +13,10 @@ import {
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import AddPeralatanBerseriHeader from "./AddPeralatanBerseriHeader";
+import EditPeralatanBerseriRow from "./EditPeralatanBerseriRow";
 function PinjamPeralatanRow({
+  peralatan,
   editable,
   index,
   peralatanImage,
@@ -25,6 +28,9 @@ function PinjamPeralatanRow({
   peralatanDetail,
   page,
   deletePinjamPeralatanData,
+  deletePinjamPeralatanBerseri,
+  incrementTotal,
+  decrementTotal,
 }) {
   const dispatch = useDispatch();
 
@@ -36,6 +42,7 @@ function PinjamPeralatanRow({
   const [jumlah, setJumlah] = useState(peralatanTotal || 0);
   const [tersedia, setTersedia] = useState(peralatanAvailable || 0);
 
+  const [editDialogBerseri, setEditDialogBerseri] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
 
   const addJumlah = () => {
@@ -43,30 +50,74 @@ function PinjamPeralatanRow({
       setJumlah(jumlah + 1);
       setTersedia(tersedia - 1);
     }
+    incrementTotal(peralatan);
   };
   const minJumlah = () => {
     if (jumlah > 1) {
       setJumlah(jumlah - 1);
       setTersedia(tersedia + 1);
     }
+    decrementTotal(peralatan)
   };
 
   const openDeleteDialog = () => {
     setDeleteDialog(true);
   };
+  const onDeleteDialog = () => {
+    setDeleteDialog(false);
+    deletePinjamPeralatanData();
+  };
+  const generateSerialNumber = () =>{
+    if(peralatanDetail){
+      return peralatanDetail.map((detail, index)=>{
+        return <div>{detail.peralatan_serial_no}{index !=-1? `,`:""}</div>
+      })
+    }
+  }
+
+  const closeEditDialog = () =>{
+    setEditDialogBerseri(false);
+  }
+
+  const generateEditPeralatanBerseri = () =>{
+    if(peralatanDetail){
+      return peralatanDetail.map((detail, index)=>{
+        return <EditPeralatanBerseriRow
+          key={index}
+          peralatan={peralatan}
+          detail={detail}
+          index={index}
+          deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
+          closeEditDialog={()=>closeEditDialog()}
+        >
+        </EditPeralatanBerseriRow>
+      })
+    }
+  }
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
+      <Dialog open={editDialogBerseri} onClose={() => setEditDialogBerseri(false)}>
+        <DialogTitle>Edit {nama}</DialogTitle> 
+        <DialogContent>
+          <div className="w-full md:w-[550px]">
+            <AddPeralatanBerseriHeader>
+            </AddPeralatanBerseriHeader>
+            {generateEditPeralatanBerseri()}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
         <DialogTitle>Delete Peralatan</DialogTitle>
         <DialogContent>
-          <div className="w-96">
+          <div className="w-full">
             Apakah Anda yakin ingin menghilangkan {nama} dari Barang yang akan
             dipinjam?
           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialog(false)}>Tidak</Button>
-          <Button onClick={deletePinjamPeralatanData} type="submit">
+          <Button onClick={() => onDeleteDialog()} type="submit">
             <b>Ya</b>
           </Button>
         </DialogActions>
@@ -75,9 +126,10 @@ function PinjamPeralatanRow({
         <div className="w-full md:w-2/12 h-24 sm:w-24 md:h-full bg-gray-700 rounded-lg">
           <img src={image} className="w-full h-full"></img>
         </div>
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
+        <div className="w-full md:w-2/12 flex flex-col flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama Barang : </div>
-          <div>{nama}</div>
+          <div><b>{nama}</b></div>
+          <div className="flex flex-wrap">{generateSerialNumber()}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Tipe: </div>
@@ -91,13 +143,13 @@ function PinjamPeralatanRow({
           <div className="flex md:hidden mr-2 font-bold">
             {"Jumlah (Tersedia)"} :{" "}
           </div>
-          <div>{`${jumlah} (${tersedia})`}</div>
+          <div>{`${peralatanDetail?peralatanDetail.length:jumlah} ${peralatanDetail?"":`(tersedia ${tersedia})`}`}</div>
         </div>
         {editable ? (
           <div className="w-full md:w-2/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">
             {tipe == "Berseri" ? (
               <div className="flex">
-                <button className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
+                <button onClick={()=>setEditDialogBerseri(true)} className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
