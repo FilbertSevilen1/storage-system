@@ -13,6 +13,7 @@ import PinjamanSaya from './pages/Pinjaman/PinjamanSaya/index.jsx';
 import PeralatanDetail from './pages/Peralatan/Detail/index.jsx';
 import CreatePinjaman from './pages/Pinjaman/Create/index.jsx';
 import DetailPinjaman from './pages/Pinjaman/Details/index.jsx';
+import LaporanKerusakan from './pages/LaporanKerusakan/index.jsx';
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
         <Route path="/detailpinjaman/:id" element={<DetailPinjaman />}></Route>
         <Route path="/pinjaman" element={<ListPinjaman/>}></Route>
         <Route path="/pinjamansaya" element={<PinjamanSaya/>}></Route>
+
+        <Route path="/laporan" element={<LaporanKerusakan/>}></Route>
 
         <Route path="/user" element={<User />}></Route>
       </Routes>

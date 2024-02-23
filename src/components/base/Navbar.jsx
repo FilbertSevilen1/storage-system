@@ -46,7 +46,7 @@ function Navbar() {
             <div className="dropdown-content">
               <div onClick={()=>navigate("/buatpinjaman")}>Buat Pinjaman Baru</div>
               <div onClick={()=>navigate("/pinjamansaya")}>Pinjaman Saya</div>
-              <div>Lapor Kerusakan</div>
+              <div onClick={()=>navigate("/laporan")}>Lapor Kerusakan</div>
               <div onClick={()=>navigate("/pinjaman")}>Lihat List Pinjaman -Admin-</div>
             </div>
           </div>

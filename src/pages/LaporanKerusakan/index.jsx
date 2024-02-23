@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import Heading from "../../../components/base/Heading";
+import Heading from "../../components/base/Heading";
 import {
   Button,
   Dialog,
@@ -15,14 +15,14 @@ import {
   TextField,
   TextareaAutosize,
 } from "@mui/material";
-import SubHeading from "../../../components/base/SubHeading";
-import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
-import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
 import { useNavigate } from "react-router";
-import PeralatanHeader from "../../../components/PeralatanHeader";
-import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
-import AddPeralatanRow from "../../../components/AddPeralatanRow";
-function CreatePinjaman() {
+import PinjamPeralatanRow from "../../components/PinjamPeralatanRow";
+import AddPeralatanRow from "../../components/AddPeralatanRow";
+import AddPeralatanHeader from "../../components/AddPeralatanHeader";
+import SubHeading from "../../components/base/SubHeading";
+import PinjamPeralatanHeader from "../../components/PinjamPeralatanHeader";
+
+function LaporanKerusakan() {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
@@ -34,47 +34,12 @@ function CreatePinjaman() {
   const horizontal = "center";
 
   const createStartDate = useRef("");
-  const createEndDate = useRef("");
-  const createReason = useRef("");
 
   const [addDialog, setAddDialog] = useState(false);
   const searchAddNama = useRef();
   const [searchAddCategory, setSearchAddCategory] = useState("");
 
-  const [listAddPeralatan, setListAddPeralatan] = useState([
-    // {
-    //   peralatan_id: "1",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   peralatan_type: "Berseri",
-    //   peralatan_category: "Elektronik",
-    //   peralatan_total: 2,
-    //   peralatan_available: 1,
-    //   peralatan_detail: [
-    //     {
-    //       peralatan_detail_id: "1",
-    //       peralatan_serial_no: "KOMP001-0001",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //     {
-    //       peralatan_detail_id: "2",
-    //       peralatan_serial_no: "KOMP001-0002",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //   ],
-    // },
-    // {
-    //   peralatan_id: "2",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   peralatan_type: "Tidak Berseri",
-    //   peralatan_category: "Elektronik",
-    //   peralatan_total: 5,
-    //   peralatan_available: 2,
-    // },
-  ]);
-
-  const [listCariAddPeralatan, setListCariAddPeralatan] = useState([
+  const [listCariAlat, setlistCariAlat] = useState([
     {
       peralatan_id: "1",
       peralatan_image: "test",
@@ -162,9 +127,9 @@ function CreatePinjaman() {
   };
 
   const getPinjamPeralatanList = () => {
-    if (listCariAddPeralatan.length % 10 === 0) {
-      setMaxPage(Math.floor(listCariAddPeralatan.length / 5));
-    } else setMaxPage(Math.floor(listCariAddPeralatan.length / 5) + 1);
+    if (listCariAlat.length % 10 === 0) {
+      setMaxPage(Math.floor(listCariAlat.length / 5));
+    } else setMaxPage(Math.floor(listCariAlat.length / 5) + 1);
   };
 
   const prevPage = () => {
@@ -181,7 +146,7 @@ function CreatePinjaman() {
     alat = { ...alat, peralatan_detail: [detail] };
 
     let found = false;
-    listAddPeralatan.forEach((item) => {
+    listKerusakan.forEach((item) => {
       if (item.peralatan_id == alat.peralatan_id) {
         let detailFound = false;
         item.peralatan_detail.forEach((itemdetail) => {
@@ -202,13 +167,13 @@ function CreatePinjaman() {
           item.peralatan_detail.push(detail);
           console.log(item);
 
-          listCariAddPeralatan.forEach((itemalat) => {
+          listCariAlat.forEach((itemalat) => {
             if (itemalat.peralatan_id == alat.peralatan_id) {
               itemalat.peralatan_total++;
               itemalat.peralatan_available--;
             }
           });
-          listAddPeralatan.forEach((itemalat) => {
+          listKerusakan.forEach((itemalat) => {
             if (itemalat.peralatan_id == alat.peralatan_id) {
               itemalat.peralatan_total--;
               itemalat.peralatan_available--;
@@ -231,8 +196,8 @@ function CreatePinjaman() {
         peralatan_total: 1,
         peralatan_available: alat.peralatan_available - 1,
       };
-      listAddPeralatan.push(alat);
-      listCariAddPeralatan.forEach((item) => {
+      listKerusakan.push(alat);
+      listCariAlat.forEach((item) => {
         if (item.peralatan_id == alat.peralatan_id) {
           item.peralatan_total++;
           item.peralatan_available--;
@@ -250,8 +215,8 @@ function CreatePinjaman() {
 
   const addPinjamPeralatanDataTidakBerseri = (alat) => {
     let found = false;
-    for (let i = 0; i < listAddPeralatan.length; i++) {
-      if (alat.peralatan_id == listAddPeralatan[i].peralatan_id) {
+    for (let i = 0; i < listKerusakan.length; i++) {
+      if (alat.peralatan_id == listKerusakan[i].peralatan_id) {
         found = true;
       }
     }
@@ -261,12 +226,12 @@ function CreatePinjaman() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
-      listAddPeralatan.push({
+      listKerusakan.push({
         ...alat,
         peralatan_total: 1,
         peralatan_available: alat.peralatan_available - 1,
       });
-      listCariAddPeralatan.forEach((item) => {
+      listCariAlat.forEach((item) => {
         if (item.peralatan_id == alat.peralatan_id) {
           item.peralatan_available--;
         }
@@ -283,92 +248,101 @@ function CreatePinjaman() {
   };
 
   const deletePinjamPeralatanData = (index) => {
-    // Use setListCariAddPeralatan to update the state
-    listAddPeralatan.forEach((item) => {
-      if (item.peralatan_id == listAddPeralatan[index].peralatan_id) {
+    // Use setlistCariAlat to update the state
+    listKerusakan.forEach((item) => {
+      if (item.peralatan_id == listKerusakan[index].peralatan_id) {
         item.peralatan_available++;
       }
     });
-    setListAddPeralatan((prevList) => {
+    setlistKerusakan((prevList) => {
       const newList = [...prevList];
       newList.splice(index, 1);
       return newList;
     });
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == listAddPeralatan[index].peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+    for (let i = 0; i < listCariAlat.length; i++) {
+      if (listCariAlat[i].peralatan_id == listKerusakan[index].peralatan_id) {
+        setlistCariAlat((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available+=1;
+          newList[i].peralatan_available += 1;
           return newList;
         });
       }
     }
   };
 
-  const deletePinjamPeralatanBerseri = (alat, detail) =>{
-    console.log(alat,detail)
-    listAddPeralatan.forEach(item => {
-      console.log(item.peralatan_id, alat.peralatan_id)
-      if(item.peralatan_id == alat.peralatan_id){
-        for(let i=0;i<item.peralatan_detail.length;i++){
-          console.log(item.peralatan_detail[i].peralatan_detail_id,detail.peralatan_detail_id)
-          if(item.peralatan_detail[i].peralatan_detail_id == detail.peralatan_detail_id){
-            item.peralatan_detail.splice(i,1);
+  const deletePinjamPeralatanBerseri = (alat, detail) => {
+    console.log(alat, detail);
+    listKerusakan.forEach((item) => {
+      console.log(item.peralatan_id, alat.peralatan_id);
+      if (item.peralatan_id == alat.peralatan_id) {
+        for (let i = 0; i < item.peralatan_detail.length; i++) {
+          console.log(
+            item.peralatan_detail[i].peralatan_detail_id,
+            detail.peralatan_detail_id
+          );
+          if (
+            item.peralatan_detail[i].peralatan_detail_id ==
+            detail.peralatan_detail_id
+          ) {
+            item.peralatan_detail.splice(i, 1);
           }
         }
       }
     });
-    for(let i=0;i<listAddPeralatan.length;i++){
-      if(listAddPeralatan[i].peralatan_id == alat.peralatan_id && listAddPeralatan[i].peralatan_detail.length<=0){
-        setListAddPeralatan((prevList) => {
+    for (let i = 0; i < listKerusakan.length; i++) {
+      if (
+        listKerusakan[i].peralatan_id == alat.peralatan_id &&
+        listKerusakan[i].peralatan_detail.length <= 0
+      ) {
+        setlistKerusakan((prevList) => {
           const newList = [...prevList];
           newList.splice(i, 1);
           return newList;
         });
       }
     }
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+    for (let i = 0; i < listCariAlat.length; i++) {
+      if (listCariAlat[i].peralatan_id == alat.peralatan_id) {
+        setlistCariAlat((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available+=1;
+          newList[i].peralatan_available += 1;
           return newList;
         });
       }
     }
-  }
+  };
 
-  const incrementTotal = (alat) =>{
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+  const incrementTotal = (alat) => {
+    for (let i = 0; i < listCariAlat.length; i++) {
+      if (listCariAlat[i].peralatan_id == alat.peralatan_id) {
+        setlistCariAlat((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available-=1;
+          newList[i].peralatan_available -= 1;
           return newList;
         });
       }
     }
-  }
-  const decrementTotal = (alat) =>{
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+  };
+  const decrementTotal = (alat) => {
+    for (let i = 0; i < listCariAlat.length; i++) {
+      if (listCariAlat[i].peralatan_id == alat.peralatan_id) {
+        setlistCariAlat((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available+=1;
+          newList[i].peralatan_available += 1;
           return newList;
         });
       }
     }
-  }
+  };
 
   const generatePinjamPeralatan = () => {
-    console.log(listCariAddPeralatan)
-    if (listAddPeralatan) {
-      return listAddPeralatan.map((peralatan, index) => {
+    console.log(listCariAlat);
+    if (listKerusakan) {
+      return listKerusakan.map((peralatan, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
           return (
             <PinjamPeralatanRow
-              listPeralatan={listCariAddPeralatan}
+              listPeralatan={listCariAlat}
               peralatan={peralatan}
               editable={true}
               index={index}
@@ -392,9 +366,12 @@ function CreatePinjaman() {
     }
   };
 
-  const batalkanPinjaman = () => {
+  const batalkanLaporan = () => {
     navigate("/home");
   };
+
+  const laporanDate = useRef("");
+  const laporanKeterangan = useRef("");
 
   const handleSearchAddCategory = (event) => {
     setSearchAddCategory(event.target.value);
@@ -413,8 +390,8 @@ function CreatePinjaman() {
   };
 
   const generateAddPeralatanList = () => {
-    if (listCariAddPeralatan) {
-      return listCariAddPeralatan.map((peralatan, index) => {
+    if (listCariAlat) {
+      return listCariAlat.map((peralatan, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5) {
           return (
             <AddPeralatanRow
@@ -431,13 +408,33 @@ function CreatePinjaman() {
               page={page}
               addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
               addPinjamPeralatanDataTidakBerseri={() =>
-              addPinjamPeralatanDataTidakBerseri(peralatan)
+                addPinjamPeralatanDataTidakBerseri(peralatan)
               }
             ></AddPeralatanRow>
           );
         }
       });
     }
+  };
+
+  const [listLaporanType, setListLaporanType] = useState([
+    "Kehilangan",
+    "Kerusakan",
+    "Diganti",
+  ]);
+  const [laporanType, setLaporanType] = useState("");
+  const [listKerusakan, setlistKerusakan] = useState([]);
+
+  const generateSelectLaporanType = () => {
+    if(listLaporanType){
+      return listLaporanType.map((laporan,index)=>{
+        return <MenuItem value={laporan}>{laporan}</MenuItem>
+      })
+    }
+  };
+
+  const handleLaporanType = (event) => {
+    setLaporanType(event.target.value);
   };
 
   return (
@@ -493,7 +490,7 @@ function CreatePinjaman() {
       </Dialog>
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
-          <Heading title="Buat Pinjaman Baru"></Heading>
+          <Heading title="Laporan Peralatan"></Heading>
         </div>
         <div className="bg-white w-full flex items-center mt-8 shadow-md px-4 py-4">
           <div className="w-full flex flex-wrap">
@@ -510,15 +507,22 @@ function CreatePinjaman() {
                 />
               </svg>
               <div className="w-full px-2 md:pr-4">
-                <TextField
-                  id=""
-                  label="Tanggal Mulai"
-                  InputLabelProps={{ shrink: true }}
-                  type="date"
-                  variant="outlined"
-                  className="w-full"
-                  inputRef={createStartDate}
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">
+                    Jenis Laporan
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={laporanType}
+                    label="Kategori"
+                    onChange={handleLaporanType}
+                    placeholder="Kategori"
+                    fullWidth
+                  >
+                    {generateSelectLaporanType()}
+                  </Select>
+                </FormControl>
               </div>
             </div>
             <div className="w-full md:w-1/4 flex items-center mb-4">
@@ -536,24 +540,25 @@ function CreatePinjaman() {
               <div className="w-full px-2">
                 <TextField
                   id=""
-                  label="Tanggal Selesai"
+                  label="Tanggal Laporan"
                   InputLabelProps={{ shrink: true }}
                   type="date"
                   variant="outlined"
                   className="w-full"
                   placeholder="Cari Barang di sini"
-                  inputRef={createEndDate}
+                  inputRef={laporanDate}
                 />
               </div>
             </div>
-            <div className="w-full flex flex-wrap">
+            <div className="w-full flex flex-col flex-wrap">
+              <div>Keterangan</div>
               <div className="w-full md:w-1/2">
                 <TextareaAutosize
                   className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
                   minRows={4}
                   aria-label="empty textarea"
-                  placeholder="Alasan Peminjaman"
-                  ref={createReason}
+                  placeholder="..."
+                  ref={laporanKeterangan}
                 />
               </div>
             </div>
@@ -561,7 +566,7 @@ function CreatePinjaman() {
         </div>
         <div className="bg-white w-full flex flex-col items-center mt-8 shadow-md px-4 py-4 mb-8">
           <div className="w-full flex items-center mb-4">
-            <SubHeading title="Keranjang"></SubHeading>
+            <SubHeading title="Alat"></SubHeading>
             <div className="ml-4">
               <Button
                 onClick={() => openAddDialog()}
@@ -584,36 +589,11 @@ function CreatePinjaman() {
           </div>
           <PinjamPeralatanHeader></PinjamPeralatanHeader>
           {generatePinjamPeralatan()}
-          <div className="w-full justify-end items-center mt-4 flex">
-            <Button onClick={prevPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path fill="currentColor" d="m14 17l-5-5l5-5z" />
-              </svg>
-            </Button>
-            <div className="mx-2">
-              {page} / {maxPage}
-            </div>
-            <Button onClick={nextPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path fill="currentColor" d="M10 17V7l5 5z" />
-              </svg>
-            </Button>
-          </div>
         </div>
         <div className="w-full flex justify-end mb-8">
           <div>
             <Button
-              onClick={() => batalkanPinjaman()}
+              onClick={() => batalkanLaporan()}
               color="error"
               variant="contained"
               size="large"
@@ -623,7 +603,7 @@ function CreatePinjaman() {
           </div>
           <div className="md:ml-2">
             <Button variant="contained" size="large">
-              Buat Pinjaman
+              Buat Laporan
             </Button>
           </div>
         </div>
@@ -631,4 +611,4 @@ function CreatePinjaman() {
     </div>
   );
 }
-export default CreatePinjaman;
+export default LaporanKerusakan;
