@@ -437,6 +437,10 @@ function LaporanKerusakan() {
     setLaporanType(event.target.value);
   };
 
+  const onSubmit = () =>{
+    //Validate Here
+  }
+
   return (
     <div className="w-full">
       <Snackbar
@@ -602,7 +606,7 @@ function LaporanKerusakan() {
             </Button>
           </div>
           <div className="md:ml-2">
-            <Button variant="contained" size="large">
+            <Button onClick={()=>onSubmit()} variant="contained" size="large">
               Buat Laporan
             </Button>
           </div>

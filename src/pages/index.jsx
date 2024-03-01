@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -20,13 +20,62 @@ function Dashboard() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const [listPinjamanCard, setListPinjamanCard] = useState([
+    {
+      pinjaman_id: "1",
+      pinjaman_start_date: "01 Januari 2024",
+      pinjaman_end_date: "29 Februari 2024",
+      pinjaman_status: "Selesai",
+    },
+    {
+      pinjaman_id: "2",
+      pinjaman_start_date: "01 Januari 2024",
+      pinjaman_end_date: "29 Februari 2024",
+      pinjaman_status: "Selesai",
+    },
+    {
+      pinjaman_id: "3",
+      pinjaman_start_date: "01 Januari 2024",
+      pinjaman_end_date: "29 Februari 2024",
+      pinjaman_status: "Selesai",
+    },
+    {
+      pinjaman_id: "4",
+      pinjaman_start_date: "01 Januari 2024",
+      pinjaman_end_date: "29 Februari 2024",
+      pinjaman_status: "Selesai",
+    },
+    {
+      pinjaman_id: "5",
+      pinjaman_start_date: "01 Januari 2024",
+      pinjaman_end_date: "29 Februari 2024",
+      pinjaman_status: "Selesai",
+    },
+  ]);
+
+  const generatePinjamanCard = () => {
+    if(listPinjamanCard){
+      return listPinjamanCard.map((card, index)=>{
+        return <PinjamanCard
+            title={card.pinjaman_id}
+            startDate={card.pinjaman_start_date}
+            endDate={card.pinjaman_end_date}
+            status={card.pinjaman_status}
+        >
+
+        </PinjamanCard>
+      })
+    }
+  };
   return (
     <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
       <div className="w-full xl:w-1/2 flex flex-col px-8">
         <div className="mb-8">
           <Heading title="Pinjaman Saya"></Heading>
         </div>
-        <div onClick={() => navigate("/detailpinjaman/1")}>
+        {generatePinjamanCard()}
+        {/* <div onClick={() => navigate("/detailpinjaman/1")}>
           <PinjamanCard
             title="Pinjaman 001"
             startDate="01 Januari 2024"
@@ -57,7 +106,7 @@ function Dashboard() {
           startDate="01 Januari 2024"
           endDate="29 Februari 2024"
           status="Dalam Peminjaman"
-        ></PinjamanCard>
+        ></PinjamanCard> */}
 
         <div className="w-full my-8">
           <Button
