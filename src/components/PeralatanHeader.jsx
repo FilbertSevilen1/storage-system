@@ -7,7 +7,6 @@ function PeralatanHeader() {
       </div>
       <div className=" w-full sm:w-fill flex flex-row p-2 items-center justify-evenly">
         <div className="w-2/12 flex justify-center">Nama</div>
-        <div className="w-2/12 flex justify-center">Tipe</div>
         <div className="w-2/12 flex justify-center">Kategori</div>
         <div className="w-2/12 flex justify-center">Deskripsi</div>
         <div className="w-1/12 flex justify-center">Stok</div>

@@ -27,31 +27,43 @@ function ListPinjaman() {
   const [searchStatus, setSearchStatus] = useState("");
   const [listPinjaman, setListPinjaman] = useState([
     {
-      pinjamanId: "1",
-      pinjamanName: "Anton",
-      pinjamanStartDate: "2024/01/01",
-      pinjamanEndDate: "2024/01/02",
-      pinjamanDurasi: "1 Minggu",
-      pinjamanJumlah: "6",
-      pinjamanStatus: "Selesai",
+      borrow_id: "1",
+      user_id:"1",
+      user_name: "Anton",
+      approval_start_id:"1",
+      approval_end_id:"2",
+      borrow_start_date: "2024/01/01",
+      borrow_end_date: "2024/01/02",
+      borrow_duration: "1 Minggu",
+      borrow_count: "6",
+      status_borrow_id: "4",
+      status_borrow_name: "Selesai"
     },
     {
-      pinjamanId: "2",
-      pinjamanName: "Anton",
-      pinjamanStartDate: "2024/01/01",
-      pinjamanEndDate: "2024/01/02",
-      pinjamanDurasi: "1 Minggu",
-      pinjamanJumlah: "6",
-      pinjamanStatus: "Menunggu Approval",
+      borrow_id: "2",
+      user_id:"1",
+      user_name: "Anton",
+      approval_start_id:"3",
+      approval_end_id:"4",
+      borrow_start_date: "2024/01/01",
+      borrow_end_date: "2024/01/02",
+      borrow_duration: "1 Minggu",
+      borrow_count: "6",
+      status_borrow_id: "2",
+      status_borrow_name: "Menunggu Approval"
     },
     {
-      pinjamanId: "3",
-      pinjamanName: "Anton",
-      pinjamanStartDate: "2024/01/01",
-      pinjamanEndDate: "2024/01/02",
-      pinjamanDurasi: "1 Minggu",
-      pinjamanJumlah: "6",
-      pinjamanStatus: "Dalam Peminjaman",
+      borrow_id: "3",
+      user_id:"1",
+      user_name: "Anton",
+      approval_start_id:"3",
+      approval_end_id:"4",
+      borrow_start_date: "2024/01/01",
+      borrow_end_date: "2024/01/02",
+      borrow_duration: "1 Minggu",
+      borrow_count: "3",
+      status_borrow_id:"3",
+      status_borrow_name: "Dalam Peminjaman",
     },
   ]);
 
@@ -79,13 +91,13 @@ function ListPinjaman() {
             <PinjamanRow
               index={index}
               key={index}
-              pinjamanId={pinjaman.pinjamanId}
-              pinjamanNama={pinjaman.pinjamanName}
-              pinjamanStartDate={pinjaman.pinjamanStartDate}
-              pinjamanEndDate={pinjaman.pinjamanEndDate}
-              pinjamanDurasi={pinjaman.pinjamanDurasi}
-              pinjamanJumlah={pinjaman.pinjamanJumlah}
-              pinjamanStatus={pinjaman.pinjamanStatus}
+              pinjamanId={pinjaman.borrow_id}
+              pinjamanNama={pinjaman.user_name}
+              pinjamanStartDate={pinjaman.borrow_start_date}
+              pinjamanEndDate={pinjaman.borrow_end_date}
+              pinjamanDurasi={pinjaman.borrow_duration}
+              pinjamanJumlah={pinjaman.borrow_count}
+              pinjamanStatus={pinjaman.status_borrow_name}
               page={page}
             ></PinjamanRow>
           );

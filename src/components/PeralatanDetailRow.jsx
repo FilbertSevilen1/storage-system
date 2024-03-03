@@ -75,7 +75,7 @@ function PeralatanDetailRow(props) {
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Status : </div>
           
-          {
+          {/* {
             edit?
             <div className="w-full">
             <FormControl fullWidth>
@@ -94,9 +94,9 @@ function PeralatanDetailRow(props) {
                 </Select>
               </FormControl>
               </div>
-            :
+            : */}
             <div>{status}</div>
-          }
+          {/* } */}
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">
           {role == "Admin" ? (

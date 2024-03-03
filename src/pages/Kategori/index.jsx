@@ -39,9 +39,9 @@ function Kategori() {
   const searchItem = useRef();
   const [listKategori, setListKategori] = useState([
     {
-      kategoriId: "1",
-      kategoriName: "Elektronik",
-      kategoriType: "Berseri",
+      category_id: "1",
+      category_name: "Elektronik",
+      category_type: "Berseri",
     },
   ]);
 
@@ -73,9 +73,9 @@ function Kategori() {
             <KategoriRow
               index={index}
               key={index}
-              kategoriId={kategori.kategoriId}
-              kategoriNama={kategori.kategoriName}
-              kategoriType={kategori.kategoriType}
+              kategoriId={kategori.category_id}
+              kategoriNama={kategori.category_name}
+              kategoriType={kategori.category_type}
               page={page}
             ></KategoriRow>
           );

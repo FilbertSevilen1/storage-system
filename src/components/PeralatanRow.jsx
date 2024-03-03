@@ -27,6 +27,7 @@ function PeralatanRow(props) {
   let [description, setDescription] = useState(props.peralatanDescription);
   let [stock, setStock] = useState(props.peralatanStock);
   let [available, setAvailable] = useState(props.peralatanAvailable);
+  let [hasIdentifier, setHasIdentifier] = useState(props.hasIdentifier)
 
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -245,54 +246,7 @@ function PeralatanRow(props) {
               </div>
             </div>
             <div className="p-2 w-1/2">
-              <TextField
-                error={errorAddPeralatanGambar}
-                onChange={checkPeralatanGambar}
-                margin="dense"
-                id="peralatanGambar"
-                name="name"
-                label="Gambar"
-                type="password"
-                fullWidth
-                variant="outlined"
-                defaultValue={addPeralatanGambarDefault}
-                inputRef={addPeralatanGambar}
-                disabled
-              />
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanGambarMessage}
-              </div>
-            </div>
-            <div className="p-2 w-1/2 mt-2">
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
-                <Select
-                  error={errorAddPeralatanKategori}
-                  onchange={checkPeralatanKategori}
-                  labelId="demo-simple-select-label"
-                  id="peralatanType"
-                  value={addPeralatanKategori}
-                  label="Kategori"
-                  onChange={handleInputCategory}
-                  placeholder="Kategori"
-                  fullWidth
-                  disabled
-                  defaultValue={addPeralatanKategori}
-                >
-                  <MenuItem value={"Berseri"}>
-                    {"Elektronik (Berseri)"}
-                  </MenuItem>
-                  <MenuItem value={"Tidak Berseri"}>
-                    {"Alat Tulis (Tidak Berseri)"}
-                  </MenuItem>
-                </Select>
-              </FormControl>
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanKategoriMessage}
-              </div>
-            </div>
-            <div className="p-2 w-1/2">
-              {addDialogType == "Berseri" ? (
+              {hasIdentifier == true ? (
                 <div>
                   <TextField
                     error={errorAddPeralatanNomorSeri}
@@ -347,10 +301,6 @@ function PeralatanRow(props) {
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama : </div>
           {name}
-        </div>
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Jenis : </div>
-          {type}
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Kategori : </div>

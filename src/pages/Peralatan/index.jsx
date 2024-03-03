@@ -33,64 +33,69 @@ function Peralatan() {
   const [searchCount, setSearchCount] = useState("");
   const [listPeralatan, setListPeralatan] = useState([
     {
-      peralatanId: "1",
-      peralatanName: "Komputer",
-      peralatanType: "Berseri",
-      peralatanCategory: "Elektronik",
-      peralatanDescription: "Ini Komputer",
-      peralatanStock: "15",
-      peralatanAvailable: "20",
-      peralatanImage:"Test"
+      peralatan_id: "1",
+      peralatan_name: "Komputer",
+      category_id: "1",
+      category_name: "Elektronik (Berseri)",
+      peralatan_description: "Ini Komputer",
+      peralatan_count: "15",
+      peralatan_available: "20",
+      peralatan_image:"Test",
+      has_identifier:true
     },
     {
-      peralatanId: "0",
-      peralatanName: "Komputer",
-      peralatanType: "Berseri",
-      peralatanCategory: "Elektronik",
-      peralatanDescription: "Ini Komputer",
-      peralatanStock: "15",
-      peralatanAvailable: "20",
-      peralatanImage:"Test"
+      peralatan_id: "0",
+      peralatan_name: "Komputer",
+      category_id: "1",
+      category_name: "Elektronik (Berseri)",
+      peralatan_description: "Ini Komputer",
+      peralatan_count: "15",
+      peralatan_available: "20",
+      peralatan_image:"Test",
+      has_identifier:true
     },
     {
-      peralatanId: "0",
-      peralatanName: "Komputer",
-      peralatanType: "Berseri",
-      peralatanCategory: "Elektronik",
-      peralatanDescription: "Ini Komputer",
-      peralatanStock: "15",
-      peralatanAvailable: "20",
-      peralatanImage:"Test"
+      peralatan_id: "0",
+      peralatan_name: "Komputer",
+      category_id: "1",
+      category_name: "Elektronik (Berseri)",
+      peralatan_description: "Ini Komputer",
+      peralatan_count: "15",
+      peralatan_available: "20",
+      peralatan_image:"Test"
     },
     {
-      peralatanId: "0",
-      peralatanName: "Komputer",
-      peralatanType: "Berseri",
-      peralatanCategory: "Elektronik",
-      peralatanDescription: "Ini Komputer",
-      peralatanStock: "15",
-      peralatanAvailable: "20",
-      peralatanImage:"Test"
+      peralatan_id: "0",
+      peralatan_name: "Komputer",
+      category_id: "1",
+      category_name: "Elektronik (Berseri)",
+      peralatan_description: "Ini Komputer",
+      peralatan_count: "15",
+      peralatan_available: "20",
+      peralatan_image:"Test",
+      has_identifier:true
     },
     {
-      peralatanId: "0",
-      peralatanName: "Komputer",
-      peralatanType: "Tidak Berseri",
-      peralatanCategory: "Elektronik",
-      peralatanDescription: "Ini Komputer",
-      peralatanStock: "15",
-      peralatanAvailable: "20",
-      peralatanImage:"Test"
+      peralatan_id: "0",
+      peralatan_name: "Komputer",
+      category_id: "2",
+      category_name: "Elektronik (Tidak Berseri)",
+      peralatan_description: "Ini Komputer",
+      peralatan_count: "15",
+      peralatan_available: "20",
+      peralatan_image:"Test",
+      has_identifier:false
     },
     {
-      peralatanId: "0",
-      peralatanName: "Komputer",
-      peralatanType: "Tidak Berseri",
-      peralatanCategory: "Elektronik",
-      peralatanDescription: "Ini Komputer",
-      peralatanStock: "15",
-      peralatanAvailable: "20",
-      peralatanImage:"Test"
+      peralatan_id: "0",
+      peralatan_name: "Komputer",
+      category_id: "2",
+      category_name: "Elektronik (Tidak Berseri)",
+      peralatan_description: "Ini Komputer",
+      peralatan_count: "15",
+      peralatan_available: "20",
+      peralatan_image:"Test",
+      has_identifier:false
     },
   ]);
 
@@ -146,14 +151,14 @@ function Peralatan() {
               index={index}
               key={index}
               showAdd={true}
-              peralatanId={peralatan.peralatanId}
-              peralatanName={peralatan.peralatanName}
-              peralatanType={peralatan.peralatanType}
-              peralatanCategory={peralatan.peralatanCategory}
-              peralatanDescription={peralatan.peralatanDescription}
-              peralatanStock={peralatan.peralatanStock}
-              peralatanAvailable={peralatan.peralatanAvailable}
-              peralatanImage={peralatan.peralatanImage}
+              peralatanId={peralatan.peralatan_id}
+              peralatanName={peralatan.peralatan_name}
+              peralatanCategory={peralatan.category_name}
+              peralatanDescription={peralatan.peralatan_description}
+              peralatanStock={peralatan.peralatan_count}
+              peralatanAvailable={peralatan.peralatan_available}
+              peralatanImage={peralatan.peralatan_image}
+              hasIdentifier={peralatan.has_identifier}
               page={page}
             ></PeralatanRow>
           );
