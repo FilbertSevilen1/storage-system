@@ -21,7 +21,7 @@ function PinjamPeralatanRow({
   index,
   peralatanImage,
   peralatanName,
-  peralatanType,
+  hasIdentifier,
   peralatanCategory,
   peralatanTotal,
   peralatanAvailable,
@@ -37,7 +37,7 @@ function PinjamPeralatanRow({
   const [No, setNo] = useState(index);
   const [image, setImage] = useState(peralatanImage);
   const [nama, setNama] = useState(peralatanName);
-  const [tipe, setTipe] = useState(peralatanType);
+  const [tipe, setTipe] = useState(hasIdentifier);
   const [kategori, setKategori] = useState(peralatanCategory);
   const [jumlah, setJumlah] = useState(peralatanTotal || 0);
   const [tersedia, setTersedia] = useState(peralatanAvailable || 0);
@@ -132,10 +132,6 @@ function PinjamPeralatanRow({
           <div className="flex flex-wrap">{generateSerialNumber()}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Tipe: </div>
-          <div>{tipe}</div>
-        </div>
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Kategori : </div>
           <div>{kategori}</div>
         </div>
@@ -147,7 +143,7 @@ function PinjamPeralatanRow({
         </div>
         {editable ? (
           <div className="w-full md:w-2/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">
-            {tipe == "Berseri" ? (
+            {hasIdentifier == true? (
               <div className="flex">
                 <button onClick={()=>setEditDialogBerseri(true)} className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
                   <svg

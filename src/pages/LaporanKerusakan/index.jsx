@@ -44,7 +44,7 @@ function LaporanKerusakan() {
       peralatan_id: "1",
       peralatan_image: "test",
       peralatan_name: "Komputer",
-      peralatan_type: "Berseri",
+      has_identifier: true,
       peralatan_category: "Elektronik",
       peralatan_total: 3,
       peralatan_available: 3,
@@ -70,7 +70,7 @@ function LaporanKerusakan() {
       peralatan_id: "2",
       peralatan_image: "test",
       peralatan_name: "Komputer",
-      peralatan_type: "Tidak Berseri",
+      has_identifier: false,
       peralatan_category: "Elektronik",
       peralatan_total: 5,
       peralatan_available: 2,
@@ -79,7 +79,7 @@ function LaporanKerusakan() {
       peralatan_id: "3",
       peralatan_image: "test",
       peralatan_name: "Monitor",
-      peralatan_type: "Tidak Berseri",
+      has_identifier: false,
       peralatan_category: "Elektronik",
       peralatan_total: 3,
       peralatan_available: 4,
@@ -88,7 +88,7 @@ function LaporanKerusakan() {
       peralatan_id: "4",
       peralatan_image: "test",
       peralatan_name: "Mobil",
-      peralatan_type: "Berseri",
+      has_identifier: true,
       peralatan_category: "Otomotif",
       peralatan_total: 3,
       peralatan_available: 3,
@@ -349,7 +349,7 @@ function LaporanKerusakan() {
               key={index}
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
-              peralatanType={peralatan.peralatan_type}
+              hasIdentifier={peralatan.has_identifier}
               peralatanCategory={peralatan.peralatan_category}
               peralatanTotal={peralatan.peralatan_total}
               peralatanAvailable={peralatan.peralatan_available}
@@ -400,7 +400,7 @@ function LaporanKerusakan() {
               peralatan={peralatan}
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
-              peralatanType={peralatan.peralatan_type}
+              hasIdentifier={peralatan.has_identifier}
               peralatanCategory={peralatan.peralatan_category}
               peralatanTotal={peralatan.peralatan_total}
               peralatanAvailable={peralatan.peralatan_available}

@@ -226,6 +226,15 @@ function User() {
     setAddUserGender(event.target.value);
   };
 
+  const handleInputSearchJabatan = (event) => {
+    setSearchUserRole(event.target.value);
+  };
+
+  const handleInputSearchGender = (event) => {
+    setSearchUserGender(event.target.value);
+  };
+
+
   const onSubmit = () => {
     if (addUserName.current.value == "") {
       setSnackbar(true);
@@ -431,7 +440,7 @@ function User() {
                   id="demo-simple-select"
                   value={searchUserRole}
                   label="Jabatan"
-                  onChange={handleInputGender}
+                  onChange={handleInputSearchJabatan}
                   placeholder="Jabatan"
                   fullWidth
                 >
@@ -449,7 +458,7 @@ function User() {
                   id="demo-simple-select"
                   value={searchUserGender}
                   label="Jenis Kelamin"
-                  onChange={handleInputGender}
+                  onChange={handleInputSearchGender}
                   placeholder="Jenis Kelamin"
                   fullWidth
                 >
