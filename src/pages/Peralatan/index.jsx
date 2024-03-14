@@ -127,7 +127,7 @@ function Peralatan() {
   }
 
   const getPeralatanList = () => {
-    if (listPeralatan.length % 10 === 0) {
+    if (listPeralatan.length % 5 === 0) {
       setMaxPage(Math.floor(listPeralatan.length / 5));
     } else setMaxPage(Math.floor(listPeralatan.length / 5) + 1);
   };

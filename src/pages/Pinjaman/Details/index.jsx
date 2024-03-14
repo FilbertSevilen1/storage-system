@@ -56,7 +56,7 @@ function DetailPinjaman() {
   };
 
   const getPinjamPeralatanList = () => {
-    if (listPinjamPeralatan.length % 10 === 0) {
+    if (listPinjamPeralatan.length % 5 === 0) {
       setMaxPage(Math.floor(listPinjamPeralatan.length / 5));
     } else setMaxPage(Math.floor(listPinjamPeralatan.length / 5) + 1);
   };

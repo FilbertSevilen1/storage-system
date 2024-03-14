@@ -49,7 +49,7 @@ function PeralatanDetail() {
   }, [page]);
 
   const getDetailList = () => {
-    if (listPeralatanDetail.length % 10 === 0) {
+    if (listPeralatanDetail.length % 5 === 0) {
       setMaxPage(Math.floor(listPeralatanDetail.length / 5));
     } else setMaxPage(Math.floor(listPeralatanDetail.length / 5) + 1);
   };

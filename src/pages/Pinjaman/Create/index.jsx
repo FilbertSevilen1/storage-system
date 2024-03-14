@@ -162,7 +162,7 @@ function CreatePinjaman() {
   };
 
   const getPinjamPeralatanList = () => {
-    if (listCariAddPeralatan.length % 10 === 0) {
+    if (listCariAddPeralatan.length % 5 === 0) {
       setMaxPage(Math.floor(listCariAddPeralatan.length / 5));
     } else setMaxPage(Math.floor(listCariAddPeralatan.length / 5) + 1);
   };

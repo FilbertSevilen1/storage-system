@@ -73,7 +73,7 @@ function User() {
   }, [page]);
 
   const getUserList = () => {
-    if (listUser.length % 10 === 0) {
+    if (listUser.length % 5 === 0) {
       setMaxPage(Math.floor(listUser.length / 5));
     } else setMaxPage(Math.floor(listUser.length / 5) + 1);
   };

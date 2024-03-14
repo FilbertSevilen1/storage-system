@@ -74,11 +74,11 @@ function ListPinjaman() {
   }, [page]);
 
   const getPinjamanData = () =>{
-    getPinjamanList();
+    getMaxPage();
   }
   
-  const getPinjamanList = () => {
-    if (listPinjaman.length % 10 === 0) {
+  const getMaxPage = () => {
+    if (listPinjaman.length % 5 === 0) {
       setMaxPage(Math.floor(listPinjaman.length / 5));
     } else setMaxPage(Math.floor(listPinjaman.length / 5) + 1);
   };

@@ -50,7 +50,7 @@ function Kategori() {
   }, [page]);
 
   const getKategoriList = () => {
-    if (listKategori.length % 10 === 0) {
+    if (listKategori.length % 5 === 0) {
       setMaxPage(Math.floor(listKategori.length / 5));
     } else setMaxPage(Math.floor(listKategori.length / 5) + 1);
   };

@@ -127,7 +127,7 @@ function LaporanKerusakan() {
   };
 
   const getPinjamPeralatanList = () => {
-    if (listCariAlat.length % 10 === 0) {
+    if (listCariAlat.length % 5 === 0) {
       setMaxPage(Math.floor(listCariAlat.length / 5));
     } else setMaxPage(Math.floor(listCariAlat.length / 5) + 1);
   };

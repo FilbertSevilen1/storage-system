@@ -80,7 +80,7 @@ function PinjamanSaya() {
   }
 
   const getPinjamanList = () => {
-    if (listPinjaman.length % 10 === 0) {
+    if (listPinjaman.length % 5 === 0) {
       setMaxPage(Math.floor(listPinjaman.length / 5));
     } else setMaxPage(Math.floor(listPinjaman.length / 5) + 1);
   };
