@@ -610,6 +610,12 @@ function LaporanKerusakan() {
               Buat Laporan
             </Button>
           </div>
+          {/* Kalau Laporan Sudah Approved */}
+          <div className="md:ml-2">
+            <Button onClick={()=>onSubmit()} variant="contained" size="large">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#ffffff" d="M8 21q-.825 0-1.412-.587T6 19v-2H4q-.825 0-1.412-.587T2 15v-4q0-1.275.875-2.137T5 8h14q1.275 0 2.138.863T22 11v4q0 .825-.587 1.413T20 17h-2v2q0 .825-.587 1.413T16 21zM18 7H6V5q0-.825.588-1.412T8 3h8q.825 0 1.413.588T18 5zm0 5.5q.425 0 .713-.288T19 11.5q0-.425-.288-.712T18 10.5q-.425 0-.712.288T17 11.5q0 .425.288.713T18 12.5M8 19h8v-4H8z" className="mr-2"/></svg> <p className="ml-2">Print Laporan</p>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

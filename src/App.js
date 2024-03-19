@@ -14,6 +14,7 @@ import PeralatanDetail from './pages/Peralatan/Detail/index.jsx';
 import CreatePinjaman from './pages/Pinjaman/Create/index.jsx';
 import DetailPinjaman from './pages/Pinjaman/Details/index.jsx';
 import LaporanKerusakan from './pages/LaporanKerusakan/index.jsx';
+import Merek from './pages/Merek/index.jsx';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/peralatan" element={<Peralatan />}></Route>
         <Route path="/peralatan/:id" element={<PeralatanDetail/>}></Route>
         <Route path="/kategori" element={<Kategori />}></Route>
+        <Route path="/merek" element={<Merek />}></Route>
 
         <Route path="/buatpinjaman" element={<CreatePinjaman />}></Route>
         <Route path="/detailpinjaman/:id" element={<DetailPinjaman />}></Route>

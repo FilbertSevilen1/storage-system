@@ -18,7 +18,10 @@ import PeralatanRow from "../../components/PeralatanRow";
 import PeralatanHeader from "../../components/PeralatanHeader";
 import Heading from "../../components/base/Heading";
 import HorizontalDivider from "../../components/base/HorizontalDivider";
+import { useSelector } from "react-redux";
 function Peralatan() {
+  const user = useSelector((state) => state.user);
+
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -40,8 +43,8 @@ function Peralatan() {
       peralatan_description: "Ini Komputer",
       peralatan_count: "15",
       peralatan_available: "20",
-      peralatan_image:"Test",
-      has_identifier:true
+      peralatan_image: "Test",
+      has_identifier: true,
     },
     {
       peralatan_id: "0",
@@ -51,8 +54,8 @@ function Peralatan() {
       peralatan_description: "Ini Komputer",
       peralatan_count: "15",
       peralatan_available: "20",
-      peralatan_image:"Test",
-      has_identifier:true
+      peralatan_image: "Test",
+      has_identifier: true,
     },
     {
       peralatan_id: "0",
@@ -62,7 +65,7 @@ function Peralatan() {
       peralatan_description: "Ini Komputer",
       peralatan_count: "15",
       peralatan_available: "20",
-      peralatan_image:"Test"
+      peralatan_image: "Test",
     },
     {
       peralatan_id: "0",
@@ -72,8 +75,8 @@ function Peralatan() {
       peralatan_description: "Ini Komputer",
       peralatan_count: "15",
       peralatan_available: "20",
-      peralatan_image:"Test",
-      has_identifier:true
+      peralatan_image: "Test",
+      has_identifier: true,
     },
     {
       peralatan_id: "0",
@@ -83,8 +86,8 @@ function Peralatan() {
       peralatan_description: "Ini Komputer",
       peralatan_count: "15",
       peralatan_available: "20",
-      peralatan_image:"Test",
-      has_identifier:false
+      peralatan_image: "Test",
+      has_identifier: false,
     },
     {
       peralatan_id: "0",
@@ -94,22 +97,18 @@ function Peralatan() {
       peralatan_description: "Ini Komputer",
       peralatan_count: "15",
       peralatan_available: "20",
-      peralatan_image:"Test",
-      has_identifier:false
+      peralatan_image: "Test",
+      has_identifier: false,
     },
   ]);
 
   const [listKategori, setListKategori] = useState([
-    'Elektronik',
-    'Alat Tulis',
-    'Lainnya'
-  ])
+    "Elektronik",
+    "Alat Tulis",
+    "Lainnya",
+  ]);
 
-  const [listTipe, setListTipe] = useState([
-    'Berseri',
-    'Tidak Berseri',
-  ])
-
+  const [listTipe, setListTipe] = useState(["Berseri", "Tidak Berseri"]);
 
   useEffect(() => {
     getPeralatanData();
@@ -122,9 +121,9 @@ function Peralatan() {
     setSearchType(event.target.value);
   };
 
-  const getPeralatanData = () =>{
-    getPeralatanList()
-  }
+  const getPeralatanData = () => {
+    getPeralatanList();
+  };
 
   const getPeralatanList = () => {
     if (listPeralatan.length % 5 === 0) {
@@ -166,25 +165,21 @@ function Peralatan() {
     }
   };
 
-  const generateSelectPeralatanKategoryList = () =>{
-    if(listKategori){
-      return listKategori.map((kategori,index)=>{
-        return(
-          <MenuItem value={kategori}>{kategori}</MenuItem>
-        )
-      })
+  const generateSelectPeralatanKategoryList = () => {
+    if (listKategori) {
+      return listKategori.map((kategori, index) => {
+        return <MenuItem value={kategori}>{kategori}</MenuItem>;
+      });
     }
-  }
+  };
 
-  const generateSelectPeralatanTipeList = () =>{
-    if(listTipe){
-      return listTipe.map((tipe,index)=>{
-        return(
-          <MenuItem value={tipe}>{tipe}</MenuItem>
-        )
-      })
+  const generateSelectPeralatanTipeList = () => {
+    if (listTipe) {
+      return listTipe.map((tipe, index) => {
+        return <MenuItem value={tipe}>{tipe}</MenuItem>;
+      });
     }
-  }
+  };
 
   const [addDialog, setAddDialog] = useState("");
 
@@ -195,96 +190,48 @@ function Peralatan() {
     setAddDialog(false);
   };
 
-  const addPeralatanNama = useRef("");
-  const addPeralatanGambar = useRef("");
-  const [addPeralatanKategori, setAddPeralatanKategori] = useState("");
+  const addPeralatanName = useRef("");
+  const addPeralatanImage = useRef("");
+  const [addPeralatanCategory, setAddPeralatanCategory] = useState("");
+  const [addPeralatanBrand, setAddPeralatanBrand] = useState("");
   const addPeralatanDeskripsi = useRef("");
 
-  const [errorAddPeralatanNama, setErrorAddPeralatanNama] = useState(false);
-  const [errorAddPeralatanNamaMessage, setErrorAddPeralatanNamaMessage] =
-    useState("");
-
-  const [errorAddPeralatanGambar, setErrorAddPeralatanGambar] = useState(false);
-  const [errorAddPeralatanGambarMessage, setErrorAddPeralatanGambarMessage] =
-    useState("");
-
-  const [errorAddPeralatanKategori, setErrorAddPeralatanKategori] =
-    useState(false);
-  const [errorAddPeralatanKategoriMessage, setErrorAddPeralatanKategoriMessage] =
-    useState("");
-
-  const [errorAddPeralatanDeskripsi, setErrorAddPeralatanDeskripsi] =
-    useState(false);
-  const [
-    errorAddPeralatanDeskripsiMessage,
-    setErrorAddPeralatanDeskripsiMessage,
-  ] = useState("");
-
   const handleInputCategory = (event) => {
-    setAddPeralatanKategori(event.target.value);
+    setAddPeralatanCategory(event.target.value);
   };
 
-  const checkPeralatanNama = () => {
-    if (addPeralatanNama.current.value == "") {
-      setErrorAddPeralatanNama(true);
-      return setErrorAddPeralatanNamaMessage(
-        "Nama Peralatan tidak boleh kosong"
-      );
-    }
-    setErrorAddPeralatanNamaMessage("");
-    return setErrorAddPeralatanNama(false);
-  };
-
-  const checkPeralatanGambar = () => {
-    if (!addPeralatanGambar.current.value) {
-      setErrorAddPeralatanGambar(true);
-      return setErrorAddPeralatanGambarMessage("Gambar tidak boleh kosong");
-    }
-    setErrorAddPeralatanGambarMessage("");
-    return setErrorAddPeralatanGambar(false);
-  };
-
-  const checkPeralatanKategori = () => {
-    if (!addPeralatanGambar.current.value) {
-      setErrorAddPeralatanKategori(true);
-      return setErrorAddPeralatanKategoriMessage("Kategori tidak boleh kosong");
-    }
-    setErrorAddPeralatanKategoriMessage("");
-    return setErrorAddPeralatanKategori(false);
-  };
-
-  const checkPeralatanDeskrispi = () => {
-    if (!addPeralatanGambar.current.value) {
-      setErrorAddPeralatanDeskripsi(true);
-      return setErrorAddPeralatanDeskripsiMessage(
-        "Kategori tidak boleh kosong"
-      );
-    }
-    setErrorAddPeralatanDeskripsiMessage("");
-    return setErrorAddPeralatanDeskripsi(false);
+  const handleInputBrand = (event) => {
+    setAddPeralatanBrand(event.target.value);
   };
 
   const onSubmit = () => {
-    if (!addPeralatanNama.current.value) {
+    if (!addPeralatanName.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
-    if (!addPeralatanGambar.current.value) {
+    if (!addPeralatanImage.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Gambar tidak boleh kosong");
     }
-    if (!addPeralatanKategori) {
+    if (!addPeralatanCategory) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Jenis Peralatan tidak boleh kosong");
+    }
+    if (!addPeralatanBrand) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Merek tidak boleh kosong");
     }
     if (!addPeralatanDeskripsi.current.value) {
       setSnackbar(true);
@@ -293,6 +240,67 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
+  };
+
+  const onSubmitRequest = () => {
+    if (!requestPeralatanName.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
+    }
+    if (!requestPeralatanCount.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Jumlah tidak boleh kosong");
+    }
+    if (!requestPeralatanCategory) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Jenis Peralatan tidak boleh kosong");
+    }
+    if (!requestPeralatanBrand) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Merek tidak boleh kosong");
+    }
+    if (!requestPeralatanDeskripsi.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Deskripsi tidak boleh kosong");
+    }
+  };
+
+  // Request
+  const [requestDialog, setRequestDialog] = useState(false);
+  const openRequestDialog = () => {
+    setRequestDialog(true);
+  };
+  const closeRequestDialog = () => {
+    setRequestDialog(false);
+  };
+
+  const requestPeralatanName = useRef("");
+  const requestPeralatanCount = useRef("");
+  const [requestPeralatanCategory, setRequestPeralatanCategory] = useState("");
+  const [requestPeralatanBrand, setRequestPeralatanBrand] = useState("");
+  const requestPeralatanDeskripsi = useRef("");
+
+  const handleInputRequestCategory = (event) => {
+    setRequestPeralatanCategory(event.target.value);
+  };
+
+  const handleInputRequestBrand = (event) => {
+    setRequestPeralatanBrand(event.target.value);
   };
 
   return (
@@ -304,14 +312,13 @@ function Peralatan() {
         message={snackbarMessage}
         key={"top" + "center"}
       />
-      <Dialog open={addDialog} onClose={closeAddDialog}>
-        <DialogTitle>Tambah Peralatan</DialogTitle>
+
+      <Dialog open={requestDialog} onClose={closeRequestDialog}>
+        <DialogTitle>Ajukan Peralatan Baru</DialogTitle>
         <DialogContent>
           <div className="w-full flex justify-between flex-wrap">
             <div className="p-2 w-1/2">
               <TextField
-                error={errorAddPeralatanNama}
-                onChange={checkPeralatanNama}
                 margin="dense"
                 id="peralatanName"
                 name="name"
@@ -319,67 +326,68 @@ function Peralatan() {
                 type="text"
                 fullWidth
                 variant="outlined"
-                inputRef={addPeralatanNama}
+                inputRef={requestPeralatanName}
               />
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanNamaMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                error={errorAddPeralatanGambar}
-                onChange={checkPeralatanGambar}
                 margin="dense"
                 id="peralatanImage"
-                name="name"
-                label="Gambar"
-                type="password"
+                name="count"
+                label="Jumlah"
+                type="number"
                 fullWidth
                 variant="outlined"
-                inputRef={addPeralatanGambar}
+                inputRef={requestPeralatanCount}
               />
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanGambarMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Kategori
-                </InputLabel>
+                <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
                 <Select
-                  error={errorAddPeralatanKategori}
-                  onchange={checkPeralatanKategori}
                   labelId="demo-simple-select-label"
                   id="peralatanType"
-                  value={addPeralatanKategori}
+                  value={addPeralatanCategory}
                   label="Kategori"
                   onChange={handleInputCategory}
                   placeholder="Kategori"
                   fullWidth
                 >
-                  <MenuItem value={"Berseri"}>{"Elektronik (Berseri)"}</MenuItem>
-                  <MenuItem value={"Tidak Berseri"}>{"Alat Tulis (Tidak Berseri)"}</MenuItem>
+                  <MenuItem value={"Berseri"}>
+                    {"Elektronik (Berseri)"}
+                  </MenuItem>
+                  <MenuItem value={"Tidak Berseri"}>
+                    {"Alat Tulis (Tidak Berseri)"}
+                  </MenuItem>
                 </Select>
               </FormControl>
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanKategoriMessage}
-              </div>
+            </div>
+            <div className="p-2 w-1/2 mt-2">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Merek</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="peralatanType"
+                  value={requestPeralatanBrand}
+                  label="Kategori"
+                  onChange={handleInputBrand}
+                  placeholder="Kategori"
+                  fullWidth
+                >
+                  <MenuItem value={"Lenovo"}>{"Lenovo"}</MenuItem>
+                </Select>
+              </FormControl>
             </div>
             <div className="p-2 w-1/2"></div>
             <div className="p-2 w-full flex flex-col">
               <div className="mt-2">Deskripsi</div>
               <TextareaAutosize
-                onchange={checkPeralatanDeskrispi}
                 className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
                 minRows={4}
                 aria-label="empty textarea"
                 placeholder="..."
-                ref={addPeralatanDeskripsi}
+                ref={requestPeralatanDeskripsi}
               />
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanKategoriMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2 mt-2"></div>
           </div>
@@ -387,6 +395,96 @@ function Peralatan() {
         <DialogActions>
           <Button onClick={closeAddDialog}>Cancel</Button>
           <Button onClick={onSubmit} type="submit">
+            <b>Ajukan</b>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={addDialog} onClose={closeAddDialog}>
+        <DialogTitle>Tambah Peralatan</DialogTitle>
+        <DialogContent>
+          <div className="w-full flex justify-between flex-wrap">
+            <div className="p-2 w-1/2">
+              <TextField
+                margin="dense"
+                id="peralatanName"
+                name="name"
+                label="Nama Peralatan"
+                type="text"
+                fullWidth
+                variant="outlined"
+                inputRef={addPeralatanName}
+              />
+            </div>
+            <div className="p-2 w-1/2">
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                margin="dense"
+                id="peralatanImage"
+                name="name"
+                label="Gambar"
+                type="file"
+                fullWidth
+                variant="outlined"
+                inputRef={addPeralatanImage}
+              />
+            </div>
+            <div className="p-2 w-1/2 mt-2">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="peralatanType"
+                  value={addPeralatanCategory}
+                  label="Kategori"
+                  onChange={handleInputCategory}
+                  placeholder="Kategori"
+                  fullWidth
+                >
+                  <MenuItem value={"Berseri"}>
+                    {"Elektronik (Berseri)"}
+                  </MenuItem>
+                  <MenuItem value={"Tidak Berseri"}>
+                    {"Alat Tulis (Tidak Berseri)"}
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            <div className="p-2 w-1/2 mt-2">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Merek</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="peralatanType"
+                  value={addPeralatanBrand}
+                  label="Kategori"
+                  onChange={handleInputBrand}
+                  placeholder="Kategori"
+                  fullWidth
+                >
+                  <MenuItem value={"Lenovo"}>{"Lenovo"}</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            <div className="p-2 w-1/2"></div>
+            <div className="p-2 w-full flex flex-col">
+              <div className="mt-2">Deskripsi</div>
+              <TextareaAutosize
+                className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
+                minRows={4}
+                aria-label="empty textarea"
+                placeholder="..."
+                ref={addPeralatanDeskripsi}
+              />
+            </div>
+            <div className="p-2 w-1/2 mt-2"></div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeAddDialog}>Cancel</Button>
+          <Button onClick={onSubmitRequest} type="submit">
             <b>Tambah</b>
           </Button>
         </DialogActions>
@@ -422,19 +520,31 @@ function Peralatan() {
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
           <div className="w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md bg-white">
             <div className="w-full">
-              <Button
-                onClick={() => {
-                  openAddDialog();
-                }}
-                variant="contained"
-                size="large"
-                fullWidth
-              >
-                + Tambah Peralatan
-              </Button>
-              <HorizontalDivider>
+              {user.role == "User" ? (
+                <Button
+                  onClick={() => {
+                    openRequestDialog();
+                  }}
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                >
+                  + Ajukan Peralatan Baru
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    openAddDialog();
+                  }}
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                >
+                  + Tambah Peralatan Baru
+                </Button>
+              )}
 
-              </HorizontalDivider>
+              <HorizontalDivider></HorizontalDivider>
               <div className="w-full mt-8">
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">
@@ -480,7 +590,12 @@ function Peralatan() {
                 />
               </div>
               <div className="w-full mt-8">
-                <Button onClick={()=>getPeralatanData()} variant="contained" size="large" fullWidth>
+                <Button
+                  onClick={() => getPeralatanData()}
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                >
                   Cari
                 </Button>
               </div>

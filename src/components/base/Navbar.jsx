@@ -23,14 +23,14 @@ function Navbar() {
       {user.name ? (
         <div className="items-center hidden sm:flex">
           <div className="dropdown">
-            <button className="dropbtn w-[200px] text-2xl">Peralatan</button>
+            <button className="dropbtn w-[200px] text-2xl">Penyimpanan</button>
             <div className="dropdown-content">
               <div
                 onClick={() => {
                   navigate("/peralatan");
                 }}
               >
-                List Peralatan
+                Peralatan
               </div>
               <div
                 onClick={() => {
@@ -39,10 +39,17 @@ function Navbar() {
               >
                 Kategori
               </div>
+              <div
+                onClick={() => {
+                  navigate("/merek");
+                }}
+              >
+                Merek
+              </div>
             </div>
           </div>
           <div className="dropdown">
-            <button className="dropbtn w-[200px] text-2xl">Pinjam</button>
+            <button className="dropbtn w-[200px] text-2xl">Peminjaman</button>
             <div className="dropdown-content">
               <div onClick={()=>navigate("/buatpinjaman")}>Buat Pinjaman Baru</div>
               <div onClick={()=>navigate("/pinjamansaya")}>Pinjaman Saya</div>

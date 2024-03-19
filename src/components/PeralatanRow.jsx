@@ -17,7 +17,7 @@ import { useNavigate } from "react-router";
 function PeralatanRow(props) {
   const navigate = useNavigate();
 
-  let [showAdd, setShowAdd] = useState(props.showAdd||false);
+  let [showAdd, setShowAdd] = useState(props.showAdd || false);
 
   let [id, setID] = useState(props.peralatanId);
   let [name, setName] = useState(props.peralatanName);
@@ -27,7 +27,7 @@ function PeralatanRow(props) {
   let [description, setDescription] = useState(props.peralatanDescription);
   let [stock, setStock] = useState(props.peralatanStock);
   let [available, setAvailable] = useState(props.peralatanAvailable);
-  let [hasIdentifier, setHasIdentifier] = useState(props.hasIdentifier)
+  let [hasIdentifier, setHasIdentifier] = useState(props.hasIdentifier);
 
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -67,7 +67,8 @@ function PeralatanRow(props) {
     useState("");
 
   const addPeralatanNomorSeri = useRef("");
-  const addPeralatanJumlah = useRef("");
+  const addPeralatanCount = useRef("");
+  const addPeralatanPrice = useRef("");
 
   const handleInputCategory = (event) => {
     setAddPeralatanKategori(event.target.value);
@@ -78,24 +79,6 @@ function PeralatanRow(props) {
   const [errorAddPeralatanNamaMessage, setErrorAddPeralatanNamaMessage] =
     useState("");
 
-  const [errorAddPeralatanGambar, setErrorAddPeralatanGambar] = useState(false);
-  const [errorAddPeralatanGambarMessage, setErrorAddPeralatanGambarMessage] =
-    useState("");
-
-  const [errorAddPeralatanKategori, setErrorAddPeralatanKategori] =
-    useState(false);
-  const [
-    errorAddPeralatanKategoriMessage,
-    setErrorAddPeralatanKategoriMessage,
-  ] = useState("");
-
-  const [errorAddPeralatanDeskripsi, setErrorAddPeralatanDeskripsi] =
-    useState(false);
-  const [
-    errorAddPeralatanDeskripsiMessage,
-    setErrorAddPeralatanDeskripsiMessage,
-  ] = useState("");
-
   const [errorAddPeralatanNomorSeri, setErrorAddPeralatanNomorSeri] =
     useState(false);
   const [
@@ -103,8 +86,13 @@ function PeralatanRow(props) {
     setErrorAddPeralatanNomorSeriMessage,
   ] = useState("");
 
-  const [errorAddPeralatanJumlah, setErrorAddPeralatanJumlah] = useState(false);
-  const [errorAddPeralatanJumlahMessage, setErrorAddPeralatanJumlahMessage] =
+  const [errorAddPeralatanCount, setErrorAddPeralatanCount] = useState(false);
+  const [errorAddPeralatanCountMessage, setErrorAddPeralatanCountMessage] =
+    useState("");
+
+    
+  const [errorAddPeralatanPrice, setErrorAddPeralatanPrice] = useState(false);
+  const [errorAddPeralatanPriceMessage, setErrorAddPeralatanPriceMessage] =
     useState("");
 
   //Checking
@@ -119,35 +107,6 @@ function PeralatanRow(props) {
     return setErrorAddPeralatanNama(false);
   };
 
-  const checkPeralatanGambar = () => {
-    if (!addPeralatanGambar.current.value) {
-      setErrorAddPeralatanGambar(true);
-      return setErrorAddPeralatanGambarMessage("Gambar tidak boleh kosong");
-    }
-    setErrorAddPeralatanGambarMessage("");
-    return setErrorAddPeralatanGambar(false);
-  };
-
-  const checkPeralatanKategori = () => {
-    if (!addPeralatanGambar.current.value) {
-      setErrorAddPeralatanKategori(true);
-      return setErrorAddPeralatanKategoriMessage("Kategori tidak boleh kosong");
-    }
-    setErrorAddPeralatanKategoriMessage("");
-    return setErrorAddPeralatanKategori(false);
-  };
-
-  const checkPeralatanDeskrispi = () => {
-    if (!addPeralatanDeskripsi.current.value) {
-      setErrorAddPeralatanDeskripsi(true);
-      return setErrorAddPeralatanDeskripsiMessage(
-        "Deskripsi tidak boleh kosong"
-      );
-    }
-    setErrorAddPeralatanDeskripsiMessage("");
-    return setErrorAddPeralatanDeskripsi(false);
-  };
-
   const checkPeralatanNomorSeri = () => {
     if (!addPeralatanNomorSeri.current.value) {
       setErrorAddPeralatanNomorSeri(true);
@@ -160,12 +119,12 @@ function PeralatanRow(props) {
   };
 
   const checkPeralatanJumlah = () => {
-    if (!addPeralatanJumlah.current.value) {
-      setErrorAddPeralatanJumlah(true);
-      return setErrorAddPeralatanJumlahMessage("Nomor Seri tidak boleh kosong");
+    if (!addPeralatanCount.current.value) {
+      setErrorAddPeralatanCount(true);
+      return setErrorAddPeralatanCountMessage("Nomor Seri tidak boleh kosong");
     }
-    setErrorAddPeralatanJumlahMessage("");
-    return setErrorAddPeralatanJumlah(false);
+    setErrorAddPeralatanCountMessage("");
+    return setErrorAddPeralatanCount(false);
   };
 
   const onSubmit = () => {
@@ -204,7 +163,7 @@ function PeralatanRow(props) {
       }, 3000);
       return setSnackbarMessage("Nomor Seri tidak boleh kosong");
     }
-    if (!addPeralatanJumlah.current.value && addDialogType == "Tidak Berseri") {
+    if (!addPeralatanCount.current.value && addDialogType == "Tidak Berseri") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -267,7 +226,7 @@ function PeralatanRow(props) {
               ) : (
                 <div>
                   <TextField
-                    error={errorAddPeralatanJumlah}
+                    error={errorAddPeralatanCount}
                     onChange={checkPeralatanJumlah}
                     margin="dense"
                     id="peralatanJumlah"
@@ -276,15 +235,34 @@ function PeralatanRow(props) {
                     type="number"
                     fullWidth
                     variant="outlined"
-                    inputRef={addPeralatanJumlah}
+                    inputRef={addPeralatanCount}
                   />
                   <div className="text-red-500 text-md">
-                    {errorAddPeralatanJumlahMessage}
+                    {errorAddPeralatanCountMessage}
                   </div>
                 </div>
               )}
             </div>
-            <div className="p-2 w-1/2 mt-2"></div>
+
+            <div className="p-2 w-1/2 mb-2">
+              <div>
+                <TextField
+                  error={errorAddPeralatanPrice}
+                  onChange={checkPeralatanJumlah}
+                  margin="dense"
+                  id="peralatanJumlah"
+                  name="jumlah"
+                  label="Harga"
+                  type="number"
+                  fullWidth
+                  variant="outlined"
+                  inputRef={addPeralatanPrice}
+                />
+                <div className="text-red-500 text-md">
+                  {errorAddPeralatanPriceMessage}
+                </div>
+              </div>
+            </div>
           </div>
         </DialogContent>
         <DialogActions>

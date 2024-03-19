@@ -104,7 +104,7 @@ function PeralatanDetail() {
         <div className="w-full md:w-[275px] h-fit flex flex-col p-4 bg-white shadow-md md:mr-2 mb-4 items-center">
           <div className="w-[250px] h-[250px] bg-gray-200">
             <img
-              src="https://unair.ac.id/wp-content/uploads/2022/08/kucing.jpg"
+              src="https://cdn.britannica.com/51/122851-050-19501A1C/hand-tools-toolbox.jpg"
               className="w-full h-full object-cover"
             ></img>
           </div>
