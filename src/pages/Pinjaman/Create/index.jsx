@@ -74,7 +74,7 @@ function CreatePinjaman() {
     // },
   ]);
 
-  const [listCariAddPeralatan, setListCariAddPeralatan] = useState([
+  const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([
     {
       peralatan_id: "1",
       peralatan_image: "test",
@@ -162,9 +162,9 @@ function CreatePinjaman() {
   };
 
   const getPinjamPeralatanList = () => {
-    if (listCariAddPeralatan.length % 5 === 0) {
-      setMaxPage(Math.floor(listCariAddPeralatan.length / 5));
-    } else setMaxPage(Math.floor(listCariAddPeralatan.length / 5) + 1);
+    if (listSearchAddPeralatan.length % 5 === 0) {
+      setMaxPage(Math.floor(listSearchAddPeralatan.length / 5));
+    } else setMaxPage(Math.floor(listSearchAddPeralatan.length / 5) + 1);
   };
 
   const prevPage = () => {
@@ -202,7 +202,7 @@ function CreatePinjaman() {
           item.peralatan_detail.push(detail);
           console.log(item);
 
-          listCariAddPeralatan.forEach((itemalat) => {
+          listSearchAddPeralatan.forEach((itemalat) => {
             if (itemalat.peralatan_id == alat.peralatan_id) {
               itemalat.peralatan_total++;
               itemalat.peralatan_available--;
@@ -232,7 +232,7 @@ function CreatePinjaman() {
         peralatan_available: alat.peralatan_available - 1,
       };
       listAddPeralatan.push(alat);
-      listCariAddPeralatan.forEach((item) => {
+      listSearchAddPeralatan.forEach((item) => {
         if (item.peralatan_id == alat.peralatan_id) {
           item.peralatan_total++;
           item.peralatan_available--;
@@ -266,7 +266,7 @@ function CreatePinjaman() {
         peralatan_total: 1,
         peralatan_available: alat.peralatan_available - 1,
       });
-      listCariAddPeralatan.forEach((item) => {
+      listSearchAddPeralatan.forEach((item) => {
         if (item.peralatan_id == alat.peralatan_id) {
           item.peralatan_available--;
         }
@@ -283,7 +283,7 @@ function CreatePinjaman() {
   };
 
   const deletePinjamPeralatanData = (index) => {
-    // Use setListCariAddPeralatan to update the state
+    // Use setListSearchAddPeralatan to update the state
     listAddPeralatan.forEach((item) => {
       if (item.peralatan_id == listAddPeralatan[index].peralatan_id) {
         item.peralatan_available++;
@@ -294,9 +294,9 @@ function CreatePinjaman() {
       newList.splice(index, 1);
       return newList;
     });
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == listAddPeralatan[index].peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+    for(let i=0;i<listSearchAddPeralatan.length;i++){
+      if(listSearchAddPeralatan[i].peralatan_id == listAddPeralatan[index].peralatan_id){
+        setListSearchAddPeralatan((prevList) => {
           const newList = [...prevList];
           newList[i].peralatan_available+=1;
           return newList;
@@ -327,9 +327,9 @@ function CreatePinjaman() {
         });
       }
     }
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+    for(let i=0;i<listSearchAddPeralatan.length;i++){
+      if(listSearchAddPeralatan[i].peralatan_id == alat.peralatan_id){
+        setListSearchAddPeralatan((prevList) => {
           const newList = [...prevList];
           newList[i].peralatan_available+=1;
           return newList;
@@ -339,9 +339,9 @@ function CreatePinjaman() {
   }
 
   const incrementTotal = (alat) =>{
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+    for(let i=0;i<listSearchAddPeralatan.length;i++){
+      if(listSearchAddPeralatan[i].peralatan_id == alat.peralatan_id){
+        setListSearchAddPeralatan((prevList) => {
           const newList = [...prevList];
           newList[i].peralatan_available-=1;
           return newList;
@@ -350,9 +350,9 @@ function CreatePinjaman() {
     }
   }
   const decrementTotal = (alat) =>{
-    for(let i=0;i<listCariAddPeralatan.length;i++){
-      if(listCariAddPeralatan[i].peralatan_id == alat.peralatan_id){
-        setListCariAddPeralatan((prevList) => {
+    for(let i=0;i<listSearchAddPeralatan.length;i++){
+      if(listSearchAddPeralatan[i].peralatan_id == alat.peralatan_id){
+        setListSearchAddPeralatan((prevList) => {
           const newList = [...prevList];
           newList[i].peralatan_available+=1;
           return newList;
@@ -362,13 +362,13 @@ function CreatePinjaman() {
   }
 
   const generatePinjamPeralatan = () => {
-    console.log(listCariAddPeralatan)
+    console.log(listSearchAddPeralatan)
     if (listAddPeralatan) {
       return listAddPeralatan.map((peralatan, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
           return (
             <PinjamPeralatanRow
-              listPeralatan={listCariAddPeralatan}
+              listPeralatan={listSearchAddPeralatan}
               peralatan={peralatan}
               editable={true}
               index={index}
@@ -413,8 +413,8 @@ function CreatePinjaman() {
   };
 
   const generateAddPeralatanList = () => {
-    if (listCariAddPeralatan) {
-      return listCariAddPeralatan.map((peralatan, index) => {
+    if (listSearchAddPeralatan) {
+      return listSearchAddPeralatan.map((peralatan, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5) {
           return (
             <AddPeralatanRow
@@ -541,7 +541,7 @@ function CreatePinjaman() {
                   type="date"
                   variant="outlined"
                   className="w-full"
-                  placeholder="Cari Barang di sini"
+                  placeholder="Search Barang di sini"
                   inputRef={createEndDate}
                 />
               </div>

@@ -20,7 +20,7 @@ function PeralatanDetail() {
   const [peralatanName, setPeralatanName] = useState("Komputer");
   const [peralatanType, setPeralatanType] = useState("Berseri");
   const [peralatanJumlah, setPeralatanJumlah] = useState("5");
-  const [peralatanTersedia, setPeralatanTersedia] = useState("2");
+  const [peralatanAvailable, setPeralatanAvailperalatanAvailable] = useState("2");
   const [peralatanDeskripsi, setPeralatanDeskripsi] = useState("");
 
   const [edit, setEdit] = useState(false);
@@ -200,8 +200,8 @@ function PeralatanDetail() {
             )}
           </div>
           <div className="text-xl md:text-2xl mb-2 flex">
-            <b>Tersedia: </b>
-            <div className="ml-2">{peralatanTersedia} Buah </div>
+            <b>AvailperalatanAvailable: </b>
+            <div className="ml-2">{peralatanAvailable} Buah </div>
           </div>
           <div className="text-xl md:text-2xl mb-2">
             <b>Deskripsi: </b>
