@@ -53,8 +53,14 @@ function Navbar() {
             <div className="dropdown-content">
               <div onClick={()=>navigate("/buatpinjaman")}>Buat Pinjaman Baru</div>
               <div onClick={()=>navigate("/pinjamansaya")}>Pinjaman Saya</div>
-              <div onClick={()=>navigate("/laporan")}>Lapor Kerusakan</div>
               <div onClick={()=>navigate("/pinjaman")}>Lihat List Pinjaman -Admin-</div>
+            </div>
+          </div>
+          <div className="dropdown">
+            <button className="dropbtn w-[200px] text-2xl">Laporan</button>
+            <div className="dropdown-content">
+              <div onClick={()=>navigate("/laporan")}>List Laporan Kerusakan</div>
+              <div onClick={()=>navigate("/buatlaporan")}>Buat Laporan Kerusakan</div>
             </div>
           </div>
           <div className="h-12 w-0.5 bg-gray-200"></div>

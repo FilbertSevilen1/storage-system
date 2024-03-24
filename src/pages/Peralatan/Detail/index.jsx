@@ -200,7 +200,7 @@ function PeralatanDetail() {
             )}
           </div>
           <div className="text-xl md:text-2xl mb-2 flex">
-            <b>AvailperalatanAvailable: </b>
+            <b>Available: </b>
             <div className="ml-2">{peralatanAvailable} Buah </div>
           </div>
           <div className="text-xl md:text-2xl mb-2">

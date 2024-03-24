@@ -13,16 +13,16 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 function PeralatanRow(props) {
   const navigate = useNavigate();
-
+  let user = useSelector((state)=>state.user)
   let [showAdd, setShowAdd] = useState(props.showAdd || false);
 
   let [id, setID] = useState(props.peralatanId);
   let [name, setName] = useState(props.peralatanName);
   let [image, setImage] = useState(props.peralatanImage);
-  let [type, setType] = useState(props.peralatanType);
   let [category, setCategory] = useState(props.peralatanCategory);
   let [description, setDescription] = useState(props.peralatanDescription);
   let [stock, setStock] = useState(props.peralatanStock);
@@ -37,23 +37,6 @@ function PeralatanRow(props) {
   const [addDialog, setAddDialog] = useState("");
   const [addDialogType, setAddDialogType] = useState("");
 
-  const openAddDialog = (name, Gambar, type, description) => {
-    setAddDialogType(type);
-
-    setAddPeralatanNamaDefault(name);
-    setAddPeralatanGambarDefault(Gambar);
-    setAddPeralatanDeskripsiDefault(description);
-    setAddPeralatanKategori(type);
-    // addPeralatanGambar.current.value = Gambar,
-    // setAddDialogType(type);
-    // addPeralatanDeskripsi.current.value = description
-
-    setAddDialog(true);
-  };
-  const closeAddDialog = () => {
-    setAddDialog(false);
-  };
-
   // Dialog Data
   const addPeralatanNama = useRef("");
   const [addPeralatanNamaDefault, setAddPeralatanNamaDefault] = useState("");
@@ -62,108 +45,77 @@ function PeralatanRow(props) {
   const [addPeralatanGambarDefault, setAddPeralatanGambarDefault] =
     useState("");
   const [addPeralatanKategori, setAddPeralatanKategori] = useState("");
-  const addPeralatanDeskripsi = useRef("");
-  const [addPeralatanDeskripsiDefault, setAddPeralatanDeskripsiDefault] =
+  const addPeralatanDescription = useRef("");
+  const [addPeralatanDescriptionDefault, setAddPeralatanDescriptionDefault] =
     useState("");
 
   const addPeralatanNomorSeri = useRef("");
   const addPeralatanCount = useRef("");
   const addPeralatanPrice = useRef("");
 
+  //Request
+  const requestPeralatanNama = useRef("");
+  const [requestPeralatanNamaDefault, setRequestPeralatanNamaDefault] = useState("");
+  const requestPeralatanCount = useRef("");
+  const requestPeralatanReason = useRef("");
+
+  const openAddDialog = (name, Gambar, type, description) => {
+
+    console.log(type)
+    if(user.role == "User"){
+      setRequestDialog(true)
+      setRequestPeralatanNamaDefault(name);
+      return 
+    }
+
+    setAddDialogType(type);
+
+    setAddPeralatanNamaDefault(name);
+    setAddPeralatanGambarDefault(Gambar);
+
+    setAddPeralatanKategori(type);
+    // addPeralatanGambar.current.value = Gambar,
+    // setAddDialogType(type);
+    // addPeralatanDescription.current.value = description
+
+    setAddDialog(true);
+  };
+  const closeAddDialog = () => {
+    setAddDialog(false);
+  };
+  const closeRequestDialog = () =>{
+    setRequestDialog(false);
+  }
+
+
   const handleInputCategory = (event) => {
     setAddPeralatanKategori(event.target.value);
   };
 
-  // Error Handling
-  const [errorAddPeralatanNama, setErrorAddPeralatanNama] = useState(false);
-  const [errorAddPeralatanNamaMessage, setErrorAddPeralatanNamaMessage] =
-    useState("");
-
-  const [errorAddPeralatanNomorSeri, setErrorAddPeralatanNomorSeri] =
-    useState(false);
-  const [
-    errorAddPeralatanNomorSeriMessage,
-    setErrorAddPeralatanNomorSeriMessage,
-  ] = useState("");
-
-  const [errorAddPeralatanCount, setErrorAddPeralatanCount] = useState(false);
-  const [errorAddPeralatanCountMessage, setErrorAddPeralatanCountMessage] =
-    useState("");
-
-    
-  const [errorAddPeralatanPrice, setErrorAddPeralatanPrice] = useState(false);
-  const [errorAddPeralatanPriceMessage, setErrorAddPeralatanPriceMessage] =
-    useState("");
-
-  //Checking
-  const checkPeralatanNama = () => {
-    if (addPeralatanNama.current.value == "") {
-      setErrorAddPeralatanNama(true);
-      return setErrorAddPeralatanNamaMessage(
-        "Nama Peralatan tidak boleh kosong"
-      );
-    }
-    setErrorAddPeralatanNamaMessage("");
-    return setErrorAddPeralatanNama(false);
-  };
-
-  const checkPeralatanNomorSeri = () => {
-    if (!addPeralatanNomorSeri.current.value) {
-      setErrorAddPeralatanNomorSeri(true);
-      return setErrorAddPeralatanNomorSeriMessage(
-        "Nomor Seri tidak boleh kosong"
-      );
-    }
-    setErrorAddPeralatanNomorSeriMessage("");
-    return setErrorAddPeralatanNomorSeri(false);
-  };
-
-  const checkPeralatanJumlah = () => {
-    if (!addPeralatanCount.current.value) {
-      setErrorAddPeralatanCount(true);
-      return setErrorAddPeralatanCountMessage("Nomor Seri tidak boleh kosong");
-    }
-    setErrorAddPeralatanCountMessage("");
-    return setErrorAddPeralatanCount(false);
-  };
-
   const onSubmit = () => {
-    if (!addPeralatanNama.current.value) {
+    if (addPeralatanNama.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
-    if (!addPeralatanGambar.current.value) {
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-      }, 3000);
-      return setSnackbarMessage("Gambar tidak boleh kosong");
-    }
-    if (!addPeralatanKategori) {
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-      }, 3000);
-      return setSnackbarMessage("Kategori tidak boleh kosong");
-    }
-    if (!addPeralatanDeskripsi.current.value) {
+    
+    if (addPeralatanDescription.current.value == "" && addDialogType == true) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
-    if (!addPeralatanNomorSeri.current.value && addDialogType == "Berseri") {
+    if (!addPeralatanNomorSeri.current.value && addDialogType == true) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Nomor Seri tidak boleh kosong");
     }
-    if (!addPeralatanCount.current.value && addDialogType == "Tidak Berseri") {
+    if (!addPeralatanCount.current.value && addDialogType == false) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -171,6 +123,32 @@ function PeralatanRow(props) {
       return setSnackbarMessage("Jumlah tidak boleh kosong");
     }
   };
+
+  const onSubmitRequest = () => {
+    if (!requestPeralatanNama.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
+    }
+    if (!requestPeralatanCount.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Jumlah Peralatan tidak boleh kosong");
+    }
+    if (!requestPeralatanReason.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Alasan tidak boleh kosong");
+    }
+  };
+
+  const [requestDialog, setRequestDialog] = useState(false);
 
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
@@ -187,8 +165,6 @@ function PeralatanRow(props) {
           <div className="w-full flex justify-between flex-wrap">
             <div className="p-2 w-1/2">
               <TextField
-                error={errorAddPeralatanNama}
-                onChange={checkPeralatanNama}
                 margin="dense"
                 id="peralatanName"
                 name="name"
@@ -200,16 +176,11 @@ function PeralatanRow(props) {
                 inputRef={addPeralatanNama}
                 disabled
               />
-              <div className="text-red-500 text-md">
-                {errorAddPeralatanNamaMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               {hasIdentifier == true ? (
                 <div>
                   <TextField
-                    error={errorAddPeralatanNomorSeri}
-                    onChange={checkPeralatanNomorSeri}
                     margin="dense"
                     id="Nomor Seri"
                     name="name"
@@ -219,15 +190,10 @@ function PeralatanRow(props) {
                     variant="outlined"
                     inputRef={addPeralatanNomorSeri}
                   />
-                  <div className="text-red-500 text-md">
-                    {errorAddPeralatanNomorSeriMessage}
-                  </div>
                 </div>
               ) : (
                 <div>
                   <TextField
-                    error={errorAddPeralatanCount}
-                    onChange={checkPeralatanJumlah}
                     margin="dense"
                     id="peralatanJumlah"
                     name="jumlah"
@@ -237,9 +203,6 @@ function PeralatanRow(props) {
                     variant="outlined"
                     inputRef={addPeralatanCount}
                   />
-                  <div className="text-red-500 text-md">
-                    {errorAddPeralatanCountMessage}
-                  </div>
                 </div>
               )}
             </div>
@@ -247,8 +210,6 @@ function PeralatanRow(props) {
             <div className="p-2 w-1/2 mb-2">
               <div>
                 <TextField
-                  error={errorAddPeralatanPrice}
-                  onChange={checkPeralatanJumlah}
                   margin="dense"
                   id="peralatanJumlah"
                   name="jumlah"
@@ -258,16 +219,76 @@ function PeralatanRow(props) {
                   variant="outlined"
                   inputRef={addPeralatanPrice}
                 />
-                <div className="text-red-500 text-md">
-                  {errorAddPeralatanPriceMessage}
-                </div>
               </div>
             </div>
           </div>
+          <div className="p-2 w-full flex flex-col">
+              <div className="mt-2">Deskripsi</div>
+              <TextareaAutosize
+                className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
+                minRows={4}
+                aria-label="empty textarea"
+                placeholder="..."
+                ref={addPeralatanDescription}
+              />
+            </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeAddDialog}>Cancel</Button>
           <Button onClick={onSubmit} type="submit">
+            <b>Tambah</b>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={requestDialog} onClose={closeRequestDialog}>
+        <DialogTitle>Ajukan Penambahan Stok</DialogTitle>
+        <DialogContent>
+          <div className="w-full flex justify-between flex-wrap">
+            <div className="p-2 w-1/2">
+              <TextField
+                margin="dense"
+                id="peralatanName"
+                name="name"
+                label="Nama Peralatan"
+                type="text"
+                fullWidth
+                variant="outlined"
+                defaultValue={requestPeralatanNamaDefault}
+                inputRef={requestPeralatanNama}
+                disabled
+              />
+            </div>
+
+            <div className="p-2 w-1/2 mb-2">
+              <div>
+                <TextField
+                  margin="dense"
+                  id="peralatanJumlah"
+                  name="jumlah"
+                  label="Jumlah"
+                  type="number"
+                  fullWidth
+                  variant="outlined"
+                  inputRef={requestPeralatanCount}
+                />
+              </div>
+            </div>
+            <div className="p-2 w-full flex flex-col">
+              <div className="mt-2">Alasan</div>
+              <TextareaAutosize
+                className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
+                minRows={4}
+                aria-label="empty textarea"
+                placeholder="..."
+                ref={requestPeralatanReason}
+              />
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeRequestDialog}>Cancel</Button>
+          <Button onClick={onSubmitRequest} type="submit">
             <b>Tambah</b>
           </Button>
         </DialogActions>
@@ -285,7 +306,7 @@ function PeralatanRow(props) {
           {category}
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Deskripsi : </div>
+          <div className="flex md:hidden mr-2 font-bold">Description : </div>
           {description}
         </div>
         <div className="w-full md:w-1/12 flex flex-wrap justify-start mx-2 md:justify-center">
@@ -299,7 +320,7 @@ function PeralatanRow(props) {
         <div className="w-full md:w-1/12 flex md:mx-2 p-2 rounded-xl flex justify-center items-center">
           {showAdd ? (
             <button
-              onClick={() => openAddDialog(name, image, type, description)}
+              onClick={() => openAddDialog(name, image, hasIdentifier, description)}
               className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
             >
               <svg

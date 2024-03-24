@@ -294,6 +294,7 @@ function Peralatan() {
   const [requestPeralatanCategory, setRequestPeralatanCategory] = useState("");
   const [requestPeralatanBrand, setRequestPeralatanBrand] = useState("");
   const requestPeralatanDeskripsi = useRef("");
+  const requestPeralatanReason = useRef("");
 
   const handleInputRequestCategory = (event) => {
     setRequestPeralatanCategory(event.target.value);
@@ -387,6 +388,16 @@ function Peralatan() {
                 aria-label="empty textarea"
                 placeholder="..."
                 ref={requestPeralatanDeskripsi}
+              />
+            </div>
+            <div className="p-2 w-full flex flex-col">
+              <div className="mt-2">Alasan</div>
+              <TextareaAutosize
+                className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
+                minRows={4}
+                aria-label="empty textarea"
+                placeholder="..."
+                ref={requestPeralatanReason}
               />
             </div>
             <div className="p-2 w-1/2 mt-2"></div>
