@@ -17,6 +17,7 @@ import Merek from './pages/Merek/index.jsx';
 import LaporanKerusakan from './pages/LaporanKerusakan/index.jsx';
 import BuatLaporan from './pages/LaporanKerusakan/create/index.jsx';
 import LaporanKerusakanDetail from './pages/LaporanKerusakan/detail/index.jsx';
+import PengajuanPeralatan from './pages/Peralatan/Request/index.jsx';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
 
         <Route path="/home" element={<Dashboard />}></Route>
         <Route path="/peralatan" element={<Peralatan />}></Route>
+        <Route path="/peralatan/request" element={<PengajuanPeralatan />}></Route>
         <Route path="/peralatan/:id" element={<PeralatanDetail/>}></Route>
         <Route path="/kategori" element={<Kategori />}></Route>
         <Route path="/merek" element={<Merek />}></Route>

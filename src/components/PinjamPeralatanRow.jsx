@@ -31,6 +31,7 @@ function PinjamPeralatanRow({
   deletePinjamPeralatanBerseri,
   incrementTotal,
   decrementTotal,
+  brandName,
 }) {
   const dispatch = useDispatch();
 
@@ -41,6 +42,7 @@ function PinjamPeralatanRow({
   const [kategori, setKategori] = useState(peralatanCategory);
   const [jumlah, setJumlah] = useState(peralatanTotal || 0);
   const [tersedia, setTersedia] = useState(peralatanAvailable || 0);
+  const [namaMerek, setNamaMerek] = useState(brandName || 0);
 
   const [editDialogBerseri, setEditDialogBerseri] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
@@ -128,7 +130,7 @@ function PinjamPeralatanRow({
         </div>
         <div className="w-full md:w-2/12 flex flex-col flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama Barang : </div>
-          <div><b>{nama}</b></div>
+          <div><b>{nama} - {namaMerek}</b></div>
           <div className="flex flex-wrap">{generateSerialNumber()}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">

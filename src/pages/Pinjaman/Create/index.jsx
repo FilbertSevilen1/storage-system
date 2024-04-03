@@ -42,36 +42,7 @@ function CreatePinjaman() {
   const [searchAddCategory, setSearchAddCategory] = useState("");
 
   const [listAddPeralatan, setListAddPeralatan] = useState([
-    // {
-    //   peralatan_id: "1",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   peralatan_type: "Berseri",
-    //   peralatan_category: "Elektronik",
-    //   peralatan_total: 2,
-    //   peralatan_available: 1,
-    //   peralatan_detail: [
-    //     {
-    //       peralatan_detail_id: "1",
-    //       peralatan_serial_no: "KOMP001-0001",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //     {
-    //       peralatan_detail_id: "2",
-    //       peralatan_serial_no: "KOMP001-0002",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //   ],
-    // },
-    // {
-    //   peralatan_id: "2",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   peralatan_type: "Tidak Berseri",
-    //   peralatan_category: "Elektronik",
-    //   peralatan_total: 5,
-    //   peralatan_available: 2,
-    // },
+
   ]);
 
   const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([
@@ -83,6 +54,7 @@ function CreatePinjaman() {
       peralatan_category: "Elektronik",
       peralatan_total: 3,
       peralatan_available: 3,
+      brand_name : "Lenovo",
       peralatan_detail: [
         {
           peralatan_detail_id: "1",
@@ -106,6 +78,7 @@ function CreatePinjaman() {
       peralatan_image: "test",
       peralatan_name: "Komputer",
       has_identifier: false,
+      brand_name : "Lenovo",
       peralatan_category: "Elektronik",
       peralatan_total: 5,
       peralatan_available: 2,
@@ -115,6 +88,7 @@ function CreatePinjaman() {
       peralatan_image: "test",
       peralatan_name: "Monitor",
       has_identifier: false,
+      brand_name : "Lenovo",
       peralatan_category: "Elektronik",
       peralatan_total: 3,
       peralatan_available: 4,
@@ -124,6 +98,7 @@ function CreatePinjaman() {
       peralatan_image: "test",
       peralatan_name: "Mobil",
       has_identifier: true,
+      brand_name : "Lenovo",
       peralatan_category: "Otomotif",
       peralatan_total: 3,
       peralatan_available: 3,
@@ -380,6 +355,7 @@ function CreatePinjaman() {
               peralatanTotal={peralatan.peralatan_total}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatan_detail}
+              brandName = {peralatan.brand_name}
               page={page}
               addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
               deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
@@ -428,6 +404,7 @@ function CreatePinjaman() {
               peralatanTotal={peralatan.peralatan_total}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatan_detail}
+              brandName = {peralatan.brand_name}
               page={page}
               addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
               addPinjamPeralatanDataTidakBerseri={() =>

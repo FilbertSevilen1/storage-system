@@ -9,8 +9,8 @@ import { Provider } from 'react-redux';
 const initialState = {
   user:{
     id: "",
-    name:"TEST",
-    role:"Admin"
+    name:"",
+    role:""
   },
   count: 5
 }

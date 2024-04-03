@@ -81,6 +81,7 @@ function PeralatanDetail() {
               peralatanName={peralatan.peralatanName}
               peralatanSerialNumber={peralatan.peralatanSerialNumber}
               peralatanStatus={peralatan.peralatanStatus}
+              brandName={peralatan.brandName}
               page={page}
             ></PeralatanDetailRow>
           );

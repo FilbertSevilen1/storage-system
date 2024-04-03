@@ -48,6 +48,7 @@ function BuatLaporan() {
       peralatan_category: "Elektronik",
       peralatan_total: 3,
       peralatan_available: 3,
+      brand_name:"Lenovo",
       peralatan_detail: [
         {
           peralatan_detail_id: "1",
@@ -74,6 +75,7 @@ function BuatLaporan() {
       peralatan_category: "Elektronik",
       peralatan_total: 5,
       peralatan_available: 2,
+      brand_name:"Lenovo",
     },
     {
       peralatan_id: "3",
@@ -83,6 +85,7 @@ function BuatLaporan() {
       peralatan_category: "Elektronik",
       peralatan_total: 3,
       peralatan_available: 4,
+      brand_name:"Lenovo",
     },
     {
       peralatan_id: "4",
@@ -92,6 +95,7 @@ function BuatLaporan() {
       peralatan_category: "Otomotif",
       peralatan_total: 3,
       peralatan_available: 3,
+      brand_name:"Lenovo",
       peralatan_detail: [
         {
           peralatan_detail_id: "1",
@@ -360,6 +364,7 @@ function BuatLaporan() {
               deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
               incrementTotal={incrementTotal}
               decrementTotal={decrementTotal}
+              brandName={peralatan.brand_name}
             ></PinjamPeralatanRow>
           );
       });
@@ -405,6 +410,7 @@ function BuatLaporan() {
               peralatanTotal={peralatan.peralatan_total}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatan_detail}
+              brandName={peralatan.brand_name}
               page={page}
               addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
               addPinjamPeralatanDataTidakBerseri={() =>
@@ -495,7 +501,7 @@ function BuatLaporan() {
       </Dialog>
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
-          <Heading title="Laporan Peralatan"></Heading>
+          <Heading title="Laporan Kerusakan"></Heading>
         </div>
         <div className="bg-white w-full flex items-center mt-8 shadow-md px-4 py-4">
           <div className="w-full flex flex-wrap">

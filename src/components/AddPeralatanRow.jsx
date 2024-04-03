@@ -26,6 +26,7 @@ function AddPeralatanRow({
   peralatanTotal,
   peralatanAvailable,
   peralatanDetail,
+  brandName,
   page,
   addPinjamPeralatanDataBerseri,
   addPinjamPeralatanDataTidakBerseri,
@@ -39,6 +40,7 @@ function AddPeralatanRow({
   const [kategori, setKategori] = useState(peralatanCategory);
   const [jumlah, setJumlah] = useState(peralatanTotal || 0);
   const [tersedia, setTersedia] = useState(peralatanAvailable || 0);
+  const [namaMerek, setNamaMerek] = useState(brandName || "")
 
   const [addPeralatanBerseriDialog, setAddPeralatanBerseriDialog] =
     useState(false);
@@ -85,7 +87,7 @@ function AddPeralatanRow({
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama Barang : </div>
-          <div>{nama}</div>
+          <div>{nama} - {namaMerek}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Kategori : </div>

@@ -45,6 +45,7 @@ function Peralatan() {
       peralatan_available: "20",
       peralatan_image: "Test",
       has_identifier: true,
+      brand_name : "Lenovo"
     },
     {
       peralatan_id: "0",
@@ -56,6 +57,7 @@ function Peralatan() {
       peralatan_available: "20",
       peralatan_image: "Test",
       has_identifier: true,
+      brand_name : "Lenovo"
     },
     {
       peralatan_id: "0",
@@ -66,6 +68,7 @@ function Peralatan() {
       peralatan_count: "15",
       peralatan_available: "20",
       peralatan_image: "Test",
+      brand_name : "Lenovo"
     },
     {
       peralatan_id: "0",
@@ -77,6 +80,7 @@ function Peralatan() {
       peralatan_available: "20",
       peralatan_image: "Test",
       has_identifier: true,
+      brand_name : "Lenovo"
     },
     {
       peralatan_id: "0",
@@ -88,6 +92,7 @@ function Peralatan() {
       peralatan_available: "20",
       peralatan_image: "Test",
       has_identifier: false,
+      brand_name : "Lenovo"
     },
     {
       peralatan_id: "0",
@@ -99,6 +104,7 @@ function Peralatan() {
       peralatan_available: "20",
       peralatan_image: "Test",
       has_identifier: false,
+      brand_name : "Lenovo"
     },
   ]);
 
@@ -158,6 +164,7 @@ function Peralatan() {
               peralatanAvailable={peralatan.peralatan_available}
               peralatanImage={peralatan.peralatan_image}
               hasIdentifier={peralatan.has_identifier}
+              brandName={peralatan.brand_name}
               page={page}
             ></PeralatanRow>
           );
@@ -404,7 +411,7 @@ function Peralatan() {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeAddDialog}>Cancel</Button>
+          <Button onClick={closeRequestDialog}>Cancel</Button>
           <Button onClick={onSubmit} type="submit">
             <b>Ajukan</b>
           </Button>

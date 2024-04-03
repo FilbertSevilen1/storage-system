@@ -1,8 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../../css/login.css";
 import Heading from "../../components/base/Heading";
 import { Button, TextField } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import Snackbar from "@mui/material/Snackbar";
 
@@ -18,6 +18,8 @@ function Login() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const user = useSelector((state)=>state.user)
 
   const login = () => {
     if(!username.current.value){
@@ -40,6 +42,13 @@ function Login() {
     });
     navigate("/home");
   };
+
+  useEffect(()=>{
+    if(user.role){
+      navigate("/home");
+    }
+  },[])
+
   return (
     <div className="bg-login w-full h-full flex flex-col items-center">
       <Snackbar

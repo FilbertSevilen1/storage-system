@@ -12,10 +12,13 @@ import Card from "../components/base/Card";
 import HorizontalDivider from "../components/base/HorizontalDivider";
 
 import Chart from "react-apexcharts";
+import { useSelector } from "react-redux";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+
+  const user = useSelector((state) => state.user);
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -105,7 +108,7 @@ function Dashboard() {
         </div>
         <div className="w-full my-8">
           <Button variant="contained" size="large">
-            Lihat Selengkapnya
+            <b>Lihat Selengkapnya</b>
           </Button>
         </div>
       </div>
@@ -118,29 +121,37 @@ function Dashboard() {
         </div>
         <div className="w-full my-8">
           <Button variant="contained" size="large">
-            Lihat Selengkapnya
+            <b>Lihat Kerusakan</b>
           </Button>
         </div>
       </div>
-      <div className="w-full xl:w-1/2 flex flex-col px-8 mb-12">
-        <div className="mb-8">
-          <Heading title="Pengajuan Penambahaan Barang"></Heading>
+      {user.role == "User" ? (
+        <div className="w-full xl:w-1/2 flex flex-col px-8 mb-12">
+          <div className="mb-8">
+            <Heading title="Pengajuan Penambahaan Barang"></Heading>
+          </div>
+          <Card title="Mobil - 15 Buah" description="12 Januari 2024"></Card>
+
+          <div className="w-full my-8">
+            <Button variant="contained" size="large">
+              <b>Lihat Pengajuan</b>
+            </Button>
+          </div>
         </div>
-        <Card title="Mobil" description="15 Buah"></Card>
-        <div className="w-full my-8">
-          <Button variant="contained" size="large">
-            Lihat Selengkapnya
-          </Button>
-        </div>
-      </div>
+      ) : (
+        <></>
+      )}
       <div className="w-full xl:w-1/2 flex flex-col px-8">
         <div className="mb-8">
           <Heading title="Pengadaan Terbaru"></Heading>
         </div>
-        <Card title="Mobil" description="Rp. 750.000.000"></Card>
+        <Card
+          title="Mobil - 1 Buah"
+          description="12 Januari 2024, Rp. 750.000.000"
+        ></Card>
         <div className="w-full my-8">
           <Button variant="contained" size="large">
-            Lihat Selengkapnya
+            <b>Lihat Peralatan</b>
           </Button>
         </div>
       </div>
@@ -159,7 +170,7 @@ function Dashboard() {
             size="large"
             onClick={() => navigate("/pinjaman")}
           >
-            Lihat Selengkapnya
+            <b>Lihat Pinjaman</b>
           </Button>
         </div>
       </div>
@@ -191,7 +202,7 @@ function Dashboard() {
             size="large"
             onClick={() => navigate("/pinjamansaya")}
           >
-            Lihat Selengkapnya
+            <b>Lihat Pinjaman</b>
           </Button>
         </div>
       </div>
