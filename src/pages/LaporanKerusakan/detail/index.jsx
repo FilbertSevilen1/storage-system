@@ -26,15 +26,15 @@ function KerusakanDetail() {
       peralatan_image: "test",
       peralatan_name: "Komputer",
       peralatan_type: "Berseri",
-      peralatan_category: "Elektronik",
-      peralatan_total: 2,
+      category_name: "Elektronik",
+      peralatan_count: 2,
       peralatan_available: 4,
       peralatan_detail: [
         {
-          peralatan_serial_no: "KOMP001-0001",
+          peralatan_detail_name: "KOMP001-0001",
         },
         {
-          peralatan_serial_no: "KOMP001-0002",
+          peralatan_detail_name: "KOMP001-0002",
         },
       ],
     },
@@ -85,8 +85,8 @@ function KerusakanDetail() {
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
               peralatanType={peralatan.peralatan_type}
-              peralatanCategory={peralatan.peralatan_category}
-              peralatanTotal={peralatan.peralatan_total}
+              peralatanCategory={peralatan.category_name}
+              peralatanTotal={peralatan.peralatan_count}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatanDetail}
               page={page}

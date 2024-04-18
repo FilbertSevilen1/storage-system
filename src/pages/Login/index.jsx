@@ -7,8 +7,8 @@ import { useNavigate } from "react-router";
 import Snackbar from "@mui/material/Snackbar";
 
 function Login() {
-  const vertical = "top"
-  const horizontal = "center"
+  const vertical = "top";
+  const horizontal = "center";
 
   const username = useRef();
   const password = useRef();
@@ -19,35 +19,60 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector((state)=>state.user)
+  const user = useSelector((state) => state.user);
 
   const login = () => {
-    if(!username.current.value){
-        setSnackbar(true);
-        setTimeout(()=>{setSnackbar(false)},3000)
-        return setSnackbarMessage("Username tidak boleh kosong!")
+    if (!username.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Username tidak boleh kosong!");
     }
-    if(!password.current.value){
-        setSnackbar(true);
-        setTimeout(()=>{setSnackbar(false)},3000)
-        return setSnackbarMessage("Password tidak boleh kosong!")
+    if (!password.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Password tidak boleh kosong!");
     }
 
     console.log(username.current.value);
     console.log(password.current.value);
 
-    dispatch({
-      type: "USER_LOGIN",
-      payload: { id: 1, name: username.current.value, role: "User" },
-    });
-    navigate("/home");
-  };
-
-  useEffect(()=>{
-    if(user.role){
+    if (username.current.value == "Admin") {
+      localStorage.setItem('ss_token',JSON.stringify({ id: 1, name: username.current.value, role: "Admin" }))
+      dispatch({
+        type: "USER_LOGIN",
+        payload: { id: 1, name: username.current.value, role: "Admin" },
+      });
+      navigate("/home");
+    } 
+    else if (username.current.value == "SuperAdmin"){
+      localStorage.setItem('ss_token',JSON.stringify({ id: 1, name: username.current.value, role: "Super Admin" }))
+      dispatch({
+        type: "USER_LOGIN",
+        payload: { id: 1, name: username.current.value, role: "Super Admin" },
+      });
       navigate("/home");
     }
-  },[])
+    else {
+      localStorage.setItem('ss_token',JSON.stringify({ id: 1, name: username.current.value, role: "User" }))
+      dispatch({
+        
+        type: "USER_LOGIN",
+        payload: { id: 1, name: username.current.value, role: "User" },
+      });
+      navigate("/home");
+    }
+  };
+
+  useEffect(() => {
+
+    if (user.role) {
+      navigate("/home");
+    }
+  }, [user]);
 
   return (
     <div className="bg-login w-full h-full flex flex-col items-center">

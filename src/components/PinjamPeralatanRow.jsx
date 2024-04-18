@@ -72,7 +72,7 @@ function PinjamPeralatanRow({
   const generateSerialNumber = () =>{
     if(peralatanDetail){
       return peralatanDetail.map((detail, index)=>{
-        return <div>{detail.peralatan_serial_no}{index !=-1? `,`:""}</div>
+        return <div>{detail.peralatan_detail_name}{index !=-1? `,`:""}</div>
       })
     }
   }

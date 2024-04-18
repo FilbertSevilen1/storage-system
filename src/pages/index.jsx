@@ -12,10 +12,11 @@ import Card from "../components/base/Card";
 import HorizontalDivider from "../components/base/HorizontalDivider";
 
 import Chart from "react-apexcharts";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const user = useSelector((state) => state.user);
   const [open, setOpen] = useState(false);
@@ -97,6 +98,8 @@ function Dashboard() {
     },
   ]);
 
+
+
   return (
     <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
       <div className="w-full xl:w-1/2 flex flex-col px-8 mb-12">
@@ -107,7 +110,7 @@ function Dashboard() {
           <Chart options={options} series={series} type="bar" height="300px" />
         </div>
         <div className="w-full my-8">
-          <Button variant="contained" size="large">
+          <Button variant="contained" size="large" onClick={()=>navigate("/pinjaman")}>
             <b>Lihat Selengkapnya</b>
           </Button>
         </div>
@@ -120,15 +123,15 @@ function Dashboard() {
           <Chart options={options} series={series} type="bar" height="300px" />
         </div>
         <div className="w-full my-8">
-          <Button variant="contained" size="large">
+          <Button variant="contained" size="large" onClick={()=>navigate("/pinjaman")}>
             <b>Lihat Kerusakan</b>
           </Button>
         </div>
       </div>
-      {user.role == "User" ? (
+      {user.role == "Admin"||user.role=="Super Admin" ? (
         <div className="w-full xl:w-1/2 flex flex-col px-8 mb-12">
           <div className="mb-8">
-            <Heading title="Pengajuan Penambahaan Barang"></Heading>
+            <Heading title="Pengajuan Penambahaan Peralatan"></Heading>
           </div>
           <Card title="Mobil - 15 Buah" description="12 Januari 2024"></Card>
 

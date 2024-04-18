@@ -14,10 +14,11 @@ function DetailPinjaman() {
   const horizontal = "center";
 
   const [id, setId] = useState("0001");
+  const [name, setName] = useState("User")
   const [startDate, setStartDate] = useState("01/01/2024");
   const [endDate, setEndDate] = useState("01/12/2024");
   const [reason, setReason] = useState("Testing");
-  const [status, setStatus] = useState("Menunggu Approval Pengembalian")
+  const [status, setStatus] = useState("Menunggu Approval Pengembalian");
 
   const [listPinjamPeralatan, setListPinjamPeralatan] = useState([
     {
@@ -25,15 +26,15 @@ function DetailPinjaman() {
       peralatan_image: "test",
       peralatan_name: "Komputer",
       peralatan_type: "Berseri",
-      peralatan_category: "Elektronik",
-      peralatan_total: 2,
+      category_name: "Elektronik",
+      peralatan_count: 2,
       peralatan_available: 4,
       peralatan_detail: [
         {
-          peralatan_serial_no: "KOMP001-0001",
+          peralatan_detail_name: "KOMP001-0001",
         },
         {
-          peralatan_serial_no: "KOMP001-0002",
+          peralatan_detail_name: "KOMP001-0002",
         },
       ],
     },
@@ -42,8 +43,8 @@ function DetailPinjaman() {
       peralatan_image: "test",
       peralatan_name: "Komputer",
       peralatan_type: "Tidak Berseri",
-      peralatan_category: "Elektronik",
-      peralatan_total: 5,
+      category_name: "Elektronik",
+      peralatan_count: 5,
       peralatan_available: 2,
     },
   ]);
@@ -93,8 +94,8 @@ function DetailPinjaman() {
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
               peralatanType={peralatan.peralatan_type}
-              peralatanCategory={peralatan.peralatan_category}
-              peralatanTotal={peralatan.peralatan_total}
+              peralatanCategory={peralatan.category_name}
+              peralatanTotal={peralatan.peralatan_count}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatanDetail}
               page={page}
@@ -111,23 +112,52 @@ function DetailPinjaman() {
           <Heading title="Detail Pinjaman"></Heading>
         </div>
         <div className="bg-white w-full flex flex-col items-center mt-8 shadow-md px-4 py-4">
-          <div className="w-full flex flex-wrap mb-4 items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M8 12h8v-2H8zm0-4h8V6H8zm11.95 12.475L15.9 15.2q-.425-.575-1.05-.887T13.5 14H4V4q0-.825.588-1.412T6 2h12q.825 0 1.413.588T20 4v16q0 .125-.012.238t-.038.237M6 22q-.825 0-1.412-.587T4 20v-4h9.5q.25 0 .463.113t.362.312l4.2 5.5q-.125.05-.262.063T18 22z"
-              />
-            </svg>
-            <div className="ml-2">
-              <b className="mr-1">Pinjaman</b>
-              {id}
+          <div className="w-full flex flex-wrap items-center">
+            <div className="flex w-1/4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M8 12h8v-2H8zm0-4h8V6H8zm11.95 12.475L15.9 15.2q-.425-.575-1.05-.887T13.5 14H4V4q0-.825.588-1.412T6 2h12q.825 0 1.413.588T20 4v16q0 .125-.012.238t-.038.237M6 22q-.825 0-1.412-.587T4 20v-4h9.5q.25 0 .463.113t.362.312l4.2 5.5q-.125.05-.262.063T18 22z"
+                />
+              </svg>
+              <div className="ml-2">
+                <b className="mr-1">Pinjaman</b>
+                {id}
+              </div>
+            </div>
+            <div className="flex w-1/4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 36 36"
+              >
+                <path
+                  fill="currentColor"
+                  d="M30.61 24.52a17.16 17.16 0 0 0-25.22 0a1.51 1.51 0 0 0-.39 1v6A1.5 1.5 0 0 0 6.5 33h23a1.5 1.5 0 0 0 1.5-1.5v-6a1.51 1.51 0 0 0-.39-.98"
+                  class="clr-i-solid clr-i-solid-path-1"
+                />
+                <circle
+                  cx="18"
+                  cy="10"
+                  r="7"
+                  fill="currentColor"
+                  class="clr-i-solid clr-i-solid-path-2"
+                />
+                <path fill="none" d="M0 0h36v36H0z" />
+              </svg>
+              <div className="ml-2">
+                <b className="mr-1">Peminjam: </b>
+                {name}
+              </div>
             </div>
           </div>
+          <div className="w-1/4 flex flex-wrap mb-4 items-center"></div>
           <div className="w-full flex flex-wrap">
             <div className="w-full md:w-1/4 flex items-center mb-4">
               <svg
@@ -180,9 +210,7 @@ function DetailPinjaman() {
         <div className="bg-white w-full flex flex-col items-center mt-8 shadow-md px-4 py-4 mb-8">
           <div className="w-full flex items-center mb-4">
             <SubHeading title="Peralatan yang Dipinjam"></SubHeading>
-            <div className="ml-4">
-
-            </div>
+            <div className="ml-4"></div>
           </div>
           <PinjamPeralatanHeader></PinjamPeralatanHeader>
           {generatePinjamPeralatan()}
@@ -220,7 +248,7 @@ function DetailPinjaman() {
           </div>
           <div className="md:ml-2">
             <Button variant="contained" size="large">
-              Setujui Pengembalian
+             Setujui Pengembalian
             </Button>
           </div>
         </div>

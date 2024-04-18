@@ -18,8 +18,21 @@ import LaporanKerusakan from './pages/LaporanKerusakan/index.jsx';
 import BuatLaporan from './pages/LaporanKerusakan/create/index.jsx';
 import LaporanKerusakanDetail from './pages/LaporanKerusakan/detail/index.jsx';
 import PengajuanPeralatan from './pages/Peralatan/Request/index.jsx';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    if(localStorage.getItem('ss_token')){
+      dispatch({
+        type: "USER_LOGIN",
+        payload: JSON.parse(localStorage.getItem('ss_token')) ,
+      });
+    }
+  },[])
+
   return (
     <BrowserRouter>
       <Navbar>

@@ -51,24 +51,24 @@ function CreatePinjaman() {
       peralatan_image: "test",
       peralatan_name: "Komputer",
       has_identifier: true,
-      peralatan_category: "Elektronik",
-      peralatan_total: 3,
+      category_name: "Elektronik",
+      peralatan_count: 3,
       peralatan_available: 3,
       brand_name : "Lenovo",
       peralatan_detail: [
         {
           peralatan_detail_id: "1",
-          peralatan_serial_no: "KOMP001-0001",
+          peralatan_detail_name: "KOMP001-0001",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "2",
-          peralatan_serial_no: "KOMP001-0002",
+          peralatan_detail_name: "KOMP001-0002",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "3",
-          peralatan_serial_no: "KOMP001-0003",
+          peralatan_detail_name: "KOMP001-0003",
           peralatan_status: "Siap Dipinjam",
         },
       ],
@@ -79,8 +79,8 @@ function CreatePinjaman() {
       peralatan_name: "Komputer",
       has_identifier: false,
       brand_name : "Lenovo",
-      peralatan_category: "Elektronik",
-      peralatan_total: 5,
+      category_name: "Elektronik",
+      peralatan_count: 5,
       peralatan_available: 2,
     },
     {
@@ -89,8 +89,8 @@ function CreatePinjaman() {
       peralatan_name: "Monitor",
       has_identifier: false,
       brand_name : "Lenovo",
-      peralatan_category: "Elektronik",
-      peralatan_total: 3,
+      category_name: "Elektronik",
+      peralatan_count: 3,
       peralatan_available: 4,
     },
     {
@@ -99,23 +99,23 @@ function CreatePinjaman() {
       peralatan_name: "Mobil",
       has_identifier: true,
       brand_name : "Lenovo",
-      peralatan_category: "Otomotif",
-      peralatan_total: 3,
+      category_name: "Otomotif",
+      peralatan_count: 3,
       peralatan_available: 3,
       peralatan_detail: [
         {
           peralatan_detail_id: "1",
-          peralatan_serial_no: "MOB001-0001",
+          peralatan_detail_name: "MOB001-0001",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "2",
-          peralatan_serial_no: "MOB001-0002",
+          peralatan_detail_name: "MOB001-0002",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "3",
-          peralatan_serial_no: "MOB001-0003",
+          peralatan_detail_name: "MOB001-0003",
           peralatan_status: "Siap Dipinjam",
         },
       ],
@@ -179,13 +179,13 @@ function CreatePinjaman() {
 
           listSearchAddPeralatan.forEach((itemalat) => {
             if (itemalat.peralatan_id == alat.peralatan_id) {
-              itemalat.peralatan_total++;
+              itemalat.peralatan_count++;
               itemalat.peralatan_available--;
             }
           });
           listAddPeralatan.forEach((itemalat) => {
             if (itemalat.peralatan_id == alat.peralatan_id) {
-              itemalat.peralatan_total--;
+              itemalat.peralatan_count--;
               itemalat.peralatan_available--;
             }
           });
@@ -203,13 +203,13 @@ function CreatePinjaman() {
     if (!found) {
       alat = {
         ...alat,
-        peralatan_total: 1,
+        peralatan_count: 1,
         peralatan_available: alat.peralatan_available - 1,
       };
       listAddPeralatan.push(alat);
       listSearchAddPeralatan.forEach((item) => {
         if (item.peralatan_id == alat.peralatan_id) {
-          item.peralatan_total++;
+          item.peralatan_count++;
           item.peralatan_available--;
         }
       });
@@ -238,7 +238,7 @@ function CreatePinjaman() {
       }, 3000);
       listAddPeralatan.push({
         ...alat,
-        peralatan_total: 1,
+        peralatan_count: 1,
         peralatan_available: alat.peralatan_available - 1,
       });
       listSearchAddPeralatan.forEach((item) => {
@@ -351,8 +351,8 @@ function CreatePinjaman() {
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
               hasIdentifier={peralatan.has_identifier}
-              peralatanCategory={peralatan.peralatan_category}
-              peralatanTotal={peralatan.peralatan_total}
+              peralatanCategory={peralatan.category_name}
+              peralatanTotal={peralatan.peralatan_count}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatan_detail}
               brandName = {peralatan.brand_name}
@@ -400,8 +400,8 @@ function CreatePinjaman() {
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
               hasIdentifier={peralatan.has_identifier}
-              peralatanCategory={peralatan.peralatan_category}
-              peralatanTotal={peralatan.peralatan_total}
+              peralatanCategory={peralatan.category_name}
+              peralatanTotal={peralatan.peralatan_count}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatan_detail}
               brandName = {peralatan.brand_name}

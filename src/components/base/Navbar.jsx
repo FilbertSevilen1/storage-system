@@ -52,21 +52,28 @@ function Navbar() {
               ) : (
                 <></>
               )}
-
-              <div
-                onClick={() => {
-                  navigate("/kategori");
-                }}
-              >
-                Kategori
-              </div>
-              <div
-                onClick={() => {
-                  navigate("/merek");
-                }}
-              >
-                Merek
-              </div>
+              {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  onClick={() => {
+                    navigate("/kategori");
+                  }}
+                >
+                  Kategori
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  onClick={() => {
+                    navigate("/merek");
+                  }}
+                >
+                  Merek
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
           <div className="dropdown">
@@ -92,16 +99,24 @@ function Navbar() {
               Laporan
             </button>
             <div className="dropdown-content">
-              <div onClick={() => navigate("/buatlaporan")}>
-                Buat Laporan Kerusakan
-              </div>
-              {user.role == "Admin" || user.role == "Super Admin" ? (
-                <div onClick={() => navigate("/laporan")}>
-                  List Laporan Kerusakan
-                </div>
-              ) : (
-                <></>
-              )}
+              <>
+                {user.role == "User" ? (
+                  <div onClick={() => navigate("/buatlaporan")}>
+                    Buat Laporan Kerusakan
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </>
+              <>
+                {user.role == "Admin" || user.role == "Super Admin" ? (
+                  <div onClick={() => navigate("/laporan")}>
+                    List Laporan Kerusakan
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </>
             </div>
           </div>
           <div className="h-12 w-0.5 bg-gray-200"></div>

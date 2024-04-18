@@ -120,6 +120,7 @@ import {
                     onChange={handleInputBrand}
                     placeholder="Kategori"
                     fullWidth
+                    disabled
                   >
                     
                   </Select>

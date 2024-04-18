@@ -351,27 +351,6 @@ function Peralatan() {
             </div>
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="peralatanType"
-                  value={addPeralatanCategory}
-                  label="Kategori"
-                  onChange={handleInputCategory}
-                  placeholder="Kategori"
-                  fullWidth
-                >
-                  <MenuItem value={"Berseri"}>
-                    {"Elektronik (Berseri)"}
-                  </MenuItem>
-                  <MenuItem value={"Tidak Berseri"}>
-                    {"Alat Tulis (Tidak Berseri)"}
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div className="p-2 w-1/2 mt-2">
-              <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Merek</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -531,7 +510,7 @@ function Peralatan() {
               label="Username"
               variant="standard"
               className="w-full"
-              placeholder="Cari Barang di sini"
+              placeholder="Cari Alat Berdasarkan Nama"
             />
           </div>
         </div>

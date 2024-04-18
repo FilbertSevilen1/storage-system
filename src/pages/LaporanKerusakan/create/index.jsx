@@ -45,24 +45,24 @@ function BuatLaporan() {
       peralatan_image: "test",
       peralatan_name: "Komputer",
       has_identifier: true,
-      peralatan_category: "Elektronik",
-      peralatan_total: 3,
+      category_name: "Elektronik",
+      peralatan_count: 3,
       peralatan_available: 3,
       brand_name:"Lenovo",
       peralatan_detail: [
         {
           peralatan_detail_id: "1",
-          peralatan_serial_no: "KOMP001-0001",
+          peralatan_detail_name: "KOMP001-0001",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "2",
-          peralatan_serial_no: "KOMP001-0002",
+          peralatan_detail_name: "KOMP001-0002",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "3",
-          peralatan_serial_no: "KOMP001-0003",
+          peralatan_detail_name: "KOMP001-0003",
           peralatan_status: "Siap Dipinjam",
         },
       ],
@@ -72,8 +72,8 @@ function BuatLaporan() {
       peralatan_image: "test",
       peralatan_name: "Komputer",
       has_identifier: false,
-      peralatan_category: "Elektronik",
-      peralatan_total: 5,
+      category_name: "Elektronik",
+      peralatan_count: 5,
       peralatan_available: 2,
       brand_name:"Lenovo",
     },
@@ -82,8 +82,8 @@ function BuatLaporan() {
       peralatan_image: "test",
       peralatan_name: "Monitor",
       has_identifier: false,
-      peralatan_category: "Elektronik",
-      peralatan_total: 3,
+      category_name: "Elektronik",
+      peralatan_count: 3,
       peralatan_available: 4,
       brand_name:"Lenovo",
     },
@@ -92,24 +92,24 @@ function BuatLaporan() {
       peralatan_image: "test",
       peralatan_name: "Mobil",
       has_identifier: true,
-      peralatan_category: "Otomotif",
-      peralatan_total: 3,
+      category_name: "Otomotif",
+      peralatan_count: 3,
       peralatan_available: 3,
       brand_name:"Lenovo",
       peralatan_detail: [
         {
           peralatan_detail_id: "1",
-          peralatan_serial_no: "MOB001-0001",
+          peralatan_detail_name: "MOB001-0001",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "2",
-          peralatan_serial_no: "MOB001-0002",
+          peralatan_detail_name: "MOB001-0002",
           peralatan_status: "Siap Dipinjam",
         },
         {
           peralatan_detail_id: "3",
-          peralatan_serial_no: "MOB001-0003",
+          peralatan_detail_name: "MOB001-0003",
           peralatan_status: "Siap Dipinjam",
         },
       ],
@@ -173,13 +173,13 @@ function BuatLaporan() {
 
           listCariAlat.forEach((itemalat) => {
             if (itemalat.peralatan_id == alat.peralatan_id) {
-              itemalat.peralatan_total++;
+              itemalat.peralatan_count++;
               itemalat.peralatan_available--;
             }
           });
           listKerusakan.forEach((itemalat) => {
             if (itemalat.peralatan_id == alat.peralatan_id) {
-              itemalat.peralatan_total--;
+              itemalat.peralatan_count--;
               itemalat.peralatan_available--;
             }
           });
@@ -197,13 +197,13 @@ function BuatLaporan() {
     if (!found) {
       alat = {
         ...alat,
-        peralatan_total: 1,
+        peralatan_count: 1,
         peralatan_available: alat.peralatan_available - 1,
       };
       listKerusakan.push(alat);
       listCariAlat.forEach((item) => {
         if (item.peralatan_id == alat.peralatan_id) {
-          item.peralatan_total++;
+          item.peralatan_count++;
           item.peralatan_available--;
         }
       });
@@ -232,7 +232,7 @@ function BuatLaporan() {
       }, 3000);
       listKerusakan.push({
         ...alat,
-        peralatan_total: 1,
+        peralatan_count: 1,
         peralatan_available: alat.peralatan_available - 1,
       });
       listCariAlat.forEach((item) => {
@@ -354,8 +354,8 @@ function BuatLaporan() {
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
               hasIdentifier={peralatan.has_identifier}
-              peralatanCategory={peralatan.peralatan_category}
-              peralatanTotal={peralatan.peralatan_total}
+              peralatanCategory={peralatan.category_name}
+              peralatanTotal={peralatan.peralatan_count}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatan_detail}
               page={page}
@@ -406,8 +406,8 @@ function BuatLaporan() {
               peralatanImage={peralatan.peralatan_image}
               peralatanName={peralatan.peralatan_name}
               hasIdentifier={peralatan.has_identifier}
-              peralatanCategory={peralatan.peralatan_category}
-              peralatanTotal={peralatan.peralatan_total}
+              peralatanCategory={peralatan.category_name}
+              peralatanTotal={peralatan.peralatan_count}
               peralatanAvailable={peralatan.peralatan_available}
               peralatanDetail={peralatan.peralatan_detail}
               brandName={peralatan.brand_name}
@@ -619,9 +619,9 @@ function BuatLaporan() {
           </div>
           {/* Kalau Laporan Sudah Approved */}
           <div className="md:ml-2">
-            <Button onClick={()=>onSubmit()} variant="contained" size="large">
+            {/* <Button onClick={()=>onSubmit()} variant="contained" size="large">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#ffffff" d="M8 21q-.825 0-1.412-.587T6 19v-2H4q-.825 0-1.412-.587T2 15v-4q0-1.275.875-2.137T5 8h14q1.275 0 2.138.863T22 11v4q0 .825-.587 1.413T20 17h-2v2q0 .825-.587 1.413T16 21zM18 7H6V5q0-.825.588-1.412T8 3h8q.825 0 1.413.588T18 5zm0 5.5q.425 0 .713-.288T19 11.5q0-.425-.288-.712T18 10.5q-.425 0-.712.288T17 11.5q0 .425.288.713T18 12.5M8 19h8v-4H8z" className="mr-2"/></svg> <p className="ml-2">Print Laporan</p>
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>

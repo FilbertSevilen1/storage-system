@@ -1,4 +1,12 @@
-import { Button, FormControl, Input, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Input,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import Heading from "../../components/base/Heading";
 import PinjamanHeader from "../../components/PinjamanHeader";
@@ -7,7 +15,10 @@ import HorizontalDivider from "../../components/base/HorizontalDivider";
 import SubHeading from "../../components/base/SubHeading";
 import LaporanHeader from "../../components/LaporanHeader";
 import LaporanRow from "../../components/LaporanList";
+import { useDispatch, useSelector } from "react-redux";
 function LaporanKerusakan() {
+  const user = useSelector((state) => state.user);
+
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -28,45 +39,44 @@ function LaporanKerusakan() {
     "Selesai",
   ]);
 
-
   const searchItem = useRef();
   const searchStartDate = useRef();
   const searchEndDate = useRef();
   const [listReport, setlistReport] = useState([
     {
       borrow_id: "1",
-      user_id:"1",
+      user_id: "1",
       user_name: "Anton",
-      approval_start_id:"1",
-      approval_end_id:"2",
+      approval_start_id: "1",
+      approval_end_id: "2",
       report_date: "2024/01/01",
       borrow_duration: "1 Minggu",
       borrow_count: "6",
       status_borrow_id: "4",
-      status_borrow_name: "Selesai"
+      status_borrow_name: "Selesai",
     },
     {
       borrow_id: "2",
-      user_id:"1",
+      user_id: "1",
       user_name: "Anton",
-      approval_start_id:"3",
-      approval_end_id:"4",
+      approval_start_id: "3",
+      approval_end_id: "4",
       report_date: "2024/01/01",
       borrow_duration: "1 Minggu",
       borrow_count: "6",
       status_borrow_id: "2",
-      status_borrow_name: "Menunggu Approval"
+      status_borrow_name: "Menunggu Approval",
     },
     {
       borrow_id: "3",
-      user_id:"1",
+      user_id: "1",
       user_name: "Anton",
-      approval_start_id:"3",
-      approval_end_id:"4",
+      approval_start_id: "3",
+      approval_end_id: "4",
       report_date: "2024/01/01",
       borrow_duration: "1 Minggu",
       borrow_count: "3",
-      status_borrow_id:"3",
+      status_borrow_id: "3",
       status_borrow_name: "Dalam Peminjaman",
     },
   ]);
@@ -74,9 +84,9 @@ function LaporanKerusakan() {
   useEffect(() => {
     getPinjamanData();
   }, [page]);
-  const getPinjamanData = () =>{
+  const getPinjamanData = () => {
     getPinjamanList();
-  }
+  };
 
   const getPinjamanList = () => {
     if (listReport.length % 5 === 0) {
@@ -84,13 +94,11 @@ function LaporanKerusakan() {
     } else setMaxPage(Math.floor(listReport.length / 5) + 1);
   };
 
-  const generateMenuIemStatus = () =>{
+  const generateMenuIemStatus = () => {
     return listStatus.map((status, index) => {
-        return(
-            <MenuItem value={status}>{status}</MenuItem>
-        )
-    })
-  }
+      return <MenuItem value={status}>{status}</MenuItem>;
+    });
+  };
 
   const generatePinjamanData = () => {
     if (listReport) {
@@ -128,7 +136,6 @@ function LaporanKerusakan() {
           <Heading title="List laporan"></Heading>
         </div>
 
-
         <div className="bg-white w-full flex items-center mt-8 shadow-md px-8 py-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -155,12 +162,19 @@ function LaporanKerusakan() {
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
           <div className="bg-white w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full mb-4">
-              <Button variant="contained" size="large" fullWidth>
-                + Buat Laporan Baru
-              </Button>
+              {user.role == "User" ? (
+                <>
+                  <Button variant="contained" size="large" fullWidth>
+                    + Buat Laporan Baru
+                  </Button>
+                  <HorizontalDivider />
+                </>
+              ) : (
+                <></>
+              )}
             </div>
-            <HorizontalDivider/>
-            <SubHeading title="Filter"/>
+
+            <SubHeading title="Filter" />
             <div className="w-full mt-4">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Status</InputLabel>
@@ -173,8 +187,7 @@ function LaporanKerusakan() {
                   placeholder="Status"
                   fullWidth
                 >
-                {generateMenuIemStatus()}
-
+                  {generateMenuIemStatus()}
                 </Select>
               </FormControl>
             </div>
@@ -201,7 +214,12 @@ function LaporanKerusakan() {
               />
             </div>
             <div className="w-full mt-8">
-              <Button onClick={()=>getPinjamanData()} variant="contained" size="large" fullWidth>
+              <Button
+                onClick={() => getPinjamanData()}
+                variant="contained"
+                size="large"
+                fullWidth
+              >
                 Cari
               </Button>
             </div>

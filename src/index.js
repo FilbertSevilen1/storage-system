@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './css/index.css';
 import App from './App';
@@ -17,6 +17,7 @@ const initialState = {
 function reducers(state = initialState, action) {
   switch (action.type) {
     case 'USER_LOGIN':
+      
       return {
         ...state,
         user:{
@@ -33,6 +34,7 @@ function reducers(state = initialState, action) {
       return state
   }
 }
+
 const store = createStore(reducers)
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

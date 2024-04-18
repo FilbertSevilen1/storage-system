@@ -180,7 +180,7 @@ import MerekHeader from "../../components/Merekheader";
                   {errorAddKategoriNamaMessage}
                 </div>
               </div>
-              <div className="mx-2 w-96 mt-2">
+              {/* <div className="mx-2 w-96 mt-2">
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">
                     Kategori Merek
@@ -198,7 +198,7 @@ import MerekHeader from "../../components/Merekheader";
                   </Select>
                 </FormControl>
                 <div className="text-red-500 text-md">{errorAddBrandCategory}</div>
-              </div>
+              </div> */}
             </div>
           </DialogContent>
           <DialogActions>
