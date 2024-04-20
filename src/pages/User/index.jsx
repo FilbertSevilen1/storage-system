@@ -22,7 +22,11 @@ import KategoriRow from "../../components/KategoriRow";
 import UserRow from "../../components/UserRow";
 import UserHeader from "../../components/UserHeader";
 import HorizontalDivider from "../../components/base/HorizontalDivider";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 function User() {
+  const user = useSelector((state)=>state.user)
+  const navigate = useNavigate()
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -69,6 +73,9 @@ function User() {
   ]);
 
   useEffect(() => {
+    if(user.role!="Super Admin"){
+      navigate("/")
+    }
     getUserList();
   }, [page]);
 

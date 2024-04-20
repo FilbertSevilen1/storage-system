@@ -22,7 +22,9 @@ import { useNavigate } from "react-router";
 import PeralatanHeader from "../../../components/PeralatanHeader";
 import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
 import AddPeralatanRow from "../../../components/AddPeralatanRow";
+import { useSelector } from "react-redux";
 function CreatePinjaman() {
+  const user = useSelector((state)=>state.user)
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
@@ -44,6 +46,12 @@ function CreatePinjaman() {
   const [listAddPeralatan, setListAddPeralatan] = useState([
 
   ]);
+
+  useEffect(()=>{
+    if(user.role != "User"){
+      navigate("/")
+    }
+  })
 
   const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([
     {
