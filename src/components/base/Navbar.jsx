@@ -55,7 +55,7 @@ function Navbar() {
               {user.role == "Admin" || user.role == "Super Admin" ? (
                 <div
                   onClick={() => {
-                    navigate("/kategori");
+                    navigate("/category");
                   }}
                 >
                   Kategori
@@ -66,7 +66,7 @@ function Navbar() {
               {user.role == "Admin" || user.role == "Super Admin" ? (
                 <div
                   onClick={() => {
-                    navigate("/merek");
+                    navigate("/brand");
                   }}
                 >
                   Merek
@@ -81,12 +81,12 @@ function Navbar() {
               Peminjaman
             </button>
             <div className="dropdown-content">
-              <div onClick={() => navigate("/buatpinjaman")}>
+              <div onClick={() => navigate("/borrow/create")}>
                 Buat Pinjaman Baru
               </div>
-              <div onClick={() => navigate("/pinjamansaya")}>Pinjaman Saya</div>
+              <div onClick={() => navigate("/myborrow")}>Pinjaman Saya</div>
               {user.role == "Admin" || user.role == "Super Admin" ? (
-                <div onClick={() => navigate("/pinjaman")}>
+                <div onClick={() => navigate("/borrow")}>
                   Lihat List Pinjaman
                 </div>
               ) : (
@@ -101,7 +101,7 @@ function Navbar() {
             <div className="dropdown-content">
               <>
                 {user.role == "User" ? (
-                  <div onClick={() => navigate("/buatlaporan")}>
+                  <div onClick={() => navigate("/report/create")}>
                     Buat Laporan Kerusakan
                   </div>
                 ) : (
@@ -110,7 +110,7 @@ function Navbar() {
               </>
               <>
                 {user.role == "Admin" || user.role == "Super Admin" ? (
-                  <div onClick={() => navigate("/laporan")}>
+                  <div onClick={() => navigate("/report")}>
                     List Laporan Kerusakan
                   </div>
                 ) : (
@@ -168,7 +168,7 @@ function Navbar() {
               <div
                 className="border-b-[0.5px] border-gray-300"
                 onClick={() => {
-                  navigate("/kategori");
+                  navigate("/category");
                 }}
               >
                 Kategori
@@ -176,38 +176,38 @@ function Navbar() {
               <div
                 className="border-b-[0.5px] border-gray-300"
                 onClick={() => {
-                  navigate("/merek");
+                  navigate("/brand");
                 }}
               >
                 Merek
               </div>
               <div
                 className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/buatpinjaman")}
+                onClick={() => navigate("/borrow/create")}
               >
                 Buat Pinjaman Baru
               </div>
               <div
                 className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/pinjamansaya")}
+                onClick={() => navigate("/myborrow")}
               >
                 Pinjaman Saya
               </div>
               <div
                 className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/pinjaman")}
+                onClick={() => navigate("/borrow")}
               >
                 Lihat List Pinjaman -Admin-
               </div>
               <div
                 className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/laporan")}
+                onClick={() => navigate("/report")}
               >
                 List Laporan Kerusakan -Admin-
               </div>
               <div
                 className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/buatlaporan")}
+                onClick={() => navigate("/report/create")}
               >
                 Buat Laporan Kerusakan
               </div>

@@ -110,7 +110,7 @@ function Dashboard() {
           <Chart options={options} series={series} type="bar" height="300px" />
         </div>
         <div className="w-full my-8">
-          <Button variant="contained" size="large" onClick={()=>navigate("/pinjaman")}>
+          <Button variant="contained" size="large" onClick={()=>navigate("/borrow")}>
             <b>Lihat Selengkapnya</b>
           </Button>
         </div>
@@ -123,7 +123,7 @@ function Dashboard() {
           <Chart options={options} series={series} type="bar" height="300px" />
         </div>
         <div className="w-full my-8">
-          <Button variant="contained" size="large" onClick={()=>navigate("/pinjaman")}>
+          <Button variant="contained" size="large" onClick={()=>navigate("/borrow")}>
             <b>Lihat Kerusakan</b>
           </Button>
         </div>
@@ -171,7 +171,7 @@ function Dashboard() {
           <Button
             variant="contained"
             size="large"
-            onClick={() => navigate("/pinjaman")}
+            onClick={() => navigate("/borrow")}
           >
             <b>Lihat Pinjaman</b>
           </Button>
@@ -203,7 +203,7 @@ function Dashboard() {
           <Button
             variant="contained"
             size="large"
-            onClick={() => navigate("/pinjamansaya")}
+            onClick={() => navigate("/myborrow")}
           >
             <b>Lihat Pinjaman</b>
           </Button>

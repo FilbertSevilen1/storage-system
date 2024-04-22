@@ -46,17 +46,17 @@ function App() {
         <Route path="/peralatan" element={<Peralatan />}></Route>
         <Route path="/peralatan/request" element={<PengajuanPeralatan />}></Route>
         <Route path="/peralatan/:id" element={<PeralatanDetail/>}></Route>
-        <Route path="/kategori" element={<Kategori />}></Route>
-        <Route path="/merek" element={<Merek />}></Route>
+        <Route path="/category" element={<Kategori />}></Route>
+        <Route path="/brand" element={<Merek />}></Route>
 
-        <Route path="/buatpinjaman" element={<CreatePinjaman />}></Route>
-        <Route path="/pinjaman/:id" element={<DetailPinjaman />}></Route>
-        <Route path="/pinjaman" element={<ListPinjaman/>}></Route>
-        <Route path="/pinjamansaya" element={<PinjamanSaya/>}></Route>
+        <Route path="/borrow/create" element={<CreatePinjaman />}></Route>
+        <Route path="/borrow/:id" element={<DetailPinjaman />}></Route>
+        <Route path="/borrow" element={<ListPinjaman/>}></Route>
+        <Route path="/myborrow" element={<PinjamanSaya/>}></Route>
 
-        <Route path="/laporan" element={<LaporanKerusakan/>}></Route>
-        <Route path="/laporan/:id" element={<LaporanKerusakanDetail/>}></Route>
-        <Route path="/buatlaporan" element={<BuatLaporan/>}></Route>
+        <Route path="/report" element={<LaporanKerusakan/>}></Route>
+        <Route path="/report/:id" element={<LaporanKerusakanDetail/>}></Route>
+        <Route path="/report/create" element={<BuatLaporan/>}></Route>
 
         <Route path="/user" element={<User />}></Route>
       </Routes>
