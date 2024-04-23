@@ -41,7 +41,7 @@ function Login() {
     console.log(password.current.value);
 
     if (username.current.value == "Admin") {
-      localStorage.setItem('ss_token',JSON.stringify({ id: 1, name: username.current.value, role: "Admin" }))
+      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "Admin" }, timestamp: new Date().getTime()}))
       dispatch({
         type: "USER_LOGIN",
         payload: { id: 1, name: username.current.value, role: "Admin" },
@@ -49,7 +49,7 @@ function Login() {
       navigate("/home");
     } 
     else if (username.current.value == "SuperAdmin"){
-      localStorage.setItem('ss_token',JSON.stringify({ id: 1, name: username.current.value, role: "Super Admin" }))
+      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "SuperAdmin" }, timestamp: new Date().getTime()}))
       dispatch({
         type: "USER_LOGIN",
         payload: { id: 1, name: username.current.value, role: "Super Admin" },
@@ -57,7 +57,7 @@ function Login() {
       navigate("/home");
     }
     else {
-      localStorage.setItem('ss_token',JSON.stringify({ id: 1, name: username.current.value, role: "User" }))
+      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "UserAdmin" }, timestamp: new Date().getTime()}))
       dispatch({
         
         type: "USER_LOGIN",
@@ -66,6 +66,7 @@ function Login() {
       navigate("/home");
     }
   };
+  
 
   useEffect(() => {
 

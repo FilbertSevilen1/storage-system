@@ -26,10 +26,19 @@ function App() {
 
   useEffect(()=>{
     if(localStorage.getItem('ss_token')){
-      dispatch({
-        type: "USER_LOGIN",
-        payload: JSON.parse(localStorage.getItem('ss_token')) ,
-      });
+      const logindata = localStorage.getItem('ss_token');
+      if(logindata){
+        const {user, timestamp} = JSON.parse(logindata)
+        const currentTime = new Date().getTime();
+        if (currentTime - timestamp <= 24 * 60 * 60 * 1000) {
+          dispatch({
+            type: "USER_LOGIN",
+            payload: user,
+          });
+        } else {
+            localStorage.removeItem('ss_token'); // Remove expired data
+        }
+      }
     }
   },[])
 
