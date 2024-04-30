@@ -98,8 +98,6 @@ function Dashboard() {
     },
   ]);
 
-
-
   return (
     <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
       <div className="w-full xl:w-1/2 flex flex-col px-8 mb-12">
@@ -110,7 +108,11 @@ function Dashboard() {
           <Chart options={options} series={series} type="bar" height="300px" />
         </div>
         <div className="w-full my-8">
-          <Button variant="contained" size="large" onClick={()=>navigate("/borrow")}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => navigate("/borrow")}
+          >
             <b>Lihat Selengkapnya</b>
           </Button>
         </div>
@@ -123,12 +125,16 @@ function Dashboard() {
           <Chart options={options} series={series} type="bar" height="300px" />
         </div>
         <div className="w-full my-8">
-          <Button variant="contained" size="large" onClick={()=>navigate("/borrow")}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => navigate("/borrow")}
+          >
             <b>Lihat Kerusakan</b>
           </Button>
         </div>
       </div>
-      {user.role == "Admin"||user.role=="Super Admin" ? (
+      {user.role == "Admin" || user.role == "Super Admin" ? (
         <div className="w-full xl:w-1/2 flex flex-col px-8 mb-12">
           <div className="mb-8">
             <Heading title="Pengajuan Penambahaan Peralatan"></Heading>
@@ -161,54 +167,77 @@ function Dashboard() {
 
       <div className="w-full h-[4px] bg-white mx-8 mb-8"></div>
 
-      <div className="w-full xl:w-1/2 flex flex-col px-8">
-        <div className="mb-8">
-          <Heading title="Pinjaman Saya"></Heading>
-        </div>
-        {generatePinjamanCard()}
+      {user.role == "User" ? (
+        <div className="w-full xl:w-1/2 flex flex-col px-8">
+          <div className="mb-8">
+            <Heading title="Pinjaman Saya"></Heading>
+          </div>
+          {generatePinjamanCard()}
 
-        <div className="w-full my-8">
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => navigate("/borrow")}
-          >
-            <b>Lihat Pinjaman</b>
-          </Button>
+          <div className="w-full my-8">
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => navigate("/borrow")}
+            >
+              <b>Lihat Pinjaman</b>
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className="w-full xl:w-1/2 flex flex-col px-8">
-        <div className="mb-8">
-          <Heading title="Riwayat Pinjaman"></Heading>
+      ) : (
+        <div className="w-full xl:w-1/2 flex flex-col px-8">
+          <div className="mb-8">
+            <Heading title="List Pinjaman"></Heading>
+          </div>
+          {generatePinjamanCard()}
+
+          <div className="w-full my-8">
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => navigate("/borrow")}
+            >
+              <b>Lihat Pinjaman</b>
+            </Button>
+          </div>
         </div>
-        <PinjamanCard
-          title="Pinjaman 001"
-          startDate="01 Januari 2024"
-          endDate="29 Februari 2024"
-          status="Selesai"
-        ></PinjamanCard>
-        <PinjamanCard
-          title="Pinjaman 001"
-          startDate="01 Januari 2024"
-          endDate="29 Februari 2024"
-          status="Selesai"
-        ></PinjamanCard>
-        <PinjamanCard
-          title="Pinjaman 001"
-          startDate="01 Januari 2024"
-          endDate="29 Februari 2024"
-          status="Selesai"
-        ></PinjamanCard>
-        <div className="w-full my-8">
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => navigate("/myborrow")}
-          >
-            <b>Lihat Pinjaman</b>
-          </Button>
+      )}
+      {user.role == "User" ? (
+        <div className="w-full xl:w-1/2 flex flex-col px-8">
+          <div className="mb-8">
+            <Heading title="Riwayat Pinjaman"></Heading>
+          </div>
+          <PinjamanCard
+            title="Pinjaman 001"
+            startDate="01 Januari 2024"
+            endDate="29 Februari 2024"
+            status="Selesai"
+          ></PinjamanCard>
+          <PinjamanCard
+            title="Pinjaman 001"
+            startDate="01 Januari 2024"
+            endDate="29 Februari 2024"
+            status="Selesai"
+          ></PinjamanCard>
+          <PinjamanCard
+            title="Pinjaman 001"
+            startDate="01 Januari 2024"
+            endDate="29 Februari 2024"
+            status="Selesai"
+          ></PinjamanCard>
+          <div className="w-full my-8">
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => navigate("/myborrow")}
+            >
+              <b>Lihat Pinjaman</b>
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

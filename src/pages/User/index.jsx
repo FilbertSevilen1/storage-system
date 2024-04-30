@@ -53,6 +53,8 @@ function User() {
       user_email: "tarto@gmail.com",
       user_birthdate: "2024-01-01",
       user_gender: "Laki-laki",
+      user_phone_number: "123123123123",
+      user_citizen_id: "1111222244445555",
     },
     {
       user_id: "2",
@@ -61,6 +63,8 @@ function User() {
       user_email: "ito@gmail.com",
       user_birthdate: "2024-01-01",
       user_gender: "Laki-laki",
+      user_phone_number: "123123123123",
+      user_citizen_id: "1111222244445555",
     },
     {
       user_id: "3",
@@ -69,6 +73,8 @@ function User() {
       user_email: "ari@gmail.com",
       user_birthdate: "2024-01-01",
       user_gender: "Laki-laki",
+      user_phone_number: "123123123123",
+      user_citizen_id: "1111222244445555",
     },
   ]);
 
@@ -109,6 +115,8 @@ function User() {
               userEmail={user.user_email}
               userBirthdate={user.user_birthdate}
               userGender={user.user_gender}
+              userPhone={user.user_phone_number}
+              userCitizenId={user.user_citizen_id}
               page={page}
             ></UserRow>
           );
@@ -153,6 +161,8 @@ function User() {
   const addUserEmail = useRef("");
   const [addUserGender, setAddUserGender] = useState("");
   const addUserBirthDate = useRef("");
+  const addUserPhone = useRef("");
+  const addUserCitizenId = useRef("");
 
   // Error Handling
   const [errorAddUserName, setErrorAddUserName] = useState(false);
@@ -383,6 +393,32 @@ function User() {
               <div className="text-red-500 text-md">
                 {errorAddUserGenderMessage}
               </div>
+            </div>
+            <div className="p-2 w-1/2">
+              <TextField
+                onChange={checkErrorEmail}
+                margin="dense"
+                id="name"
+                name="name"
+                label="Email"
+                type="text"
+                fullWidth
+                variant="outlined"
+                inputRef={addUserPhone}
+              />
+            </div>
+            <div className="p-2 w-1/2">
+              <TextField
+                onChange={checkErrorEmail}
+                margin="dense"
+                id="name"
+                name="name"
+                label="Email"
+                type="text"
+                fullWidth
+                variant="outlined"
+                inputRef={addUserCitizenId}
+              />
             </div>
           </div>
         </DialogContent>

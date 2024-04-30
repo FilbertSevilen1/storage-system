@@ -24,15 +24,19 @@ function UserRow(props) {
   let [email, setEmail] = useState(props.userEmail);
   let [birthdate, setBirthdate] = useState(props.userBirthdate);
   let [gender, setGender] = useState(props.userGender);
+  let [phone, setPhone] = useState(props.userPhone);
+  let [citizenId, setCitizenId] = useState(props.userCitizenId)
 
   const [editDialog, setEditDialog] = useState(false);
 
-  const openEditDialog = (name, type, email, birthdate, gender) => {
+  const openEditDialog = (name, type, email, birthdate, gender, phone, citizenId) => {
     setEditUserNameDefault(name);
     setEditUserRole(type);
     setEditUserEmailDefault(email);
     setEditUserBirthdateDefault(birthdate);
     setEditUserGender(gender);
+    setEditPhoneDefault(phone)
+    setEditCitizenIdDefault(citizenId)
 
     resetErrorMessage();
     setEditDialog(true);
@@ -53,6 +57,10 @@ function UserRow(props) {
   const [editUserBirthdateDefault, setEditUserBirthdateDefault] = useState("");
   const [editUserRole, setEditUserRole] = useState("");
   const [editUserGender, setEditUserGender] = useState("");
+  const editUserPhone = useRef("");
+  const editUserCitizenId = useRef("");
+  const [editPhoneDefault, setEditPhoneDefault] = useState("");
+  const [editCitizenIdDefault, setEditCitizenIdDefault] = useState("");
 
   // Error Handling
   const [errorEditUserName, setErrorEditUserName] = useState(false);
@@ -69,6 +77,8 @@ function UserRow(props) {
   const [errorEditUserGenderMessage, setErrorEditUserGenderMessage] =
     useState("");
 
+
+    
   const handleInputRole = (event) => {
     setEditUserRole(event.target.value);
   };
@@ -295,6 +305,34 @@ function UserRow(props) {
                 {errorEditUserGender}
               </div>
             </div>
+            <div className="p-2 w-1/2">
+              <TextField
+                onChange={checkErrorEmail}
+                margin="dense"
+                id="name"
+                name="name"
+                label="Nomor Telepon"
+                type="text"
+                fullWidth
+                variant="outlined"
+                inputRef={editUserPhone}
+                defaultValue={editPhoneDefault}
+              />
+            </div>
+            <div className="p-2 w-1/2">
+              <TextField
+                onChange={checkErrorEmail}
+                margin="dense"
+                id="name"
+                name="name"
+                label="Nomor KTP"
+                type="text"
+                fullWidth
+                variant="outlined"
+                inputRef={editUserCitizenId}
+                defaultValue={editCitizenIdDefault}
+              />
+            </div>
           </div>
         </DialogContent>
         <DialogActions>
@@ -323,7 +361,7 @@ function UserRow(props) {
         </div>
         <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
           <div
-            onClick={() => openEditDialog(name, role, email, birthdate, gender)}
+            onClick={() => openEditDialog(name, role, email, birthdate, gender, phone, citizenId)}
             className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
           >
             <svg

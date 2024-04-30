@@ -17,7 +17,7 @@ function KerusakanDetail() {
   const [type, setType] = useState("Kerusakan")
   const [startDate, setStartDate] = useState("01/01/2024");
   const [endDate, setEndDate] = useState("01/12/2024");
-  const [reason, setReason] = useState("Barang Rusak");
+  const [reason, setReason] = useState("Peralatan Rusak");
   const [status, setStatus] = useState("Menunggu Approval");
 
   const [listPinjamPeralatan, setListPinjamPeralatan] = useState([

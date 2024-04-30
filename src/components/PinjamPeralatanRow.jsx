@@ -113,7 +113,7 @@ function PinjamPeralatanRow({
         <DialogTitle>Delete Peralatan</DialogTitle>
         <DialogContent>
           <div className="w-full">
-            Apakah Anda yakin ingin menghilangkan {nama} dari Barang yang akan
+            Apakah Anda yakin ingin menghilangkan {nama} dari Peralatan yang akan
             dipinjam?
           </div>
         </DialogContent>
@@ -129,7 +129,7 @@ function PinjamPeralatanRow({
           <img src={image} className="w-full h-full"></img>
         </div>
         <div className="w-full md:w-2/12 flex flex-col flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Nama Barang : </div>
+          <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>
           <div><b>{nama} - {namaMerek}</b></div>
           <div className="flex flex-wrap">{generateSerialNumber()}</div>
         </div>

@@ -556,7 +556,7 @@ function BuatLaporan() {
                   type="date"
                   variant="outlined"
                   className="w-full"
-                  placeholder="Cari Barang di sini"
+                  placeholder="Cari Peralatan di sini"
                   inputRef={laporanDate}
                 />
               </div>

@@ -86,7 +86,7 @@ function AddPeralatanRow({
           <img src={image} className="w-full h-full"></img>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Nama Barang : </div>
+          <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>
           <div>{nama} - {namaMerek}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">

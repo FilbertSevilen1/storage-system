@@ -526,7 +526,7 @@ function CreatePinjaman() {
                   type="date"
                   variant="outlined"
                   className="w-full"
-                  placeholder="Search Barang di sini"
+                  placeholder="Search Peralatan di sini"
                   inputRef={createEndDate}
                 />
               </div>

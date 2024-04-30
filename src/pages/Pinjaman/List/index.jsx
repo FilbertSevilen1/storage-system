@@ -140,7 +140,7 @@ function ListPinjaman() {
         </div>
 
         <div className="bg-white w-full flex items-center mt-8 shadow-md px-8 py-4">
-          <div className="flex w-1/2 md:mr-4">
+          {/* <div className="flex w-1/2 md:mr-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="32"
@@ -161,8 +161,8 @@ function ListPinjaman() {
               className="w-full"
               placeholder="Pinjaman ID"
             />
-          </div>
-          <div className="flex w-1/2 md:ml-4">
+          </div> */}
+          <div className="flex w-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="32"

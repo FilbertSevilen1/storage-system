@@ -81,10 +81,18 @@ function Navbar() {
               Peminjaman
             </button>
             <div className="dropdown-content">
-              <div onClick={() => navigate("/borrow/create")}>
-                Buat Pinjaman Baru
-              </div>
-              <div onClick={() => navigate("/myborrow")}>Pinjaman Saya</div>
+              {user.role == "User" ? (
+                <div onClick={() => navigate("/borrow/create")}>
+                  Buat Pinjaman Baru
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "User" ? (
+                <div onClick={() => navigate("/myborrow")}>Pinjaman Saya</div>
+              ) : (
+                <></>
+              )}
               {user.role == "Admin" || user.role == "Super Admin" ? (
                 <div onClick={() => navigate("/borrow")}>
                   Lihat List Pinjaman
@@ -165,58 +173,105 @@ function Navbar() {
               >
                 Peralatan
               </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => {
-                  navigate("/category");
-                }}
-              >
-                Kategori
-              </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => {
-                  navigate("/brand");
-                }}
-              >
-                Merek
-              </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/borrow/create")}
-              >
-                Buat Pinjaman Baru
-              </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/myborrow")}
-              >
-                Pinjaman Saya
-              </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/borrow")}
-              >
-                Lihat List Pinjaman -Admin-
-              </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/report")}
-              >
-                List Laporan Kerusakan -Admin-
-              </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/report/create")}
-              >
-                Buat Laporan Kerusakan
-              </div>
-              <div
-                className="border-b-[0.5px] border-gray-300"
-                onClick={() => navigate("/user")}
-              >
-                Manage User
-              </div>
+              {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => {
+                    navigate("/peralatan/request");
+                  }}
+                >
+                  Pengajuan Penambahan
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => {
+                    navigate("/category");
+                  }}
+                >
+                  Kategori
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => {
+                    navigate("/brand");
+                  }}
+                >
+                  Merek
+                </div>
+              ) : (
+                <></>
+              )}
+
+              {user.role == "User" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => navigate("/borrow/create")}
+                >
+                  Buat Pinjaman Baru
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "User" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => navigate("/myborrow")}
+                >
+                  Pinjaman Saya
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => navigate("/borrow")}
+                >
+                  Lihat List Pinjaman
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "User" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => navigate("/report/create")}
+                >
+                  Buat Laporan Kerusakan
+                </div>
+              ) : (
+                <></>
+              )}
+              {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => navigate("/report")}
+                >
+                  List Laporan Kerusakan
+                </div>
+              ) : (
+                <></>
+              )}
+
+              {user.role == "Super Admin" ? (
+                <div
+                  className="border-b-[0.5px] border-gray-300"
+                  onClick={() => navigate("/user")}
+                >
+                  Manage User
+                </div>
+              ) : (
+                <></>
+              )}
+
               <div onClick={logout}>Logout</div>
             </div>
           </div>

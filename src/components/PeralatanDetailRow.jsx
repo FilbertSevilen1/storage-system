@@ -51,7 +51,7 @@ function PeralatanDetailRow(props) {
           <div>{index + 1}</div>
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Nama Barang : </div>
+          <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>
           <div>{name}</div>
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
