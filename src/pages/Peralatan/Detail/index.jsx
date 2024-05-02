@@ -20,14 +20,17 @@ function PeralatanDetail() {
   const [peralatanName, setPeralatanName] = useState("Komputer");
   const [peralatanType, setPeralatanType] = useState("Berseri");
   const [peralatanJumlah, setPeralatanJumlah] = useState("5");
-  const [peralatanAvailable, setPeralatanAvailperalatanAvailable] = useState("2");
+  const [peralatanAvailable, setPeralatanAvailable] =
+    useState("2");
   const [peralatanDeskripsi, setPeralatanDeskripsi] = useState("");
+  const [perlatanImage, setPeralatanImage] = useState("");
 
   const [edit, setEdit] = useState(false);
 
   const editPeralatanNama = useRef("");
   const editPeralatanJumlah = useRef("");
   const editPeralatanDeskripsi = useRef("");
+  const [editPeralatanImage, setEditPeralatanImage] = useState("");
 
   const [listPeralatanDetail, setListPeralatanDetail] = useState([
     {
@@ -45,8 +48,18 @@ function PeralatanDetail() {
   ]);
 
   useEffect(() => {
+    getPeralatanData();
     getDetailList();
   }, [page]);
+
+  const getPeralatanData = () =>{
+    setPeralatanName("Komputer")
+    setPeralatanType("Berseri")
+    setPeralatanJumlah("5")
+    setPeralatanAvailable("2")
+    setPeralatanDeskripsi("")
+    setPeralatanImage("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/20060513_toolbox.jpg/220px-20060513_toolbox.jpg")
+  }
 
   const getDetailList = () => {
     if (listPeralatanDetail.length % 5 === 0) {
@@ -65,8 +78,16 @@ function PeralatanDetail() {
   };
 
   const saveEdit = () => {
+  
+    setPeralatanName(editPeralatanNama.current.value)
+    setPeralatanDeskripsi(editPeralatanDeskripsi.current.value)
     setEdit(false);
   };
+
+  const cancelEdit = () =>{
+    getPeralatanData();
+    setEdit(false)
+  }
 
   const generatePeralatanDetail = () => {
     if (listPeralatanDetail) {
@@ -89,6 +110,13 @@ function PeralatanDetail() {
     }
   };
 
+  const changePeralatanImage = (event) =>{
+    setEditPeralatanImage(event.target.files[0])
+    setPeralatanImage(URL.createObjectURL(event.target.files[0]));
+  }
+  
+
+    
   return (
     <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
       <Snackbar
@@ -105,40 +133,48 @@ function PeralatanDetail() {
         <div className="w-full md:w-[275px] h-fit flex flex-col p-4 bg-white shadow-md md:mr-2 mb-4 items-center">
           <div className="w-[250px] h-[250px] bg-gray-200">
             <img
-              src="https://cdn.britannica.com/51/122851-050-19501A1C/hand-tools-toolbox.jpg"
+              src={perlatanImage}
               className="w-full h-full object-cover"
             ></img>
           </div>
           {userRole == "Admin" ? (
             <div className="w-full">
-              <div className="w-full  mt-4 flex flex-col items-center">
+              <div className="w-full mt-4 flex flex-col items-center gap-2">
                 {edit ? (
-                  <div className="flex w-full">
-                    <div className="w-full mr-1">
-                      <Button
-                        onClick={() => setEdit(false)}
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        className=""
-                        color="error"
-                      >
-                        Batal
-                      </Button>
+                  <>
+                    <div className="w-full">
+                      <div className="text-xl font-bold">Ubah Gambar Peralatan</div>
+                      <input type="file" onChange={changePeralatanImage} className="my-4">
+
+                      </input>
                     </div>
-                    <div className="w-full ml-1">
-                      <Button
-                        onClick={() => saveEdit()}
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        className=""
-                        color="success"
-                      >
-                        Simpan
-                      </Button>
+                    <div className="flex w-full">
+                      <div className="w-full">
+                        <Button
+                          onClick={() => cancelEdit(false)}
+                          variant="contained"
+                          size="large"
+                          fullWidth
+                          className=""
+                          color="error"
+                        >
+                          Batal
+                        </Button>
+                      </div>
+                      <div className="w-full ml-1">
+                        <Button
+                          onClick={() => saveEdit()}
+                          variant="contained"
+                          size="large"
+                          fullWidth
+                          className=""
+                          color="success"
+                        >
+                          Simpan
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  </>
                 ) : (
                   <Button
                     onClick={() => setEdit(true)}

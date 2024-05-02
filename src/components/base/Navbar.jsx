@@ -108,7 +108,7 @@ function Navbar() {
             </button>
             <div className="dropdown-content">
               <>
-                {user.role == "User" ? (
+                {user.role == "Admin" || user.role == "Super Admin" ? (
                   <div onClick={() => navigate("/report/create")}>
                     Buat Laporan Kerusakan
                   </div>
@@ -120,6 +120,24 @@ function Navbar() {
                 {user.role == "Admin" || user.role == "Super Admin" ? (
                   <div onClick={() => navigate("/report")}>
                     List Laporan Kerusakan
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </>
+              <>
+                {user.role == "Admin" || user.role == "Super Admin" ? (
+                  <div onClick={() => navigate("/penalty")}>
+                    List Pinalty
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </>
+              <>
+                {user.role == "User" ? (
+                  <div onClick={() => navigate("/penalty/mypenalty")}>
+                    Pinalti Saya
                   </div>
                 ) : (
                   <></>

@@ -20,6 +20,8 @@ import LaporanKerusakanDetail from './pages/LaporanKerusakan/detail/index.jsx';
 import PengajuanPeralatan from './pages/Peralatan/Request/index.jsx';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import Penalty from './pages/Penalty/index.jsx';
+import MyPenalty from './pages/Penalty/MyPenalty/index.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -66,6 +68,9 @@ function App() {
         <Route path="/report" element={<LaporanKerusakan/>}></Route>
         <Route path="/report/:id" element={<LaporanKerusakanDetail/>}></Route>
         <Route path="/report/create" element={<BuatLaporan/>}></Route>
+
+        <Route path="/penalty" element={<Penalty/>}></Route>
+        <Route path="/penalty/mypenalty" element={<MyPenalty/>}></Route>
 
         <Route path="/user" element={<User />}></Route>
       </Routes>
