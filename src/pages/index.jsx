@@ -34,7 +34,7 @@ function Dashboard() {
       pinjaman_id: "1",
       pinjaman_start_date: "01 Januari 2024",
       pinjaman_end_date: "29 Februari 2024",
-      pinjaman_status: "Selesai",
+      pinjaman_status: "Dalam Peminjaman",
     },
     {
       pinjaman_id: "2",
