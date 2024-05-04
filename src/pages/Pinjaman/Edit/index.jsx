@@ -85,11 +85,11 @@ function EditPinjaman() {
     },
   ]);
 
-  useEffect(() => {
-    if (user.role == "User") {
-      navigate("/");
-    }
-  });
+  // useEffect(() => {
+  //   if (user.role == "User") {
+  //     navigate("/");
+  //   }
+  // });
 
   const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([
     {
