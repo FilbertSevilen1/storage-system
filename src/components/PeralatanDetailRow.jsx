@@ -16,6 +16,7 @@ function PeralatanDetailRow(props) {
   const [edit, setEdit] = useState(false);
 
   const editAngkaSeri = useRef("");
+  const [editStatus, setEditStatus] = useState("");
 
   const saveEdit = () => {
     if (editAngkaSeri.current.value == "") {
@@ -34,6 +35,10 @@ function PeralatanDetailRow(props) {
       setSnackbar(false);
     }, 3000);
     return setSnackbarMessage("Simpan Sukses!");
+  };
+
+  const handleEditStatus = (event) => {
+    setEditStatus(event.target.value);
   };
 
   return (
@@ -74,10 +79,31 @@ function PeralatanDetailRow(props) {
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Status : </div>
+          
+          {edit ? (
+            <div className="w-48">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  value={editStatus}
+                  id="demo-simple-select"
+                  label="Status"
+                  onChange={handleEditStatus}
+                  placeholder="Status"
+                  defaultValue={status}
+                  fullWidth
+                >
+                 <MenuItem value="Dalam Peminjaman">Dalam Peminjaman</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+          ) : (
             <div>{status}</div>
+          )}
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">
-          {role == "Admin" ? (
+          {role != "User" ? (
             <div>
               {edit ? (
                 <div className="flex">

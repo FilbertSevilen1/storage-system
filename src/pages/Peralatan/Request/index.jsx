@@ -143,7 +143,7 @@ function PengajuanPeralatan() {
               label="Username"
               variant="standard"
               className="w-full"
-              placeholder="Cari Pengajuan ID di sini"
+              placeholder="Cari Nama Pengaju di sini"
             />
           </div>
         </div>

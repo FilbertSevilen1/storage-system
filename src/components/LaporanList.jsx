@@ -12,7 +12,10 @@ import {
     TextField,
   } from "@mui/material";
   import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router";
   function LaporanRow(props) {
+    const navigate = useNavigate()
+
     const [snackbar, setSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const vertical = "top";
@@ -50,11 +53,12 @@ import {
             {status}
           </div>
           <div className=" w-full md:w-2/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
-            <div
+            <button
               className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
+              onClick={()=>navigate("/report/1")}
             >
              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M6.4 18L5 16.6L14.6 7H6V5h12v12h-2V8.4z"/></svg>
-            </div>
+            </button>
 
           </div>
         </div>

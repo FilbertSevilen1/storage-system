@@ -165,37 +165,6 @@ import PenaltyHeader from "../../components/PenaltyHeader";
           message={snackbarMessage}
           key={"top" + "center"}
         />
-        <Dialog open={AddDialog} onClose={closeAddDialog}>
-          <DialogTitle>Tambah Merek</DialogTitle>
-          <DialogContent>
-            <div className="w-full flex justify-between">
-              <div className="mx-2 w-96">
-                <TextField
-                  error={errorAddKategoriNama}
-                  onChange={checkKategoriNama}
-                  margin="dense"
-                  id="name"
-                  name="name"
-                  label="Nama Merek"
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  inputRef={addBrandName}
-                />
-                <div className="text-red-500 text-md">
-                  {errorAddKategoriNamaMessage}
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={closeAddDialog}>Cancel</Button>
-            <Button onClick={onSubmit} type="submit">
-              <b>Tambah</b>
-            </Button>
-          </DialogActions>
-        </Dialog>
-  
   
         <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
           <div>

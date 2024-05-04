@@ -4,7 +4,9 @@ import { Button, Input, TextField, TextareaAutosize } from "@mui/material";
 import SubHeading from "../../../components/base/SubHeading";
 import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
+import { useNavigate } from "react-router";
 function DetailPinjaman() {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -210,6 +212,15 @@ function DetailPinjaman() {
         <div className="bg-white w-full flex flex-col items-center mt-8 shadow-md px-4 py-4 mb-8">
           <div className="w-full flex items-center mb-4">
             <SubHeading title="Peralatan yang Dipinjam"></SubHeading>
+            <div className="ml-4">
+              <Button
+                variant="contained"
+                size="large"
+                onClick={()=>navigate('/borrow/edit/1')}
+              >
+                Edit
+              </Button>
+            </div>
             <div className="ml-4"></div>
           </div>
           <PinjamPeralatanHeader></PinjamPeralatanHeader>
@@ -241,14 +252,14 @@ function DetailPinjaman() {
           </div>
         </div>
         <div className="w-full flex justify-end mb-8">
-          <div>
+          <div className="md:ml-2">
             <Button color="error" variant="contained" size="large">
-              Tolak Pengembalian
+              Tolak Peminjaman
             </Button>
           </div>
           <div className="md:ml-2">
-            <Button variant="contained" size="large">
-             Setujui Pengembalian
+            <Button color="success" variant="contained" size="large">
+             Setujui Peminjaman
             </Button>
           </div>
         </div>

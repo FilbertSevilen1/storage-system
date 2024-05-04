@@ -22,6 +22,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Penalty from './pages/Penalty/index.jsx';
 import MyPenalty from './pages/Penalty/MyPenalty/index.jsx';
+import EditPinjaman from './pages/Pinjaman/Edit/index.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function App() {
         const {user, timestamp} = JSON.parse(logindata)
         const currentTime = new Date().getTime();
         if (currentTime - timestamp <= 24 * 60 * 60 * 1000) {
+          console.log(user)
           dispatch({
             type: "USER_LOGIN",
             payload: user,
@@ -62,6 +64,7 @@ function App() {
 
         <Route path="/borrow/create" element={<CreatePinjaman />}></Route>
         <Route path="/borrow/:id" element={<DetailPinjaman />}></Route>
+        <Route path="/borrow/edit/:id" element={<EditPinjaman/>}></Route>
         <Route path="/borrow" element={<ListPinjaman/>}></Route>
         <Route path="/myborrow" element={<PinjamanSaya/>}></Route>
 

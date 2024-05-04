@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Heading from "../../../components/base/Heading";
-import { Button, Input, TextField, TextareaAutosize } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Input, TextField, TextareaAutosize } from "@mui/material";
 import SubHeading from "../../../components/base/SubHeading";
 import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
@@ -13,12 +13,14 @@ function KerusakanDetail() {
   const vertical = "top";
   const horizontal = "center";
 
-  const [id, setId] = useState("0001");
-  const [type, setType] = useState("Kerusakan")
-  const [startDate, setStartDate] = useState("01/01/2024");
-  const [endDate, setEndDate] = useState("01/12/2024");
-  const [reason, setReason] = useState("Peralatan Rusak");
-  const [status, setStatus] = useState("Menunggu Approval");
+  const [reportDate, setReportDate] = useState("01/01/2024");
+  const [reportType, setReportType] = useState("Kerusakan");
+  const [reportUser, setReportUser] = useState("Budi");
+  const [reportStatus, setReportStatus] = useState("Menunggu Approval");
+  const [reportPenaltyId, setReportPenaltyId] = useState("0001");
+  const [reportPenaltyStatus, setReportPenaltyStatus] = useState(
+    "Menunggu Persetujuan"
+  );
 
   const [listPinjamPeralatan, setListPinjamPeralatan] = useState([
     {
@@ -96,8 +98,56 @@ function KerusakanDetail() {
       });
     }
   };
+
+  const openPenaltyDialog = () => {
+    setPenaltyDialog(true);
+  };
+  const closePenaltyDialog = () => {
+    setPenaltyDialog(false);
+  };
+
+  const [penaltyDialog, setPenaltyDialog] = useState(false);
+  const [penaltyDescription, setPenaltyDescription] = useState("")
+  const [approvalReason, setApprovalReason] = useState("");
+
+  const onPenaltySubmit = () =>{
+
+  };
+
   return (
     <div className="w-full">
+      <Dialog open={penaltyDialog} onClose={closePenaltyDialog}>
+        <DialogTitle>Bukti Penyelesaian Penalti</DialogTitle>
+        <DialogContent>
+          <div className="w-full h-[450px] flex justify-between">
+            <div className="p-2 w-96 h-64">
+              <img src="https://static8.depositphotos.com/1040728/935/i/450/depositphotos_9352722-stock-photo-tool-set.jpg"></img>
+              <div className="my-4">
+                <TextField
+                  className="w-full my-4"
+                  defaultValue={penaltyDescription}
+                  label="Deskripsi"
+                  disabled
+                ></TextField>
+              </div>
+              <div className="my-4">
+                <TextField
+                  className="w-full my-4"
+                  value={approvalReason}
+                  defaultValue={penaltyDescription}
+                  label="Alasan Tolak/Setuju"
+                ></TextField>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => onPenaltySubmit("reject")}>Tolak</Button>
+          <Button onClick={() => onPenaltySubmit("approve")} type="submit">
+            <b>Setujui</b>
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
           <Heading title="Detail Laporan"></Heading>
@@ -117,7 +167,7 @@ function KerusakanDetail() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Laporan</b> {id}
+                <b>Tanggal Laporan :</b> {reportDate}
               </div>
             </div>
             <div className="w-full md:w-1/4 flex items-center mb-4">
@@ -133,7 +183,7 @@ function KerusakanDetail() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Jenis Laporan : </b> {type}
+                <b>Jenis Laporan : </b> {reportType}
               </div>
             </div>
           </div>
@@ -151,7 +201,7 @@ function KerusakanDetail() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Mulai :</b> {startDate}
+                <b>User yang bertanggung jawab :</b> {reportUser}
               </div>
             </div>
             <div className="w-full md:w-1/4 flex items-center mb-4">
@@ -167,21 +217,32 @@ function KerusakanDetail() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Selesai :</b> {endDate}
+                <b>Status Laporan :</b> {reportStatus}
+              </div>
+            </div>
+            <div className="w-full flex flex-wrap mt-8">
+              <div className="w-full md:w-1/4">
+                <div>
+                  <b>ID Penalti</b>
+                  <div>{reportPenaltyId}</div>
+                </div>
+              </div>
+              <div className="w-full md:w-1/4">
+                <div>
+                  <b>Status Penalti</b>
+                  <div>{reportPenaltyStatus}</div>
+                </div>
               </div>
             </div>
             <div className="w-full flex flex-wrap">
-              <div className="w-full md:w-1/4">
-                <div>
-                  <b>Alasan Laporan</b>
-                  <div>{reason}</div>
-                </div>
-              </div>
-              <div className="w-full md:w-1/4">
-                <div>
-                  <b>Status Laporan</b>
-                  <div>{status}</div>
-                </div>
+              <div className="w-full md:w-1/4 mt-8">
+                <Button
+                  onClick={() => openPenaltyDialog()}
+                  variant="contained"
+                  fullWidth
+                >
+                  Lihat Bukti Penalti
+                </Button>
               </div>
             </div>
           </div>
@@ -220,14 +281,9 @@ function KerusakanDetail() {
           </div>
         </div>
         <div className="w-full flex justify-end mb-8">
-          <div>
-            <Button color="error" variant="contained" size="large">
-              Tolak Laporan
-            </Button>
-          </div>
           <div className="md:ml-2">
             <Button variant="contained" size="large">
-              Setujui Laporan
+              Selesaikan Laporan
             </Button>
           </div>
         </div>

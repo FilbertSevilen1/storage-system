@@ -57,7 +57,7 @@ function Login() {
       navigate("/home");
     }
     else {
-      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "UserAdmin" }, timestamp: new Date().getTime()}))
+      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "User" }, timestamp: new Date().getTime()}))
       dispatch({
         
         type: "USER_LOGIN",

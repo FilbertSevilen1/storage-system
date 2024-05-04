@@ -100,7 +100,7 @@ function LaporanKerusakan() {
     });
   };
 
-  const generatePinjamanData = () => {
+  const generateLaporanData = () => {
     if (listReport) {
       return listReport.map((report, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
@@ -226,7 +226,7 @@ function LaporanKerusakan() {
           </div>
           <div className="bg-white w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
             <LaporanHeader></LaporanHeader>
-            {generatePinjamanData()}
+            {generateLaporanData()}
             <div className="w-full justify-end items-center mt-4 flex">
               <Button onClick={prevPage}>
                 <svg
