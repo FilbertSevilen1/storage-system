@@ -107,7 +107,7 @@ import {
                   {errorEditBrandNamaMessage}
                 </div>
               </div>
-              <div className="p-2 w-96 mt-2">
+              {/* <div className="p-2 w-96 mt-2">
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">
                     Kategori
@@ -125,7 +125,7 @@ import {
                     
                   </Select>
                 </FormControl>
-              </div>
+              </div> */}
             </div>
           </DialogContent>
           <DialogActions>
@@ -144,10 +144,10 @@ import {
             <div className="flex md:hidden mr-2 font-bold">Nama : </div>
             {name}
           </div>
-          <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
+          {/* <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
             <div className="flex md:hidden mr-2 font-bold">Tipe : </div>
             {type}
-          </div>
+          </div> */}
           <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
             <div
               onClick={() => openEditDialog(name, type)}

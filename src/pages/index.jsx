@@ -128,7 +128,7 @@ function Dashboard() {
           <Button
             variant="contained"
             size="large"
-            onClick={() => navigate("/borrow")}
+            onClick={() => navigate("/report")}
           >
             <b>Lihat Kerusakan</b>
           </Button>
@@ -142,7 +142,7 @@ function Dashboard() {
           <Card title="Mobil - 15 Buah" description="12 Januari 2024"></Card>
 
           <div className="w-full my-8">
-            <Button variant="contained" size="large">
+            <Button onClick={()=>navigate('/peralatan/request')} variant="contained" size="large">
               <b>Lihat Pengajuan</b>
             </Button>
           </div>
@@ -159,7 +159,7 @@ function Dashboard() {
           description="12 Januari 2024, Rp. 750.000.000"
         ></Card>
         <div className="w-full my-8">
-          <Button variant="contained" size="large">
+          <Button onClick={()=>navigate('/peralatan')} variant="contained" size="large">
             <b>Lihat Peralatan</b>
           </Button>
         </div>

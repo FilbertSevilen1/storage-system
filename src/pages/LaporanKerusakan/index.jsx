@@ -162,7 +162,7 @@ function LaporanKerusakan() {
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
           <div className="bg-white w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full mb-4">
-              {user.role == "User" ? (
+              {user.role != "User" ? (
                 <>
                   <Button variant="contained" size="large" fullWidth>
                     + Buat Laporan Baru

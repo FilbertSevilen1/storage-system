@@ -117,13 +117,13 @@ function Navbar() {
                 )}
               </>
               <>
-                {user.role == "Admin" || user.role == "Super Admin" ? (
+                {/* {user.role == "Admin" || user.role == "Super Admin" ? ( */}
                   <div onClick={() => navigate("/report")}>
                     List Laporan Kerusakan
                   </div>
-                ) : (
+                {/* ) : (
                   <></>
-                )}
+                )} */}
               </>
               <>
                 {user.role == "Admin" || user.role == "Super Admin" ? (
