@@ -74,6 +74,17 @@ function Navbar() {
               ) : (
                 <></>
               )}
+               {user.role == "Admin" || user.role == "Super Admin" ? (
+                <div
+                  onClick={() => {
+                    navigate("/purchase");
+                  }}
+                >
+                  Pembelian
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
           <div className="dropdown">
@@ -118,18 +129,16 @@ function Navbar() {
               </>
               <>
                 {/* {user.role == "Admin" || user.role == "Super Admin" ? ( */}
-                  <div onClick={() => navigate("/report")}>
-                    List Laporan Kerusakan
-                  </div>
+                <div onClick={() => navigate("/report")}>
+                  List Laporan Kerusakan
+                </div>
                 {/* ) : (
                   <></>
                 )} */}
               </>
               <>
                 {user.role == "Admin" || user.role == "Super Admin" ? (
-                  <div onClick={() => navigate("/penalty")}>
-                    List Pinalty
-                  </div>
+                  <div onClick={() => navigate("/penalty")}>List Pinalty</div>
                 ) : (
                   <></>
                 )}
@@ -182,6 +191,7 @@ function Navbar() {
               </svg>
             </div>
 
+            {/* Mobile */}
             <div className="dropdown-content">
               <div
                 className="border-b-[0.5px] border-gray-300"
