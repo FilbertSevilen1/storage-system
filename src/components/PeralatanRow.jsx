@@ -223,6 +223,7 @@ function PeralatanRow(props) {
               </div>
             </div>
           </div>
+          {hasIdentifier == true ? (
           <div className="p-2 w-full flex flex-col">
               <div className="mt-2">Deskripsi</div>
               <TextareaAutosize
@@ -233,6 +234,10 @@ function PeralatanRow(props) {
                 ref={addPeralatanDescription}
               />
             </div>
+            ) : (
+              <>
+              </>
+            )}
         </DialogContent>
         <DialogActions>
           <Button onClick={closeAddDialog}>Cancel</Button>

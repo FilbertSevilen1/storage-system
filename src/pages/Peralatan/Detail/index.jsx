@@ -38,12 +38,14 @@ function PeralatanDetail() {
       peralatanName: "Komputer",
       peralatanSerialNumber: "KOMP001-0001",
       peralatanStatus: "Dalam Peminjaman",
+      peralatanDescription:"Test"
     },
     {
       peralatanId: "2",
       peralatanName: "Komputer",
       peralatanSerialNumber: "KOMP001-0001",
       peralatanStatus: "Dalam Peminjaman",
+      peralatanDescription:"Test"
     },
   ]);
 
@@ -54,7 +56,7 @@ function PeralatanDetail() {
 
   const getPeralatanData = () =>{
     setPeralatanName("Komputer")
-    setPeralatanType("Tidak Berseri")
+    setPeralatanType("Berseri")
     setPeralatanJumlah("5")
     setPeralatanAvailable("2")
     setPeralatanDeskripsi("")
@@ -102,6 +104,7 @@ function PeralatanDetail() {
               peralatanName={peralatan.peralatanName}
               peralatanSerialNumber={peralatan.peralatanSerialNumber}
               peralatanStatus={peralatan.peralatanStatus}
+              peralatanDescription={peralatan.peralatanDescription}
               brandName={peralatan.brandName}
               page={page}
             ></PeralatanDetailRow>
@@ -224,7 +227,7 @@ function PeralatanDetail() {
                 <TextField
                   inputRef={editPeralatanJumlah}
                   id="peralatanNama"
-                  label="Nama Peralatan"
+                  label="Jumlah Alat"
                   margin="dense"
                   variant="outlined"
                   hide-details

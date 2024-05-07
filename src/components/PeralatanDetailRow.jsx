@@ -11,11 +11,13 @@ function PeralatanDetailRow(props) {
   const [index, setIndex] = useState(props.index);
   const [name, setName] = useState(props.peralatanName);
   const [serialNumber, setSerialNumber] = useState(props.peralatanSerialNumber);
+  const [description, setDescription] = useState(props.peralatanDescription);
   const [status, setStatus] = useState(props.peralatanStatus);
 
   const [edit, setEdit] = useState(false);
 
   const editAngkaSeri = useRef("");
+  const editDescription = useRef("")
   const [editStatus, setEditStatus] = useState("");
 
   const saveEdit = () => {
@@ -29,6 +31,7 @@ function PeralatanDetailRow(props) {
     setEdit(false);
 
     setSerialNumber(editAngkaSeri.current.value);
+    setDescription(editDescription.current.value)
 
     setSnackbar(true);
     setTimeout(() => {
@@ -56,10 +59,6 @@ function PeralatanDetailRow(props) {
           <div>{index + 1}</div>
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>
-          <div>{name}</div>
-        </div>
-        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Angka Seri : </div>
           {edit ? (
             <div>
@@ -77,6 +76,26 @@ function PeralatanDetailRow(props) {
             <div>{serialNumber}</div>
           )}
         </div>
+
+        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
+          <div className="flex md:hidden mr-2 font-bold">Deskripsi : </div>
+          {edit ? (
+            <div>
+              <TextField
+                type="text"
+                id="descritpion"
+                label="Deskripsi"
+                variant="outlined"
+                defaultValue={description}
+                inputRef={editDescription}
+                fullWidth
+              />
+            </div>
+          ) : (
+            <div>{description}</div>
+          )}
+        </div>
+
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Status : </div>
           
