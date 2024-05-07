@@ -48,7 +48,8 @@ function CreatePinjaman() {
   ]);
 
   useEffect(()=>{
-    if(user.role != "User"){
+    console.log("ROLE", user.role)
+    if(user.role != "User" && user.role !=""){
       navigate("/")
     }
   })
@@ -396,6 +397,10 @@ function CreatePinjaman() {
     setAddDialog(true);
   };
 
+  const resetPage = () =>{
+    window.location.reload()
+  }
+
   const generateAddPeralatanList = () => {
     if (listSearchAddPeralatan) {
       return listSearchAddPeralatan.map((peralatan, index) => {
@@ -499,10 +504,11 @@ function CreatePinjaman() {
                   id=""
                   label="Tanggal Mulai"
                   InputLabelProps={{ shrink: true }}
-                  type="date"
+                  type="datetime-local"
                   variant="outlined"
                   className="w-full"
                   inputRef={createStartDate}
+                  disabled={listAddPeralatan.length}
                 />
               </div>
             </div>
@@ -523,11 +529,12 @@ function CreatePinjaman() {
                   id=""
                   label="Tanggal Selesai"
                   InputLabelProps={{ shrink: true }}
-                  type="date"
+                  type="datetime-local"
                   variant="outlined"
                   className="w-full"
                   placeholder="Search Peralatan di sini"
                   inputRef={createEndDate}
+                  disabled={listAddPeralatan.length}
                 />
               </div>
             </div>
@@ -598,12 +605,12 @@ function CreatePinjaman() {
         <div className="w-full flex justify-end mb-8">
           <div>
             <Button
-              onClick={() => batalkanPinjaman()}
+              onClick={() => resetPage()}
               color="error"
               variant="contained"
               size="large"
             >
-              Batal
+              Reset
             </Button>
           </div>
           <div className="md:ml-2">

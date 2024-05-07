@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import Penalty from './pages/Penalty/index.jsx';
 import MyPenalty from './pages/Penalty/MyPenalty/index.jsx';
 import EditPinjaman from './pages/Pinjaman/Edit/index.jsx';
+import ReturnPinjaman from './pages/Pinjaman/Return/index.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -67,6 +68,7 @@ function App() {
         <Route path="/borrow/edit/:id" element={<EditPinjaman/>}></Route>
         <Route path="/borrow" element={<ListPinjaman/>}></Route>
         <Route path="/myborrow" element={<PinjamanSaya/>}></Route>
+        <Route path="/borrow/return/:id" element={<ReturnPinjaman/>}></Route>
 
         <Route path="/report" element={<LaporanKerusakan/>}></Route>
         <Route path="/report/:id" element={<LaporanKerusakanDetail/>}></Route>

@@ -54,7 +54,7 @@ function PeralatanDetail() {
 
   const getPeralatanData = () =>{
     setPeralatanName("Komputer")
-    setPeralatanType("Berseri")
+    setPeralatanType("Tidak Berseri")
     setPeralatanJumlah("5")
     setPeralatanAvailable("2")
     setPeralatanDeskripsi("")

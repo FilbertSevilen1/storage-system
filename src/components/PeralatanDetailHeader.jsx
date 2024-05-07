@@ -6,8 +6,8 @@ function PeralatanDetailHeader() {
         <div className="w-1/12 flex justify-center">No</div>
         <div className="w-3/12 flex justify-center">Nama Peralatan</div>
         <div className="w-3/12 flex justify-center">Angka Seri</div>
-        <div className="w-3/12 flex justify-center">Status Peminjaman</div>
-        <div className="w-2/12 flex justify-center">Aksi</div>
+        <div className="w-3/12 flex justify-center">Status</div>
+        <div className="w-2/12 flex justify-center">Edit</div>
       </div>
     </div>
   );

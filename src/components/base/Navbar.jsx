@@ -15,7 +15,7 @@ function Navbar() {
   };
   useEffect(() => {
     console.log(path.pathname);
-    if (path.pathname != "/" && user.name == "") {
+    if (path.pathname != "/" && user.username == "") {
       navigate("/");
     }
   });

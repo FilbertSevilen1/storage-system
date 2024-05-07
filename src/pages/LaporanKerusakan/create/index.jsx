@@ -3,6 +3,7 @@ import Heading from "../../../components/base/Heading";
 import {
   Autocomplete,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -39,6 +40,9 @@ function BuatLaporan() {
   const [addDialog, setAddDialog] = useState(false);
   const searchAddNama = useRef();
   const [searchAddCategory, setSearchAddCategory] = useState("");
+
+  const [isPenalty, setIsPenalty] = useState(false);
+  const deadlineDate = useRef("");
 
   const [listCariAlat, setlistCariAlat] = useState([
     {
@@ -135,16 +139,6 @@ function BuatLaporan() {
     if (listCariAlat.length % 5 === 0) {
       setMaxPage(Math.floor(listCariAlat.length / 5));
     } else setMaxPage(Math.floor(listCariAlat.length / 5) + 1);
-  };
-
-  const prevPage = () => {
-    if (page <= 1) return;
-    setPage(page - 1);
-  };
-
-  const nextPage = () => {
-    if (page >= maxPage) return;
-    setPage(page + 1);
   };
 
   const addPinjamPeralatanDataBerseri = (alat, detail) => {
@@ -393,14 +387,13 @@ function BuatLaporan() {
   };
 
   const openAddDialog = () => {
-    console.log(listKerusakan)
-    if(listKerusakan.length){
+    console.log(listKerusakan);
+    if (listKerusakan.length) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Data Peralatan sudah ada");
-      
     }
     setAddDialog(true);
   };
@@ -454,7 +447,11 @@ function BuatLaporan() {
     setLaporanType(event.target.value);
   };
 
-  const handlePenaltyType = (event) =>{
+  const changeIsPenalty = () => {
+    setIsPenalty(!isPenalty);
+  };
+
+  const handlePenaltyType = (event) => {
     setPenaltyType(event.target.value);
   };
 
@@ -519,7 +516,7 @@ function BuatLaporan() {
         </div>
         <div className="bg-white w-full flex items-center mt-8 shadow-md px-4 py-4">
           <div className="w-full flex flex-wrap">
-            <div className="w-full md:w-1/4 flex items-center mb-4">
+            {/* <div className="w-full md:w-1/4 flex items-center mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -574,76 +571,149 @@ function BuatLaporan() {
                   inputRef={laporanDate}
                 />
               </div>
+            </div> */}
+            <div className="w-full flex flex-wrap items-center mb-4">
+              <Checkbox
+                checked={isPenalty}
+                onChange={changeIsPenalty}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+              <div className="">Berikan Penalti untuk Pengguna</div>
             </div>
-            <div className="w-full md:w-1/4 flex items-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 36 36"
-              >
-                <path
-                  fill="currentColor"
-                  d="M30.61 24.52a17.16 17.16 0 0 0-25.22 0a1.51 1.51 0 0 0-.39 1v6A1.5 1.5 0 0 0 6.5 33h23a1.5 1.5 0 0 0 1.5-1.5v-6a1.51 1.51 0 0 0-.39-.98"
-                  class="clr-i-solid clr-i-solid-path-1"
-                />
-                <circle
-                  cx="18"
-                  cy="10"
-                  r="7"
-                  fill="currentColor"
-                  class="clr-i-solid clr-i-solid-path-2"
-                />
-                <path fill="none" d="M0 0h36v36H0z" />
-              </svg>
+            {isPenalty ? (
+              <>
+                <div className="w-full flex flex-wrap">
+                  <div className="w-full md:w-1/4 flex items-center mb-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 36 36"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M30.61 24.52a17.16 17.16 0 0 0-25.22 0a1.51 1.51 0 0 0-.39 1v6A1.5 1.5 0 0 0 6.5 33h23a1.5 1.5 0 0 0 1.5-1.5v-6a1.51 1.51 0 0 0-.39-.98"
+                        class="clr-i-solid clr-i-solid-path-1"
+                      />
+                      <circle
+                        cx="18"
+                        cy="10"
+                        r="7"
+                        fill="currentColor"
+                        class="clr-i-solid clr-i-solid-path-2"
+                      />
+                      <path fill="none" d="M0 0h36v36H0z" />
+                    </svg>
 
-              <div className="w-full px-2">
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={['a','b','c']}
-                  renderInput={(params) => (
-                    <TextField {...params} label="User yang bertanggung Jawab" className="w-full"/>
-                  )}
-                />
-              </div>
-            </div>
-            <div className="w-full md:w-1/4 flex items-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="M7.805 3.469C8.16 3.115 8.451 3 8.937 3h6.126c.486 0 .778.115 1.132.469l4.336 4.336c.354.354.469.646.469 1.132v6.126c0 .5-.125.788-.469 1.132l-4.336 4.336c-.354.354-.646.469-1.132.469H8.937c-.5 0-.788-.125-1.132-.469L3.47 16.195c-.355-.355-.47-.646-.47-1.132V8.937c0-.5.125-.788.469-1.132zM12 7.627v5.5m0 3.246v-.5"
-                />
-              </svg>
-              <div className="w-full px-2 md:pr-4">
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Pinalti yang Diberikan
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={penaltyType}
-                    label="Kategori"
-                    onChange={handlePenaltyType}
-                    placeholder="Kategori"
-                    fullWidth
+                    <div className="w-full px-2">
+                      <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={["a", "b", "c"]}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="User yang bertanggung Jawab"
+                            className="w-full"
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full md:w-1/4 flex items-center mb-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M7.805 3.469C8.16 3.115 8.451 3 8.937 3h6.126c.486 0 .778.115 1.132.469l4.336 4.336c.354.354.469.646.469 1.132v6.126c0 .5-.125.788-.469 1.132l-4.336 4.336c-.354.354-.646.469-1.132.469H8.937c-.5 0-.788-.125-1.132-.469L3.47 16.195c-.355-.355-.47-.646-.47-1.132V8.937c0-.5.125-.788.469-1.132zM12 7.627v5.5m0 3.246v-.5"
+                      />
+                    </svg>
+                    <div className="w-full px-2">
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Pinalti yang Diberikan
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={penaltyType}
+                          label="Kategori"
+                          onChange={handlePenaltyType}
+                          placeholder="Kategori"
+                          fullWidth
+                        >
+                          <MenuItem value="denda">Denda</MenuItem>
+                          <MenuItem value="penggantian">
+                            Penggantian Barang
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full md:w-1/4 flex items-center mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
                   >
-                    <MenuItem value="denda">Denda</MenuItem>
-                    <MenuItem value="penggantian">Penggantian Barang</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-            </div>
+                    <path
+                      fill="currentColor"
+                      d="M12 14q-.425 0-.712-.288T11 13q0-.425.288-.712T12 12q.425 0 .713.288T13 13q0 .425-.288.713T12 14m-4 0q-.425 0-.712-.288T7 13q0-.425.288-.712T8 12q.425 0 .713.288T9 13q0 .425-.288.713T8 14m8 0q-.425 0-.712-.288T15 13q0-.425.288-.712T16 12q.425 0 .713.288T17 13q0 .425-.288.713T16 14m-4 4q-.425 0-.712-.288T11 17q0-.425.288-.712T12 16q.425 0 .713.288T13 17q0 .425-.288.713T12 18m-4 0q-.425 0-.712-.288T7 17q0-.425.288-.712T8 16q.425 0 .713.288T9 17q0 .425-.288.713T8 18m8 0q-.425 0-.712-.288T15 17q0-.425.288-.712T16 16q.425 0 .713.288T17 17q0 .425-.288.713T16 18M5 22q-.825 0-1.412-.587T3 20V6q0-.825.588-1.412T5 4h1V2h2v2h8V2h2v2h1q.825 0 1.413.588T21 6v14q0 .825-.587 1.413T19 22zm0-2h14V10H5z"
+                    />
+                  </svg>
+                  <div className="w-full px-2">
+                    <TextField
+                      id=""
+                      label="Tanggal Deadline"
+                      InputLabelProps={{ shrink: true }}
+                      type="date"
+                      variant="outlined"
+                      className="w-full"
+                      placeholder="Cari Peralatan di sini"
+                      inputRef={deadlineDate}
+                    />
+                  </div>
+                </div>
+                <div className="w-full md:w-1/4 flex items-center mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M12 21q-1.85 0-3.488-.712T5.65 18.35t-1.937-2.863T3 12q0-1.1.25-2.137t.725-1.95t1.138-1.7T6.6 4.8l6.8 6.8L12 13L6.6 7.6q-.75.9-1.175 2.013T5 12q0 2.9 2.05 4.95T12 19t4.95-2.05T19 12q0-2.675-1.713-4.612T13 5.1V7h-2V3h1q1.85 0 3.488.713T18.35 5.65t1.938 2.863T21 12t-.712 3.488t-1.938 2.862t-2.863 1.938T12 21m-5-8q-.425 0-.712-.288T6 12t.288-.712T7 11t.713.288T8 12t-.288.713T7 13m5 5q-.425 0-.712-.288T11 17t.288-.712T12 16t.713.288T13 17t-.288.713T12 18m5-5q-.425 0-.712-.288T16 12t.288-.712T17 11t.713.288T18 12t-.288.713T17 13"
+                    />
+                  </svg>
+                  <div className="w-full px-2">
+                    <TextField
+                      id=""
+                      label="Waktu Timeout (Hari)"
+                      InputLabelProps={{ shrink: true }}
+                      type="number"
+                      variant="outlined"
+                      className="w-full"
+                      placeholder="0"
+                      inputRef={deadlineDate}
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+
             <div className="w-full flex flex-col flex-wrap">
               <div>Keterangan</div>
               <div className="w-full md:w-1/2">
