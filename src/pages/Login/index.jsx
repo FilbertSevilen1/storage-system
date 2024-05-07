@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import Snackbar from "@mui/material/Snackbar";
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = process.env.REACT_APP_API_URL;
 function Login() {
   const vertical = "top";
   const horizontal = "center";
@@ -39,46 +39,57 @@ function Login() {
       return setSnackbarMessage("Password tidak boleh kosong!");
     }
 
-    console.log(username.current.value);
-    console.log(password.current.value);
+    let body = {
+      username: username.current.value,
+      password: password.current.value,
+    };
 
-    if (username.current.value == "Admin") {
-      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "Admin" }, timestamp: new Date().getTime()}))
-      dispatch({
-        type: "USER_LOGIN",
-        payload: { id: 1, name: username.current.value, role: "Admin" },
+    let header = {
+      "Access-Control-Allow-Origin": "*",
+    };
+
+    axios
+      .post(API_URL + "/auth/login", body, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          // Add other headers as needed
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-      navigate("/home");
-    } 
-    else if (username.current.value == "SuperAdmin"){
-      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "SuperAdmin" }, timestamp: new Date().getTime()}))
-      dispatch({
-        type: "USER_LOGIN",
-        payload: { id: 1, name: username.current.value, role: "Super Admin" },
-      });
-      navigate("/home");
-    }
-    else {
-      localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "User" }, timestamp: new Date().getTime()}))
-      dispatch({
-        
-        type: "USER_LOGIN",
-        payload: { id: 1, name: username.current.value, role: "User" },
-      });
-      navigate("/home");
-    }
+
+    // if (username.current.value == "Admin") {
+    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "Admin" }, timestamp: new Date().getTime()}))
+    //   dispatch({
+    //     type: "USER_LOGIN",
+    //     payload: { id: 1, name: username.current.value, role: "Admin" },
+    //   });
+    //   navigate("/home");
+    // }
+    // else if (username.current.value == "SuperAdmin"){
+    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "SuperAdmin" }, timestamp: new Date().getTime()}))
+    //   dispatch({
+    //     type: "USER_LOGIN",
+    //     payload: { id: 1, name: username.current.value, role: "Super Admin" },
+    //   });
+    //   navigate("/home");
+    // }
+    // else {
+    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "User" }, timestamp: new Date().getTime()}))
+    //   dispatch({
+
+    //     type: "USER_LOGIN",
+    //     payload: { id: 1, name: username.current.value, role: "User" },
+    //   });
+    //   navigate("/home");
+    // }
   };
-  
 
   useEffect(() => {
-    axios.get(API_URL + "/wheel")
-    .then((res)=>{
-      console.log(res)
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-
     if (user.role) {
       navigate("/home");
     }
