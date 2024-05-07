@@ -11,15 +11,19 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 import React, { useRef, useState } from "react";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function UserRow(props) {
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
   const horizontal = "center";
-  
+
   let [id, setID] = useState(props.userId);
   let [name, setName] = useState(props.userName);
+  let [roleId, setRoleId] = useState(props.userRoleId);
   let [role, setRole] = useState(props.userRole);
   let [email, setEmail] = useState(props.userEmail);
   let [birthdate, setBirthdate] = useState(props.userBirthdate);
@@ -30,25 +34,30 @@ function UserRow(props) {
 
   const [editDialog, setEditDialog] = useState(false);
 
-  const openEditDialog = (name, type, email, birthdate, gender, phone, citizenId) => {
+  const openEditDialog = (
+    name,
+    role,
+    email,
+    birthdate,
+    gender,
+    phone,
+    citizenId,
+    status
+  ) => {
     setEditUserNameDefault(name);
-    setEditUserRole(type);
+    setEditUserRole(role);
     setEditUserEmailDefault(email);
     setEditUserBirthdateDefault(birthdate);
     setEditUserGender(gender);
-    setEditPhoneDefault(phone)
-    setEditCitizenIdDefault(citizenId)
+    setEditPhoneDefault(phone);
+    setEditCitizenIdDefault(citizenId);
+    setEditUserStatus(status);
 
-    resetErrorMessage();
     setEditDialog(true);
   };
   const closeEditDialog = () => {
     setEditDialog(false);
   };
-
-  const [listRole, setListRole] = useState([
-    'Admin', 'User'
-  ])
 
   const editUserName = useRef("");
   const [editUserNameDefault, setEditUserNameDefault] = useState("");
@@ -62,24 +71,8 @@ function UserRow(props) {
   const editUserCitizenId = useRef("");
   const [editPhoneDefault, setEditPhoneDefault] = useState("");
   const [editCitizenIdDefault, setEditCitizenIdDefault] = useState("");
-  const [editUserStatus, setEditUserStatus] = useState("")
+  const [editUserStatus, setEditUserStatus] = useState("");
 
-  // Error Handling
-  const [errorEditUserName, setErrorEditUserName] = useState(false);
-  const [errorEditUserNameMessage, setErrorEditUserNameMessage] = useState("");
-  const [errorEditUserEmail, setErrorEditUserEmail] = useState(false);
-  const [errorEditUserEmailMessage, setErrorEditUserEmailMessage] =
-    useState("");
-  const [errorEditUserBirthDate, setErrorEditUserBirthDate] = useState(false);
-  const [errorEditUserBirthDateMessage, setErrorEditUserBirthDateMessage] =
-    useState("");
-  const [errorEditUserRole, setErrorEditUserRole] = useState(false);
-  const [errorEditUserRoleMessage, setErrorEditUserRoleMessage] = useState("");
-  const [errorEditUserGender, setErrorEditUserGender] = useState(false);
-  const [errorEditUserGenderMessage, setErrorEditUserGenderMessage] =
-    useState("");
-
-    
   const handleInputRole = (event) => {
     setEditUserRole(event.target.value);
   };
@@ -87,70 +80,11 @@ function UserRow(props) {
     setEditUserGender(event.target.value);
   };
 
-  const handleInputStatus = (event) =>{
+  const handleInputStatus = (event) => {
     setEditUserStatus(event.target.value);
-  }
-
-  const resetErrorMessage = () =>{
-    setErrorEditUserName(false);
-    setErrorEditUserNameMessage("");
-    setErrorEditUserEmail(false);
-    setErrorEditUserEmailMessage("");
-    setErrorEditUserBirthDate(false);
-    setErrorEditUserBirthDateMessage("");
-    setErrorEditUserRole(false);
-    setErrorEditUserRoleMessage("");
-    setErrorEditUserGender(false);
-    setErrorEditUserGenderMessage("");
-  }
-
-  const checkErrorUsername = () => {
-    if (!editUserName.current.value) {
-      setErrorEditUserName(true);
-      return setErrorEditUserNameMessage("Username tidak boleh kosong!");
-    }
-    setErrorEditUserName(false);
-    setErrorEditUserNameMessage("");
-  };
-  const checkErrorEmail = () => {
-    if (!editUserEmail.current.value) {
-      setErrorEditUserEmail(true);
-      return setErrorEditUserEmailMessage("Email tidak boleh kosong!");
-    }
-    setErrorEditUserEmail(false);
-    setErrorEditUserEmailMessage("");
   };
 
-  const checkErrorBirthDate = () => {
-    if (!editUserBirthdate.current.value) {
-      setErrorEditUserBirthDate(true);
-      return setErrorEditUserBirthDateMessage(
-        "Tanggal Lahir tidak boleh kosong!"
-      );
-    }
-    setErrorEditUserBirthDate(false);
-    setErrorEditUserBirthDateMessage("");
-  };
-
-  const checkErrorRole = () => {
-    if (!editUserRole) {
-      setErrorEditUserRole(true);
-      return setErrorEditUserRoleMessage("Role tidak boleh kosong!");
-    }
-    setErrorEditUserRole(false);
-    setErrorEditUserRoleMessage("");
-  };
-
-  const checkErrorGender = () => {
-    if (!editUserGender) {
-      setErrorEditUserGender(true);
-      return setErrorEditUserGenderMessage("Gender tidak boleh kosong!");
-    }
-    setErrorEditUserGender(false);
-    setErrorEditUserGenderMessage("");
-  };
-
-  const onSubmit = () =>{
+  const onSubmit = () => {
     if (editUserName.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
@@ -186,22 +120,62 @@ function UserRow(props) {
       }, 3000);
       return setSnackbarMessage("Jenis Kelamin tidak boleh kosong");
     }
-    return closeEditDialog();
-  }
-
-  const generateRoleData = () =>{
-    if(listRole){
-      return listRole.map((role,index)=>{
-        return(
-          <MenuItem value={role}>{role}</MenuItem>
-        )
-      })
+    if (editUserPhone.current.value == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Nomor Telepon tidak boleh kosong");
     }
-  }
+    if (editUserCitizenId.current.value == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Nomor KTP tidak boleh kosong");
+    }
+    if (editUserStatus == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Status tidak boleh kosong");
+    }
 
+    let body = {
+      id: id,
+      name: editUserName.current.value,
+      password: "u53R2o2A",
+      gender: editUserGender,
+      email: editUserEmail.current.value,
+      phoneNumber: editUserPhone.current.value,
+      ktp: editUserCitizenId.current.value,
+      birthDate: editUserBirthdate,
+      roleId: editUserRole,
+    };
+
+    console.log(body);
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+    console.log(token.token)
+    axios
+      .put(API_URL + "/user/update", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    return closeEditDialog();
+  };
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
-       <Snackbar
+      <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}
         autoHideDuration={3000}
@@ -214,8 +188,6 @@ function UserRow(props) {
           <div className="w-full flex justify-between flex-wrap">
             <div className="p-2 w-1/2">
               <TextField
-                error={errorEditUserName}
-                onChange={checkErrorUsername}
                 margin="dense"
                 id="name"
                 name="name"
@@ -226,9 +198,6 @@ function UserRow(props) {
                 inputRef={editUserName}
                 defaultValue={editUserNameDefault}
               />
-              <div className="text-red-500 text-md">
-                {errorEditUserNameMessage}
-              </div>
             </div>
 
             <div className="p-2 w-1/2 mt-2">
@@ -243,18 +212,25 @@ function UserRow(props) {
                   placeholder="Kategori"
                   fullWidth
                   defaultValue={editUserRole}
+                  disabled={
+                    editUserRole == "3389a328-8272-4ae4-a8d0-b53d7597f009"
+                  }
                 >
-                  {generateRoleData()}
+                  <MenuItem value={"3389a328-8272-4ae4-a8d0-b53d7597f009"}>
+                    Super Admin
+                  </MenuItem>
+
+                  <MenuItem value={"c510b438-ade0-4df1-b469-58212703f4b1"}>
+                    Admin
+                  </MenuItem>
+                  <MenuItem value={"54013ecf-d55e-4588-9a64-f93cdba97267"}>
+                    User
+                  </MenuItem>
                 </Select>
               </FormControl>
-              <div className="text-red-500 text-md">
-                {errorEditUserRoleMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                error={errorEditUserEmail}
-                onChange={checkErrorEmail}
                 margin="dense"
                 id="name"
                 name="name"
@@ -265,13 +241,9 @@ function UserRow(props) {
                 inputRef={editUserEmail}
                 defaultValue={editUserEmailDefault}
               />
-               <div className="text-red-500 text-md">
-                {errorEditUserEmailMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                onChange={checkErrorBirthDate}
                 InputLabelProps={{ shrink: true }}
                 margin="dense"
                 id="name"
@@ -283,9 +255,6 @@ function UserRow(props) {
                 inputRef={editUserBirthdate}
                 defaultValue={editUserBirthdateDefault}
               />
-               <div className="text-red-500 text-md">
-                {errorEditUserBirthDate}
-              </div>
             </div>
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
@@ -302,17 +271,13 @@ function UserRow(props) {
                   fullWidth
                   defaultValue={editUserGender}
                 >
-                  <MenuItem value={"Laki-laki"}>Laki-laki</MenuItem>
-                  <MenuItem value={"Perempuan"}>Perempuan</MenuItem>
+                  <MenuItem value={"Male"}>Laki-laki</MenuItem>
+                  <MenuItem value={"Female"}>Perempuan</MenuItem>
                 </Select>
               </FormControl>
-              <div className="text-red-500 text-md">
-                {errorEditUserGender}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                onChange={checkErrorEmail}
                 margin="dense"
                 id="name"
                 name="name"
@@ -326,7 +291,6 @@ function UserRow(props) {
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                onChange={checkErrorEmail}
                 margin="dense"
                 id="name"
                 name="name"
@@ -341,7 +305,7 @@ function UserRow(props) {
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">
-                Status User
+                  Status User
                 </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -352,9 +316,12 @@ function UserRow(props) {
                   placeholder="Status User"
                   fullWidth
                   defaultValue={editUserStatus}
+                  disabled={
+                    editUserRole == "3389a328-8272-4ae4-a8d0-b53d7597f009"
+                  }
                 >
-                  <MenuItem value={"Aktif"}>Aktif</MenuItem>
-                  <MenuItem value={"Tidak Aktif"}>Tidak Aktif</MenuItem>
+                  <MenuItem value={true}>Aktif</MenuItem>
+                  <MenuItem value={false}>Tidak Aktif</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -367,30 +334,43 @@ function UserRow(props) {
           </Button>
         </DialogActions>
       </Dialog>
-      <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
-        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Id : </div>
+      <div className="w-full md:w-fill flex flex-col md:flex-row p-4 items-start md:items-center justify-evenly">
+        <div className="w-full md:w-1/12 flex flex-wrap justify-start md:justify-center">
+          <div className="flex md:hidden mr-2  md:mr-0 font-bold">No : </div>
           {id}
         </div>
-        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Nama : </div>
+        <div className="w-full md:w-3/12 flex flex-wrap justify-start md:justify-center">
+          <div className="flex md:hidden mr-2  md:mr-0 font-bold">Nama : </div>
           {name}
         </div>
-        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Role : </div>
+        <div className="w-full md:w-3/12 flex flex-wrap justify-start md:justify-center">
+          <div className="flex md:hidden mr-2  md:mr-0 font-bold">Role : </div>
           {role}
         </div>
-        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Email : </div>
+        <div className="w-full md:w-2/12 flex flex-wrap justify-start md:justify-center">
+          <div className="flex md:hidden mr-2  md:mr-0 font-bold">Email : </div>
           {email}
         </div>
-        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Status : </div>
-          {status}
+        <div className="w-full md:w-2/12 flex flex-wrap justify-start md:justify-center">
+          <div className="flex md:hidden mr-2  md:mr-0 font-bold">
+            Status :{" "}
+          </div>
+          {status == true ? "Aktif" : "Tidak Aktif"}
         </div>
-        <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
+        <div className=" w-full md:w-1/12 flex rounded-xl flex justify-center items-center">
           <div
-            onClick={() => openEditDialog(name, role, email, birthdate, gender, phone, citizenId)}
+            onClick={() =>
+              openEditDialog(
+                name,
+                roleId,
+                email,
+                birthdate,
+                gender,
+                phone,
+                citizenId,
+                status
+              )
+            }
             className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
           >
             <svg

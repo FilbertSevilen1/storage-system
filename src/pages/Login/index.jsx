@@ -57,19 +57,37 @@ function Login() {
       })
       .then((res) => {
         console.log(res.data.token);
+        const token = res.data.token;
         localStorage.setItem(
           "bearer_token",
           JSON.stringify({
-            token: res.data.token,
+            token: token,
             timestamp: new Date().getTime(),
           })
         );
-          localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "Super Admin" }, timestamp: new Date().getTime()}))
-          dispatch({
-            type: "USER_LOGIN",
-            payload: { id: 1, name: email.current.value, role: "Super Admin" },
-          });
-          navigate("/home");
+        const user = res.data.user;
+        localStorage.setItem(
+          "ss_token",
+          JSON.stringify({
+            user: {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.roleName,
+            },
+            timestamp: new Date().getTime(),
+          })
+        );
+        dispatch({
+          type: "USER_LOGIN",
+          payload: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.roleName,
+          },
+        });
+        navigate("/home");
       })
       .catch((err) => {
         console.log(err.response.data.message);
@@ -79,32 +97,6 @@ function Login() {
         }, 3000);
         return setSnackbarMessage(err.response.data.message);
       });
-
-    // if (email.current.value == "Admin") {
-    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "Admin" }, timestamp: new Date().getTime()}))
-    //   dispatch({
-    //     type: "USER_LOGIN",
-    //     payload: { id: 1, name: email.current.value, role: "Admin" },
-    //   });
-    //   navigate("/home");
-    // }
-    // else if (email.current.value == "SuperAdmin"){
-    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "SuperAdmin" }, timestamp: new Date().getTime()}))
-    //   dispatch({
-    //     type: "USER_LOGIN",
-    //     payload: { id: 1, name: email.current.value, role: "Super Admin" },
-    //   });
-    //   navigate("/home");
-    // }
-    // else {
-    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "User" }, timestamp: new Date().getTime()}))
-    //   dispatch({
-
-    //     type: "USER_LOGIN",
-    //     payload: { id: 1, name: email.current.value, role: "User" },
-    //   });
-    //   navigate("/home");
-    // }
   };
 
   useEffect(() => {

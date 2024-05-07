@@ -5,6 +5,8 @@ import PinjamanHeader from "../../../components/PinjamanHeader";
 import PinjamanRow from "../../../components/PinjamanRow";
 import HorizontalDivider from "../../../components/base/HorizontalDivider";
 import SubHeading from "../../../components/base/SubHeading";
+import MyPinjamanHeader from "../../../components/MyPinjamanHeader";
+import MyPinjamanRow from "../../../components/MyPinjamanRow";
 function PinjamanSaya() {
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -98,7 +100,7 @@ function PinjamanSaya() {
       return listPinjaman.map((pinjaman, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
           return (
-            <PinjamanRow
+            <MyPinjamanRow
               index={index}
               key={index}
               pinjamanId={pinjaman.borrow_id}
@@ -109,7 +111,7 @@ function PinjamanSaya() {
               pinjamanJumlah={pinjaman.borrow_count}
               pinjamanStatus={pinjaman.status_borrow_name}
               page={page}
-            ></PinjamanRow>
+            ></MyPinjamanRow>
           );
       });
     }
@@ -210,7 +212,7 @@ function PinjamanSaya() {
             </div>
           </div>
           <div className="bg-white w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
-            <PinjamanHeader></PinjamanHeader>
+            <MyPinjamanHeader></MyPinjamanHeader>
             {generatePinjamanData()}
             <div className="w-full justify-end items-center mt-4 flex">
               <Button onClick={prevPage}>

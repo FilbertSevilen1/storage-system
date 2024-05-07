@@ -24,9 +24,12 @@ import UserHeader from "../../components/UserHeader";
 import HorizontalDivider from "../../components/base/HorizontalDivider";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function User() {
-  const user = useSelector((state)=>state.user)
-  const navigate = useNavigate()
+  const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -39,56 +42,50 @@ function User() {
   const [dialogTitle, setDialogTitle] = useState("");
 
   const searchItem = useRef();
-  const [listRole, setListRole] = useState([
-    'Admin', 'User'
-  ])
-  const [listGender,setListGender] = useState([
-    'Laki-laki', 'Perempuan'
-  ])
+  const [listRole, setListRole] = useState(["Admin", "User"]);
+  const [listGender, setListGender] = useState(["Laki-laki", "Perempuan"]);
   const [listUser, setListUser] = useState([
-    {
-      user_id: "1",
-      user_name: "Greg Sutarto",
-      user_role: "Admin",
-      user_email: "tarto@gmail.com",
-      user_birthdate: "2024-01-01",
-      user_gender: "Laki-laki",
-      user_phone_number: "123123123123",
-      user_citizen_id: "1111222244445555",
-      user_status:"Aktif"
-    },
-    {
-      user_id: "2",
-      user_name: "Ig Warsito",
-      user_role: "Admin",
-      user_email: "ito@gmail.com",
-      user_birthdate: "2024-01-01",
-      user_gender: "Laki-laki",
-      user_phone_number: "123123123123",
-      user_citizen_id: "1111222244445555",
-      user_status:"Aktif"
-    },
-    {
-      user_id: "3",
-      user_name: "Ari",
-      user_role: "User",
-      user_email: "ari@gmail.com",
-      user_birthdate: "2024-01-01",
-      user_gender: "Laki-laki",
-      user_phone_number: "123123123123",
-      user_citizen_id: "1111222244445555",
-      user_status:"Aktif"
-    },
+
   ]);
 
   useEffect(() => {
-    if(user.role!="Super Admin" && user.role !=""){
-      navigate("/")
+    if (user.role != "Super Admin" && user.role != "") {
+      navigate("/");
     }
     getUserList();
   }, [page]);
 
+  const getDataUserList = () => {
+    let body = {};
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+    console.log(token.token);
+    axios
+      .post(API_URL + "/user/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.users
+        if(data){
+          setListUser(data)
+        }
+        else{
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          return setSnackbarMessage("Get Data Gagal");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const getUserList = () => {
+    getDataUserList();
+
     if (listUser.length % 5 === 0) {
       setMaxPage(Math.floor(listUser.length / 5));
     } else setMaxPage(Math.floor(listUser.length / 5) + 1);
@@ -112,15 +109,16 @@ function User() {
             <UserRow
               index={index}
               key={index}
-              userId={user.user_id}
-              userName={user.user_name}
-              userRole={user.user_role}
-              userEmail={user.user_email}
-              userBirthdate={user.user_birthdate}
-              userGender={user.user_gender}
-              userPhone={user.user_phone_number}
-              userCitizenId={user.user_citizen_id}
-              userStatus={user.user_status}
+              userId={index+1}
+              userName={user.name}
+              userRoleId={user.roleId}
+              userRole={user.roleName}
+              userEmail={user.email}
+              userBirthdate={user.dateOfBirth}
+              userGender={user.gender}
+              userPhone={user.phoneNumber}
+              userCitizenId={user.ktp}
+              userStatus={user.isActive}
               page={page}
             ></UserRow>
           );
@@ -128,24 +126,20 @@ function User() {
     }
   };
 
-  const generateRoleData = () =>{
-    if(listRole){
-      return listRole.map((role,index)=>{
-        return(
-          <MenuItem value={role}>{role}</MenuItem>
-        )
-      })
+  const generateRoleData = () => {
+    if (listRole) {
+      return listRole.map((role, index) => {
+        return <MenuItem value={role}>{role}</MenuItem>;
+      });
     }
-  }
-  const generateGenderData = () =>{
-    if(listGender){
-      return listGender.map((gender,index)=>{
-        return(
-          <MenuItem value={gender}>{gender}</MenuItem>
-        )
-      })
+  };
+  const generateGenderData = () => {
+    if (listGender) {
+      return listGender.map((gender, index) => {
+        return <MenuItem value={gender}>{gender}</MenuItem>;
+      });
     }
-  }
+  };
 
   const openAddDialog = () => {
     resetErrorMessage();
@@ -158,7 +152,6 @@ function User() {
   // Search
   const [searchUserRole, setSearchUserRole] = useState("");
   const [searchUserGender, setSearchUserGender] = useState("");
-
 
   const addUserName = useRef("");
   const addUserPassword = useRef("");
@@ -183,19 +176,18 @@ function User() {
   const [errorAddUserGenderMessage, setErrorAddUserGenderMessage] =
     useState("");
 
-
-    const resetErrorMessage = () =>{
-      setErrorAddUserName(false);
-      setErrorAddUserNameMessage("");
-      setErrorAddUserEmail(false);
-      setErrorAddUserEmailMessage("");
-      setErrorAddUserBirthDate(false);
-      setErrorAddUserBirthDateMessage("");
-      setErrorAddUserPassword(false);
-      setErrorAddUserPasswordMessage("");
-      setErrorAddUserGender(false);
-      setErrorAddUserGenderMessage("");
-    }
+  const resetErrorMessage = () => {
+    setErrorAddUserName(false);
+    setErrorAddUserNameMessage("");
+    setErrorAddUserEmail(false);
+    setErrorAddUserEmailMessage("");
+    setErrorAddUserBirthDate(false);
+    setErrorAddUserBirthDateMessage("");
+    setErrorAddUserPassword(false);
+    setErrorAddUserPasswordMessage("");
+    setErrorAddUserGender(false);
+    setErrorAddUserGenderMessage("");
+  };
 
   const checkErrorUsername = () => {
     if (!addUserName.current.value) {
@@ -254,7 +246,6 @@ function User() {
   const handleInputSearchGender = (event) => {
     setSearchUserGender(event.target.value);
   };
-
 
   const onSubmit = () => {
     if (addUserName.current.value == "") {
@@ -474,14 +465,10 @@ function User() {
                 + Tambah User
               </Button>
             </div>
-            <HorizontalDivider>
-
-            </HorizontalDivider>
+            <HorizontalDivider></HorizontalDivider>
             <div className="w-full mt-4">
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Jabatan
-                </InputLabel>
+                <InputLabel id="demo-simple-select-label">Jabatan</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"

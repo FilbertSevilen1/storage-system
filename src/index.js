@@ -12,7 +12,6 @@ const initialState = {
     name:"",
     role:""
   },
-  count: 5
 }
 function reducers(state = initialState, action) {
   switch (action.type) {

@@ -14,8 +14,15 @@ function Navbar() {
     navigate("/");
   };
   useEffect(() => {
-    console.log("user", user);
-    if (path.pathname != "/" && user.name == "") {
+    let userdata = ""
+    if(localStorage.getItem('ss_token')){
+      const logindata = localStorage.getItem('ss_token');
+      const {user, timestamp} = JSON.parse(logindata)
+      userdata = user
+    }
+    
+    
+    if (path.pathname != "/" && userdata.role == "") {
       navigate("/");
     }
   });
