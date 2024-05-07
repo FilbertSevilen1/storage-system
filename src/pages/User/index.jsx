@@ -58,7 +58,6 @@ function User() {
   const getDataUserList = () => {
     let body = {};
     const token = JSON.parse(localStorage.getItem("bearer_token"));
-    console.log(token.token);
     axios
       .post(API_URL + "/user/list", body, {
         headers: {

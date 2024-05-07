@@ -10,6 +10,7 @@ const initialState = {
   user:{
     id: "",
     name:"",
+    email:"",
     role:""
   },
 }
@@ -22,6 +23,7 @@ function reducers(state = initialState, action) {
         user:{
           id: action.payload.id,
           name: action.payload.name,
+          email:action.payload.email,
           role: action.payload.role
         },
       }
