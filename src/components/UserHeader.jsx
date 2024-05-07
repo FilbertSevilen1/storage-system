@@ -7,6 +7,7 @@ function UserHeader() {
         <div className="w-3/12 flex justify-center">Nama</div>
         <div className="w-3/12 flex justify-center">Jabatan</div>
         <div className="w-3/12 flex justify-center">Email</div>
+        <div className="w-3/12 flex justify-center">Status</div>
         <div className="w-3/12 flex justify-center">Aksi</div>
       </div>
     </div>

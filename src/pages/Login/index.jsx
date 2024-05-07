@@ -5,7 +5,9 @@ import { Button, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import Snackbar from "@mui/material/Snackbar";
+import axios from "axios";
 
+const API_URL = process.env.REACT_APP_API_URL
 function Login() {
   const vertical = "top";
   const horizontal = "center";
@@ -69,6 +71,13 @@ function Login() {
   
 
   useEffect(() => {
+    axios.get(API_URL + "/wheel")
+    .then((res)=>{
+      console.log(res)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
 
     if (user.role) {
       navigate("/home");

@@ -24,6 +24,7 @@ import Penalty from './pages/Penalty/index.jsx';
 import MyPenalty from './pages/Penalty/MyPenalty/index.jsx';
 import EditPinjaman from './pages/Pinjaman/Edit/index.jsx';
 import ReturnPinjaman from './pages/Pinjaman/Return/index.jsx';
+import Purchase from './pages/Purchase/index.jsx';
 
 function App() {
   const dispatch = useDispatch();
@@ -76,6 +77,8 @@ function App() {
 
         <Route path="/penalty" element={<Penalty/>}></Route>
         <Route path="/penalty/mypenalty" element={<MyPenalty/>}></Route>
+
+        <Route path="/purchase" element={<Purchase/>}></Route>
 
         <Route path="/user" element={<User />}></Route>
       </Routes>

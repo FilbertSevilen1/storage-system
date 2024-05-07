@@ -55,6 +55,7 @@ function User() {
       user_gender: "Laki-laki",
       user_phone_number: "123123123123",
       user_citizen_id: "1111222244445555",
+      user_status:"Aktif"
     },
     {
       user_id: "2",
@@ -65,6 +66,7 @@ function User() {
       user_gender: "Laki-laki",
       user_phone_number: "123123123123",
       user_citizen_id: "1111222244445555",
+      user_status:"Aktif"
     },
     {
       user_id: "3",
@@ -75,11 +77,12 @@ function User() {
       user_gender: "Laki-laki",
       user_phone_number: "123123123123",
       user_citizen_id: "1111222244445555",
+      user_status:"Aktif"
     },
   ]);
 
   useEffect(() => {
-    if(user.role!="Super Admin"){
+    if(user.role!="Super Admin" && user.role !=""){
       navigate("/")
     }
     getUserList();
@@ -117,6 +120,7 @@ function User() {
               userGender={user.user_gender}
               userPhone={user.user_phone_number}
               userCitizenId={user.user_citizen_id}
+              userStatus={user.user_status}
               page={page}
             ></UserRow>
           );

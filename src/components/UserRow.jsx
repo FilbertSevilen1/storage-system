@@ -25,7 +25,8 @@ function UserRow(props) {
   let [birthdate, setBirthdate] = useState(props.userBirthdate);
   let [gender, setGender] = useState(props.userGender);
   let [phone, setPhone] = useState(props.userPhone);
-  let [citizenId, setCitizenId] = useState(props.userCitizenId)
+  let [citizenId, setCitizenId] = useState(props.userCitizenId);
+  let [status, setStatus] = useState(props.userStatus);
 
   const [editDialog, setEditDialog] = useState(false);
 
@@ -61,6 +62,7 @@ function UserRow(props) {
   const editUserCitizenId = useRef("");
   const [editPhoneDefault, setEditPhoneDefault] = useState("");
   const [editCitizenIdDefault, setEditCitizenIdDefault] = useState("");
+  const [editUserStatus, setEditUserStatus] = useState("")
 
   // Error Handling
   const [errorEditUserName, setErrorEditUserName] = useState(false);
@@ -77,7 +79,6 @@ function UserRow(props) {
   const [errorEditUserGenderMessage, setErrorEditUserGenderMessage] =
     useState("");
 
-
     
   const handleInputRole = (event) => {
     setEditUserRole(event.target.value);
@@ -85,6 +86,10 @@ function UserRow(props) {
   const handleInputGender = (event) => {
     setEditUserGender(event.target.value);
   };
+
+  const handleInputStatus = (event) =>{
+    setEditUserStatus(event.target.value);
+  }
 
   const resetErrorMessage = () =>{
     setErrorEditUserName(false);
@@ -333,6 +338,26 @@ function UserRow(props) {
                 defaultValue={editCitizenIdDefault}
               />
             </div>
+            <div className="p-2 w-1/2 mt-2">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                Status User
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={editUserStatus}
+                  label="Status User"
+                  onChange={handleInputStatus}
+                  placeholder="Status User"
+                  fullWidth
+                  defaultValue={editUserStatus}
+                >
+                  <MenuItem value={"Aktif"}>Aktif</MenuItem>
+                  <MenuItem value={"Tidak Aktif"}>Tidak Aktif</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
           </div>
         </DialogContent>
         <DialogActions>
@@ -358,6 +383,10 @@ function UserRow(props) {
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Email : </div>
           {email}
+        </div>
+        <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
+          <div className="flex md:hidden mr-2 font-bold">Status : </div>
+          {status}
         </div>
         <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
           <div
