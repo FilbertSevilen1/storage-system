@@ -14,8 +14,8 @@ function Navbar() {
     navigate("/");
   };
   useEffect(() => {
-    console.log(path.pathname);
-    if (path.pathname != "/" && user.username == "") {
+    console.log("user", user);
+    if (path.pathname != "/" && user.name == "") {
       navigate("/");
     }
   });
@@ -156,7 +156,7 @@ function Navbar() {
           </div>
           <div className="h-12 w-0.5 bg-gray-200"></div>
           <div className="dropdown">
-            <button className="dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl">
+            <button className="dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl flex whitespace-nowrap">
               Hi, {user.name}
             </button>
             <div className="dropdown-content">

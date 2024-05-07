@@ -43,6 +43,7 @@ function App() {
           });
         } else {
             localStorage.removeItem('ss_token'); // Remove expired data
+            localStorage.removeItem('bearer_token');
         }
       }
     }

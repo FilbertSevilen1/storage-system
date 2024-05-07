@@ -271,7 +271,7 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Jenis Peralatan tidak boleh kosong");
     }
-    if (!requestPeralatanBrand) {
+    if (!requestPeralatanBrand) { 
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);

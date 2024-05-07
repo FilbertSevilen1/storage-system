@@ -12,7 +12,7 @@ function Login() {
   const vertical = "top";
   const horizontal = "center";
 
-  const username = useRef();
+  const email = useRef();
   const password = useRef();
 
   const [snackbar, setSnackbar] = useState(false);
@@ -24,12 +24,12 @@ function Login() {
   const user = useSelector((state) => state.user);
 
   const login = () => {
-    if (!username.current.value) {
+    if (!email.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
-      return setSnackbarMessage("Username tidak boleh kosong!");
+      return setSnackbarMessage("Email tidak boleh kosong!");
     }
     if (!password.current.value) {
       setSnackbar(true);
@@ -40,7 +40,7 @@ function Login() {
     }
 
     let body = {
-      username: username.current.value,
+      email: email.current.value,
       password: password.current.value,
     };
 
@@ -56,34 +56,52 @@ function Login() {
         },
       })
       .then((res) => {
-        console.log(res);
+        console.log(res.data.token);
+        localStorage.setItem(
+          "bearer_token",
+          JSON.stringify({
+            token: res.data.token,
+            timestamp: new Date().getTime(),
+          })
+        );
+          localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "Super Admin" }, timestamp: new Date().getTime()}))
+          dispatch({
+            type: "USER_LOGIN",
+            payload: { id: 1, name: email.current.value, role: "Super Admin" },
+          });
+          navigate("/home");
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data.message);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage(err.response.data.message);
       });
 
-    // if (username.current.value == "Admin") {
-    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "Admin" }, timestamp: new Date().getTime()}))
+    // if (email.current.value == "Admin") {
+    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "Admin" }, timestamp: new Date().getTime()}))
     //   dispatch({
     //     type: "USER_LOGIN",
-    //     payload: { id: 1, name: username.current.value, role: "Admin" },
+    //     payload: { id: 1, name: email.current.value, role: "Admin" },
     //   });
     //   navigate("/home");
     // }
-    // else if (username.current.value == "SuperAdmin"){
-    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "SuperAdmin" }, timestamp: new Date().getTime()}))
+    // else if (email.current.value == "SuperAdmin"){
+    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "SuperAdmin" }, timestamp: new Date().getTime()}))
     //   dispatch({
     //     type: "USER_LOGIN",
-    //     payload: { id: 1, name: username.current.value, role: "Super Admin" },
+    //     payload: { id: 1, name: email.current.value, role: "Super Admin" },
     //   });
     //   navigate("/home");
     // }
     // else {
-    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: username.current.value, role: "User" }, timestamp: new Date().getTime()}))
+    //   localStorage.setItem('ss_token',JSON.stringify({user:{ id: 1, name: email.current.value, role: "User" }, timestamp: new Date().getTime()}))
     //   dispatch({
 
     //     type: "USER_LOGIN",
-    //     payload: { id: 1, name: username.current.value, role: "User" },
+    //     payload: { id: 1, name: email.current.value, role: "User" },
     //   });
     //   navigate("/home");
     // }
@@ -109,9 +127,9 @@ function Login() {
 
         <div className="flex flex-col w-full md:w-[450px] text-xl md:text-2xl mt-8">
           <TextField
-            inputRef={username}
+            inputRef={email}
             id="standard-basic"
-            label="Username"
+            label="Email"
             variant="standard"
             margin="normal"
           />
