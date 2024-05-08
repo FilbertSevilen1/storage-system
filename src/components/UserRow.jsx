@@ -150,7 +150,6 @@ function UserRow(props) {
     let body = {
       id: id,
       name: editUserName.current.value,
-
       gender: editUserGender,
       email: editUserEmail.current.value,
       phoneNumber: editUserPhone.current.value,
@@ -169,7 +168,12 @@ function UserRow(props) {
         },
       })
       .then((res) => {
-        console.log(res);
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+            window.location.reload()
+          }, 1000);
+          return setSnackbarMessage("Update User Berhasil");
       })
       .catch((err) => {
         console.log(err);
@@ -223,7 +227,6 @@ function UserRow(props) {
                   <MenuItem value={"3389a328-8272-4ae4-a8d0-b53d7597f009"}>
                     Super Admin
                   </MenuItem>
-
                   <MenuItem value={"c510b438-ade0-4df1-b469-58212703f4b1"}>
                     Admin
                   </MenuItem>
@@ -275,8 +278,8 @@ function UserRow(props) {
                   fullWidth
                   defaultValue={editUserGender}
                 >
-                  <MenuItem value={"Male"}>Laki-laki</MenuItem>
-                  <MenuItem value={"Female"}>Perempuan</MenuItem>
+                  <MenuItem value={"Laki-laki"}>Laki-laki</MenuItem>
+                  <MenuItem value={"Perempuan"}>Perempuan</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -389,19 +392,6 @@ function UserRow(props) {
               />
             </svg>
           </div>
-          {/* <div className="mx-1 p-1 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="black"
-                d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"
-              />
-            </svg>
-          </div> */}
         </div>
       </div>
     </div>

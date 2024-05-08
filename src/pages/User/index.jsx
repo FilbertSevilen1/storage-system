@@ -44,44 +44,50 @@ function User() {
   const searchItem = useRef();
   const [listRole, setListRole] = useState(["Admin", "User"]);
   const [listGender, setListGender] = useState(["Laki-laki", "Perempuan"]);
-  const [listUser, setListUser] = useState([
+  const [listUser, setListUser] = useState([]);
 
-  ]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (user.role != "Super Admin" && user.role != "") {
-      navigate("/");
-    }
-    getUserList();
-  }, [page]);
-
-  const getDataUserList = () => {
-    let body = {};
+  const getDataUserList = async () => {
+    setLoading(true);
+    let body = {
+      name: searchItem.current.value,
+      roleId: searchUserRole,
+      gender: searchUserGender,
+    };
     const token = JSON.parse(localStorage.getItem("bearer_token"));
-    axios
+    await axios
       .post(API_URL + "/user/list", body, {
         headers: {
           Authorization: `Bearer ${token.token}`,
         },
       })
       .then((res) => {
-        const data = res.data.users
-        if(data){
-          setListUser(data)
+        const data = res.data.users;
+
+        if (data) {
+          setListUser(data);
           if (listUser.length % 5 === 0) {
             setMaxPage(Math.floor(listUser.length / 5));
           } else setMaxPage(Math.floor(listUser.length / 5) + 1);
-        }
-        else{
+          generateUserData();
+          setLoading(false);
+        } else {
           setSnackbar(true);
           setTimeout(() => {
             setSnackbar(false);
           }, 3000);
+          setLoading(false);
           return setSnackbarMessage("Get Data Gagal");
         }
       })
       .catch((err) => {
-        console.log(err);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage(err.response.data.message);
       });
   };
 
@@ -99,7 +105,8 @@ function User() {
     setPage(page + 1);
   };
 
-  const generateKategoriData = () => {
+  const generateUserData = () => {
+    console.log("LIST", listUser);
     if (listUser) {
       return listUser.map((user, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
@@ -107,7 +114,7 @@ function User() {
             <UserRow
               index={index}
               key={index}
-              userIndex={index+1}
+              userIndex={index + 1}
               userId={user.id}
               userName={user.name}
               userRoleId={user.roleId}
@@ -125,13 +132,6 @@ function User() {
     }
   };
 
-  const generateRoleData = () => {
-    if (listRole) {
-      return listRole.map((role, index) => {
-        return <MenuItem value={role}>{role}</MenuItem>;
-      });
-    }
-  };
   const generateGenderData = () => {
     if (listGender) {
       return listGender.map((gender, index) => {
@@ -159,7 +159,6 @@ function User() {
   const addUserPhone = useRef("");
   const addUserCitizenId = useRef("");
 
-
   const handleInputGender = (event) => {
     setAddUserGender(event.target.value);
   };
@@ -170,6 +169,18 @@ function User() {
 
   const handleInputSearchGender = (event) => {
     setSearchUserGender(event.target.value);
+  };
+
+  const handleSearchNameKeyDown = (event) =>{
+    if (event.key == 'Enter') {
+      getDataUserList();
+    }
+  }
+
+  const resetFilter = () => {
+    setSearchUserRole("");
+    setSearchUserGender("");
+    getDataUserList();
   };
 
   const onSubmit = () => {
@@ -209,15 +220,15 @@ function User() {
       return setSnackbarMessage("Jenis Kelamin tidak boleh kosong");
     }
 
-    if (addUserPhone.current.value == ""){
+    if (addUserPhone.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       return setSnackbarMessage("Nomor Telepon tidak boleh kosong");
     }
-    
-    if (addUserCitizenId.current.value == ""){
+
+    if (addUserCitizenId.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -225,8 +236,50 @@ function User() {
       return setSnackbarMessage("Nomor KTP tidak boleh kosong");
     }
 
+    let body = {
+      name: addUserName.current.value,
+      password: addUserPassword.current.value,
+      gender: addUserGender,
+      email: addUserEmail.current.value,
+      phoneNumber: addUserPhone.current.value,
+      ktp: addUserCitizenId.current.value,
+      birthDate: addUserBirthDate.current.value,
+      roleId: "54013ecf-d55e-4588-9a64-f93cdba97267",
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/user/register", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Penambahan User Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage(err.response.data.message);
+      });
+
     return closeAddDialog();
   };
+
+  useEffect(() => {
+    if (user.role != "Super Admin" && user.role != "") {
+      navigate("/");
+    }
+    getUserList();
+  }, [searchUserGender, searchUserRole]);
 
   return (
     <div className="w-full">
@@ -323,7 +376,7 @@ function User() {
             <div className="p-2 w-1/2">
               <TextField
                 margin="dense"
-                id="name"
+                id="ktp"
                 name="name"
                 label="Nomor KTP"
                 type="text"
@@ -362,6 +415,7 @@ function User() {
           <div className="w-full ml-4">
             <Input
               inputRef={searchItem}
+              onKeyDown={handleSearchNameKeyDown}
               id=""
               label="Username"
               variant="standard"
@@ -395,7 +449,15 @@ function User() {
                   placeholder="Jabatan"
                   fullWidth
                 >
-                  {generateRoleData()}
+                  <MenuItem value={"3389a328-8272-4ae4-a8d0-b53d7597f009"}>
+                    Super Admin
+                  </MenuItem>
+                  <MenuItem value={"c510b438-ade0-4df1-b469-58212703f4b1"}>
+                    Admin
+                  </MenuItem>
+                  <MenuItem value={"54013ecf-d55e-4588-9a64-f93cdba97267"}>
+                    User
+                  </MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -417,10 +479,21 @@ function User() {
                 </Select>
               </FormControl>
             </div>
+            <div className="mt-4">
+              <Button
+                onClick={resetFilter}
+                variant="contained"
+                size="large"
+                fullWidth
+              >
+                Reset Filter
+              </Button>
+            </div>
           </div>
           <div className="bg-white w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
             <UserHeader></UserHeader>
-            {generateKategoriData()}
+            {loading ? <></> : <>{generateUserData()}</>}
+
             <div className="w-full justify-end items-center mt-4 flex">
               <Button onClick={prevPage}>
                 <svg
