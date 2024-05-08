@@ -68,6 +68,9 @@ function User() {
         const data = res.data.users
         if(data){
           setListUser(data)
+          if (listUser.length % 5 === 0) {
+            setMaxPage(Math.floor(listUser.length / 5));
+          } else setMaxPage(Math.floor(listUser.length / 5) + 1);
         }
         else{
           setSnackbar(true);
@@ -84,10 +87,6 @@ function User() {
 
   const getUserList = () => {
     getDataUserList();
-
-    if (listUser.length % 5 === 0) {
-      setMaxPage(Math.floor(listUser.length / 5));
-    } else setMaxPage(Math.floor(listUser.length / 5) + 1);
   };
 
   const prevPage = () => {
@@ -108,7 +107,8 @@ function User() {
             <UserRow
               index={index}
               key={index}
-              userId={index+1}
+              userIndex={index+1}
+              userId={user.id}
               userName={user.name}
               userRoleId={user.roleId}
               userRole={user.roleName}
@@ -141,7 +141,6 @@ function User() {
   };
 
   const openAddDialog = () => {
-    resetErrorMessage();
     setAddDialog(true);
   };
   const closeAddDialog = () => {
@@ -160,79 +159,6 @@ function User() {
   const addUserPhone = useRef("");
   const addUserCitizenId = useRef("");
 
-  // Error Handling
-  const [errorAddUserName, setErrorAddUserName] = useState(false);
-  const [errorAddUserNameMessage, setErrorAddUserNameMessage] = useState("");
-  const [errorAddUserPassword, setErrorAddUserPassword] = useState(false);
-  const [errorAddUserPasswordMessage, setErrorAddUserPasswordMessage] =
-    useState("");
-  const [errorAddUserEmail, setErrorAddUserEmail] = useState(false);
-  const [errorAddUserEmailMessage, setErrorAddUserEmailMessage] = useState("");
-  const [errorAddUserBirthDate, setErrorAddUserBirthDate] = useState(false);
-  const [errorAddUserBirthDateMessage, setErrorAddUserBirthDateMessage] =
-    useState("");
-  const [errorAddUserGender, setErrorAddUserGender] = useState(false);
-  const [errorAddUserGenderMessage, setErrorAddUserGenderMessage] =
-    useState("");
-
-  const resetErrorMessage = () => {
-    setErrorAddUserName(false);
-    setErrorAddUserNameMessage("");
-    setErrorAddUserEmail(false);
-    setErrorAddUserEmailMessage("");
-    setErrorAddUserBirthDate(false);
-    setErrorAddUserBirthDateMessage("");
-    setErrorAddUserPassword(false);
-    setErrorAddUserPasswordMessage("");
-    setErrorAddUserGender(false);
-    setErrorAddUserGenderMessage("");
-  };
-
-  const checkErrorUsername = () => {
-    if (!addUserName.current.value) {
-      setErrorAddUserName(true);
-      return setErrorAddUserNameMessage("Username tidak boleh kosong!");
-    }
-    setErrorAddUserName(false);
-    setErrorAddUserNameMessage("");
-  };
-  const checkErrorEmail = () => {
-    if (!addUserEmail.current.value) {
-      setErrorAddUserEmail(true);
-      return setErrorAddUserEmailMessage("Email tidak boleh kosong!");
-    }
-    setErrorAddUserEmail(false);
-    setErrorAddUserEmailMessage("");
-  };
-
-  const checkErrorBirthDate = () => {
-    if (!addUserBirthDate.current.value) {
-      setErrorAddUserBirthDate(true);
-      return setErrorAddUserBirthDateMessage(
-        "Tanggal Lahir tidak boleh kosong!"
-      );
-    }
-    setErrorAddUserBirthDate(false);
-    setErrorAddUserBirthDateMessage("");
-  };
-
-  const checkErrorPassword = () => {
-    if (!addUserPassword.current.value) {
-      setErrorAddUserPassword(true);
-      return setErrorAddUserPasswordMessage("Password tidak boleh kosong!");
-    }
-    setErrorAddUserPassword(false);
-    setErrorAddUserPasswordMessage("");
-  };
-
-  const checkErrorGender = () => {
-    if (!addUserGender) {
-      setErrorAddUserGender(true);
-      return setErrorAddUserGenderMessage("Gender tidak boleh kosong!");
-    }
-    setErrorAddUserGender(false);
-    setErrorAddUserGenderMessage("");
-  };
 
   const handleInputGender = (event) => {
     setAddUserGender(event.target.value);
@@ -282,6 +208,23 @@ function User() {
       }, 3000);
       return setSnackbarMessage("Jenis Kelamin tidak boleh kosong");
     }
+
+    if (addUserPhone.current.value == ""){
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Nomor Telepon tidak boleh kosong");
+    }
+    
+    if (addUserCitizenId.current.value == ""){
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Nomor KTP tidak boleh kosong");
+    }
+
     return closeAddDialog();
   };
 
@@ -300,8 +243,6 @@ function User() {
           <div className="w-full flex justify-between flex-wrap">
             <div className="p-2 w-1/2">
               <TextField
-                error={errorAddUserName}
-                onChange={checkErrorUsername}
                 margin="dense"
                 id="name"
                 name="name"
@@ -311,14 +252,9 @@ function User() {
                 variant="outlined"
                 inputRef={addUserName}
               />
-              <div className="text-red-500 text-md">
-                {errorAddUserNameMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                error={errorAddUserPassword}
-                onChange={checkErrorPassword}
                 margin="dense"
                 id="name"
                 name="name"
@@ -328,14 +264,9 @@ function User() {
                 variant="outlined"
                 inputRef={addUserPassword}
               />
-              <div className="text-red-500 text-md">
-                {errorAddUserPasswordMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                error={errorAddUserEmail}
-                onChange={checkErrorEmail}
                 margin="dense"
                 id="name"
                 name="name"
@@ -345,15 +276,10 @@ function User() {
                 variant="outlined"
                 inputRef={addUserEmail}
               />
-              <div className="text-red-500 text-md">
-                {errorAddUserEmailMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
                 InputLabelProps={{ shrink: true }}
-                error={errorAddUserBirthDate}
-                onChange={checkErrorBirthDate}
                 margin="dense"
                 id="name"
                 name="name"
@@ -363,9 +289,6 @@ function User() {
                 variant="outlined"
                 inputRef={addUserBirthDate}
               />
-              <div className="text-red-500 text-md">
-                {errorAddUserBirthDateMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
@@ -384,17 +307,13 @@ function User() {
                   {generateGenderData()}
                 </Select>
               </FormControl>
-              <div className="text-red-500 text-md">
-                {errorAddUserGenderMessage}
-              </div>
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                onChange={checkErrorEmail}
                 margin="dense"
                 id="name"
                 name="name"
-                label="Email"
+                label="Nomor Telepon"
                 type="text"
                 fullWidth
                 variant="outlined"
@@ -403,11 +322,10 @@ function User() {
             </div>
             <div className="p-2 w-1/2">
               <TextField
-                onChange={checkErrorEmail}
                 margin="dense"
                 id="name"
                 name="name"
-                label="Email"
+                label="Nomor KTP"
                 type="text"
                 fullWidth
                 variant="outlined"

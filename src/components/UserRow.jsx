@@ -21,6 +21,7 @@ function UserRow(props) {
   const vertical = "top";
   const horizontal = "center";
 
+  let [index,setIndex] = useState(props.userIndex)
   let [id, setID] = useState(props.userId);
   let [name, setName] = useState(props.userName);
   let [roleId, setRoleId] = useState(props.userRoleId);
@@ -142,18 +143,21 @@ function UserRow(props) {
       return setSnackbarMessage("Status tidak boleh kosong");
     }
 
+    console.log(id)
+
+// password: "u53R2o2A",
+
     let body = {
       id: id,
       name: editUserName.current.value,
-      password: "u53R2o2A",
+
       gender: editUserGender,
       email: editUserEmail.current.value,
       phoneNumber: editUserPhone.current.value,
       ktp: editUserCitizenId.current.value,
-      birthDate: editUserBirthdate,
+      birthDate: editUserBirthdate.current.value,
       roleId: editUserRole,
     };
-
     console.log(body);
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -337,7 +341,7 @@ function UserRow(props) {
       <div className="w-full md:w-fill flex flex-col md:flex-row p-4 items-start md:items-center justify-evenly">
         <div className="w-full md:w-1/12 flex flex-wrap justify-start md:justify-center">
           <div className="flex md:hidden mr-2  md:mr-0 font-bold">No : </div>
-          {id}
+          {index}
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start md:justify-center">
           <div className="flex md:hidden mr-2  md:mr-0 font-bold">Nama : </div>
