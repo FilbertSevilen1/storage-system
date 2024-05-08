@@ -68,10 +68,9 @@ function Merek() {
       .post(API_URL + "/brand/list", body, {
         headers: {
           Authorization: `Bearer ${token.token}`,
-        },
+      },
       })
       .then((res) => {
-        console.log(res);
         setListMerek(res.data.brands);
         
         setLoading(false);

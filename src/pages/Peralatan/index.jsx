@@ -36,21 +36,21 @@ function Peralatan() {
 
   const searchItem = useRef();
   const [searchCategory, setSearchCategory] = useState("");
-  const [searchType, setSearchType] = useState("");
-  const [searchCount, setSearchCount] = useState("");
+  const [searchType, setSearchType] = useState(null);
+  const searchCount = useRef("");
   const [listPeralatan, setListPeralatan] = useState([]);
 
-  const [listKategori, setListKategori] = useState([
-    "Elektronik",
-    "Alat Tulis",
-    "Lainnya",
-  ]);
+  const [listKategori, setListKategori] = useState([]);
+
+  const [listBrand, setListBrand] = useState([]);
 
   const [listTipe, setListTipe] = useState(["Berseri", "Tidak Berseri"]);
 
   useEffect(() => {
     getPeralatanList();
-  }, [page]);
+    getDataKategoriList();
+    getDataBrandList();
+  }, [searchCategory, searchType]);
 
   useEffect(() => {
     getMaxPage();
@@ -64,18 +64,72 @@ function Peralatan() {
 
   const handleSearchCategory = (event) => {
     setSearchCategory(event.target.value);
+    getDataPeralatanList();
   };
   const handleSearchType = (event) => {
     setSearchType(event.target.value);
+    getDataPeralatanList();
   };
 
   const getPeralatanList = () => {
     getDataPeralatanList();
   };
 
+  const getDataKategoriList = () => {
+    let body = {};
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/category/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setListKategori(res.data.categories);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
+  const getDataBrandList = () => {
+    let body = {};
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/brand/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setListBrand(res.data.brands);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
   const getDataPeralatanList = () => {
+    setLoading(true);
     const body = {
       name: searchItem.current.value,
+      // categoryId:searchCategory,
+      hasIdentifier: searchType,
+      // minimumCount:searchCount.current.value
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -89,6 +143,7 @@ function Peralatan() {
       .then((res) => {
         console.log(res);
         setListPeralatan(res.data.peralatans);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -136,10 +191,19 @@ function Peralatan() {
     }
   };
 
-  const generateSelectPeralatanKategoryList = () => {
+  const generateSelectPeralatanCategoryList = () => {
     if (listKategori) {
       return listKategori.map((kategori, index) => {
-        return <MenuItem value={kategori}>{kategori}</MenuItem>;
+        return <MenuItem value={kategori.id}>{kategori.name}</MenuItem>;
+      });
+    }
+  };
+
+  const generateSelectPeralatanBrandList = () => {
+    console.log(listBrand);
+    if (listBrand) {
+      return listBrand.map((brand, index) => {
+        return <MenuItem value={brand.id}>{brand.name}</MenuItem>;
       });
     }
   };
@@ -147,12 +211,12 @@ function Peralatan() {
   const generateSelectPeralatanTipeList = () => {
     if (listTipe) {
       return listTipe.map((tipe, index) => {
-        return <MenuItem value={tipe}>{tipe}</MenuItem>;
+        return <MenuItem value={tipe.id}>{tipe.name}</MenuItem>;
       });
     }
   };
 
-  const [addDialog, setAddDialog] = useState("");
+  const [addDialog, setAddDialog] = useState(false);
 
   const openAddDialog = () => {
     setAddDialog(true);
@@ -176,7 +240,6 @@ function Peralatan() {
   };
 
   const changeUploadAddImage = (event) => {
-
     const file = event.target.files[0];
     const reader = new FileReader();
 
@@ -235,13 +298,28 @@ function Peralatan() {
 
     console.log(body);
 
-    // const token = JSON.parse(localStorage.getItem("bearer_token"));
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
-    // axios.post(API_URL + "/peralatan/create", body, {
-    //   headers: {
-    //     Authorization: `Bearer ${token.token}`,
-    //   },
-    // });
+    axios
+      .post(API_URL + "/peralatan/create", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Perekaman Data Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Perekaman Data Gagal");
+      });
   };
 
   const onSubmitRequest = () => {
@@ -280,6 +358,38 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
+
+    let body = {
+      itemName:requestPeralatanName.current.value,
+      itemDescription: requestPeralatanDeskripsi.current.value,
+      itemCount: requestPeralatanCount.current.value,
+      reason: requestPeralatanReason.current.value,
+      brandId: requestPeralatanBrand.current.value,
+    }
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios.post(API_URL + "/request/create", body, {
+      headers: {
+        Authorization: `Bearer ${token.token}`,
+      },
+    })
+    .then((res)=>{
+      setLoading(false);
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+        window.location.reload()
+      }, 1000);
+      return setSnackbarMessage("Pembuatan Pengajuan Berhasil");
+    })
+    .catch((err)=>{
+      setLoading(false);
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Pembuatan Pengajuan Gagal");
+    })
   };
 
   // Request
@@ -313,6 +423,13 @@ function Peralatan() {
     }
   };
 
+  const resetFilter = () =>{
+    setSearchCategory("")
+    setSearchType(null)
+    searchCount.current.value = ""
+    getDataPeralatanList();
+  }
+ 
   return (
     <div className="w-full">
       <Snackbar
@@ -359,11 +476,11 @@ function Peralatan() {
                   id="peralatanType"
                   value={requestPeralatanBrand}
                   label="Kategori"
-                  onChange={handleInputBrand}
+                  onChange={handleInputRequestBrand}
                   placeholder="Kategori"
                   fullWidth
                 >
-                  <MenuItem value={"Lenovo"}>{"Lenovo"}</MenuItem>
+                  {generateSelectPeralatanBrandList()}
                 </Select>
               </FormControl>
             </div>
@@ -393,7 +510,7 @@ function Peralatan() {
         </DialogContent>
         <DialogActions>
           <Button onClick={closeRequestDialog}>Cancel</Button>
-          <Button onClick={onSubmit} type="submit">
+          <Button onClick={onSubmitRequest} type="submit">
             <b>Ajukan</b>
           </Button>
         </DialogActions>
@@ -416,7 +533,11 @@ function Peralatan() {
               />
             </div>
             <div className="p-2 w-1/2">
-              <input className="mt-5" type="file" onChange={changeUploadAddImage} />
+              <input
+                className="mt-5"
+                type="file"
+                onChange={changeUploadAddImage}
+              />
             </div>
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
@@ -430,12 +551,7 @@ function Peralatan() {
                   placeholder="Kategori"
                   fullWidth
                 >
-                  <MenuItem value={"Berseri"}>
-                    {"Elektronik (Berseri)"}
-                  </MenuItem>
-                  <MenuItem value={"Tidak Berseri"}>
-                    {"Alat Tulis (Tidak Berseri)"}
-                  </MenuItem>
+                  {generateSelectPeralatanCategoryList()}
                 </Select>
               </FormControl>
             </div>
@@ -452,7 +568,7 @@ function Peralatan() {
                   placeholder="Kategori"
                   fullWidth
                 >
-                  <MenuItem value={"Lenovo"}>{"Lenovo"}</MenuItem>
+                  {generateSelectPeralatanBrandList()}
                 </Select>
               </FormControl>
             </div>
@@ -549,7 +665,7 @@ function Peralatan() {
                     placeholder="Kategori"
                     fullWidth
                   >
-                    {generateSelectPeralatanKategoryList()}
+                    {generateSelectPeralatanCategoryList()}
                   </Select>
                 </FormControl>
               </div>
@@ -565,22 +681,25 @@ function Peralatan() {
                     placeholder="Tipe"
                     fullWidth
                   >
-                    {generateSelectPeralatanTipeList()}
+                    <MenuItem value={true}>Berseri</MenuItem>
+                    <MenuItem value={false}>Tidak Berseri</MenuItem>
                   </Select>
                 </FormControl>
               </div>
               <div className="w-full mt-4">
                 <TextField
+                  onKeyDown={handleSearchNameKeyDown}
                   inputRef={searchCount}
                   type="number"
                   id="jumlahMinimum"
+                  name="searchMinimumCount"
                   label="Jumlah Minimum"
                   variant="outlined"
                   fullWidth
                 />
               </div>
               <div className="w-full mt-8">
-                <Button variant="contained" size="large" fullWidth>
+                <Button onClick={()=>resetFilter()} variant="contained" size="large" fullWidth>
                   Reset
                 </Button>
               </div>
@@ -588,7 +707,8 @@ function Peralatan() {
           </div>
           <div className="w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between bg-white">
             <PeralatanHeader></PeralatanHeader>
-            {generatePeralatanData()}
+            {loading ? <></> : <>{generatePeralatanData()}</>}
+
             <div className="w-full justify-end items-center mt-4 flex">
               <Button onClick={prevPage}>
                 <svg
