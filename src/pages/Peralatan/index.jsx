@@ -19,7 +19,11 @@ import PeralatanHeader from "../../components/PeralatanHeader";
 import Heading from "../../components/base/Heading";
 import HorizontalDivider from "../../components/base/HorizontalDivider";
 import { useSelector } from "react-redux";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function Peralatan() {
+  const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user);
 
   const [page, setPage] = useState(1);
@@ -34,79 +38,7 @@ function Peralatan() {
   const [searchCategory, setSearchCategory] = useState("");
   const [searchType, setSearchType] = useState("");
   const [searchCount, setSearchCount] = useState("");
-  const [listPeralatan, setListPeralatan] = useState([
-    {
-      peralatan_id: "1",
-      peralatan_name: "Komputer",
-      category_id: "1",
-      category_name: "Elektronik (Berseri)",
-      peralatan_description: "Ini Komputer",
-      peralatan_count: "15",
-      peralatan_available: "20",
-      peralatan_image: "Test",
-      has_identifier: true,
-      brand_name : "Lenovo"
-    },
-    {
-      peralatan_id: "0",
-      peralatan_name: "Komputer",
-      category_id: "1",
-      category_name: "Elektronik (Berseri)",
-      peralatan_description: "Ini Komputer",
-      peralatan_count: "15",
-      peralatan_available: "20",
-      peralatan_image: "Test",
-      has_identifier: true,
-      brand_name : "Lenovo"
-    },
-    {
-      peralatan_id: "0",
-      peralatan_name: "Komputer",
-      category_id: "1",
-      category_name: "Elektronik (Berseri)",
-      peralatan_description: "Ini Komputer",
-      peralatan_count: "15",
-      peralatan_available: "20",
-      peralatan_image: "Test",
-      brand_name : "Lenovo"
-    },
-    {
-      peralatan_id: "0",
-      peralatan_name: "Komputer",
-      category_id: "1",
-      category_name: "Elektronik (Berseri)",
-      peralatan_description: "Ini Komputer",
-      peralatan_count: "15",
-      peralatan_available: "20",
-      peralatan_image: "Test",
-      has_identifier: true,
-      brand_name : "Lenovo"
-    },
-    {
-      peralatan_id: "0",
-      peralatan_name: "Komputer",
-      category_id: "2",
-      category_name: "Elektronik (Tidak Berseri)",
-      peralatan_description: "Ini Komputer",
-      peralatan_count: "15",
-      peralatan_available: "20",
-      peralatan_image: "Test",
-      has_identifier: false,
-      brand_name : "Lenovo"
-    },
-    {
-      peralatan_id: "0",
-      peralatan_name: "Komputer",
-      category_id: "2",
-      category_name: "Elektronik (Tidak Berseri)",
-      peralatan_description: "Ini Komputer",
-      peralatan_count: "15",
-      peralatan_available: "20",
-      peralatan_image: "Test",
-      has_identifier: false,
-      brand_name : "Lenovo"
-    },
-  ]);
+  const [listPeralatan, setListPeralatan] = useState([]);
 
   const [listKategori, setListKategori] = useState([
     "Elektronik",
@@ -117,8 +49,18 @@ function Peralatan() {
   const [listTipe, setListTipe] = useState(["Berseri", "Tidak Berseri"]);
 
   useEffect(() => {
-    getPeralatanData();
+    getPeralatanList();
   }, [page]);
+
+  useEffect(() => {
+    getMaxPage();
+  }, [listPeralatan]);
+
+  const getMaxPage = () => {
+    if (listPeralatan.length % 5 === 0) {
+      setMaxPage(Math.floor(listPeralatan.length / 5));
+    } else setMaxPage(Math.floor(listPeralatan.length / 5) + 1);
+  };
 
   const handleSearchCategory = (event) => {
     setSearchCategory(event.target.value);
@@ -127,14 +69,35 @@ function Peralatan() {
     setSearchType(event.target.value);
   };
 
-  const getPeralatanData = () => {
-    getPeralatanList();
+  const getPeralatanList = () => {
+    getDataPeralatanList();
   };
 
-  const getPeralatanList = () => {
-    if (listPeralatan.length % 5 === 0) {
-      setMaxPage(Math.floor(listPeralatan.length / 5));
-    } else setMaxPage(Math.floor(listPeralatan.length / 5) + 1);
+  const getDataPeralatanList = () => {
+    const body = {
+      name: searchItem.current.value,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/peralatan/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setListPeralatan(res.data.peralatans);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal mendapatkan data");
+      });
   };
 
   const prevPage = () => {
@@ -156,14 +119,15 @@ function Peralatan() {
               index={index}
               key={index}
               showAdd={true}
-              peralatanId={peralatan.peralatan_id}
-              peralatanName={peralatan.peralatan_name}
-              peralatanCategory={peralatan.category_name}
-              peralatanDescription={peralatan.peralatan_description}
-              peralatanStock={peralatan.peralatan_count}
-              peralatanAvailable={peralatan.peralatan_available}
-              peralatanImage={peralatan.peralatan_image}
-              hasIdentifier={peralatan.has_identifier}
+              peralatanId={peralatan.id}
+              peralatanName={peralatan.name}
+              peralatanCategory={peralatan.categoryName}
+              peralatanBrand={peralatan.brandName}
+              peralatanDescription={peralatan.description}
+              peralatanStock={peralatan.count}
+              peralatanAvailable={peralatan.count - peralatan.borrowCount}
+              peralatanImage={peralatan.image}
+              hasIdentifier={peralatan.hasIdentifier}
               brandName={peralatan.brand_name}
               page={page}
             ></PeralatanRow>
@@ -198,7 +162,7 @@ function Peralatan() {
   };
 
   const addPeralatanName = useRef("");
-  const addPeralatanImage = useRef("");
+  const [addPeralatanImage, setAddPeralatanImage] = useState("");
   const [addPeralatanCategory, setAddPeralatanCategory] = useState("");
   const [addPeralatanBrand, setAddPeralatanBrand] = useState("");
   const addPeralatanDeskripsi = useRef("");
@@ -211,6 +175,18 @@ function Peralatan() {
     setAddPeralatanBrand(event.target.value);
   };
 
+  const changeUploadAddImage = (event) => {
+
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      setAddPeralatanImage(event.target.result);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
   const onSubmit = () => {
     if (!addPeralatanName.current.value) {
       setSnackbar(true);
@@ -219,7 +195,7 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
-    if (!addPeralatanImage.current.value) {
+    if (!addPeralatanImage) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -247,6 +223,25 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
+
+    let body = {
+      peralatan_name: addPeralatanName.current.value,
+      peralatan_description: addPeralatanDeskripsi.current.value,
+      peralatan_image: addPeralatanImage,
+      peralatan_count: 0,
+      category_id: addPeralatanCategory,
+      brand_id: addPeralatanBrand,
+    };
+
+    console.log(body);
+
+    // const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    // axios.post(API_URL + "/peralatan/create", body, {
+    //   headers: {
+    //     Authorization: `Bearer ${token.token}`,
+    //   },
+    // });
   };
 
   const onSubmitRequest = () => {
@@ -271,7 +266,7 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Jenis Peralatan tidak boleh kosong");
     }
-    if (!requestPeralatanBrand) { 
+    if (!requestPeralatanBrand) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -309,6 +304,13 @@ function Peralatan() {
 
   const handleInputRequestBrand = (event) => {
     setRequestPeralatanBrand(event.target.value);
+  };
+
+  const handleSearchNameKeyDown = (event) => {
+    if (event.key == "Enter") {
+      setPage(1);
+      getDataPeralatanList();
+    }
   };
 
   return (
@@ -414,17 +416,7 @@ function Peralatan() {
               />
             </div>
             <div className="p-2 w-1/2">
-              <TextField
-                InputLabelProps={{ shrink: true }}
-                margin="dense"
-                id="peralatanImage"
-                name="name"
-                label="Gambar"
-                type="file"
-                fullWidth
-                variant="outlined"
-                inputRef={addPeralatanImage}
-              />
+              <input className="mt-5" type="file" onChange={changeUploadAddImage} />
             </div>
             <div className="p-2 w-1/2 mt-2">
               <FormControl fullWidth>
@@ -481,7 +473,7 @@ function Peralatan() {
         </DialogContent>
         <DialogActions>
           <Button onClick={closeAddDialog}>Cancel</Button>
-          <Button onClick={onSubmitRequest} type="submit">
+          <Button onClick={onSubmit} type="submit">
             <b>Tambah</b>
           </Button>
         </DialogActions>
@@ -505,6 +497,7 @@ function Peralatan() {
           </svg>
           <div className="w-full ml-4">
             <Input
+              onKeyDown={handleSearchNameKeyDown}
               inputRef={searchItem}
               id=""
               label="Username"
@@ -587,13 +580,8 @@ function Peralatan() {
                 />
               </div>
               <div className="w-full mt-8">
-                <Button
-                  onClick={() => getPeralatanData()}
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                >
-                  Cari
+                <Button variant="contained" size="large" fullWidth>
+                  Reset
                 </Button>
               </div>
             </div>

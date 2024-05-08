@@ -53,7 +53,7 @@ import { useNavigate } from "react-router";
             <div className="flex md:hidden mr-2 font-bold">Tanggal Pembelian : </div>
             {date}
           </div>
-          <div className=" w-full md:w-2/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
+          <div className=" w-full md:w-2/12 flex mx-2 rounded-xl flex justify-start md:justify-center items-center">
           <div className="flex md:hidden mr-2 font-bold">Total Harga : </div>
             {price}
           </div>

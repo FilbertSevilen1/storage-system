@@ -28,7 +28,7 @@ function PeralatanRow(props) {
   let [stock, setStock] = useState(props.peralatanStock);
   let [available, setAvailable] = useState(props.peralatanAvailable);
   let [hasIdentifier, setHasIdentifier] = useState(props.hasIdentifier);
-  let [brandName, setBrandName] = useState(props.brandName)
+  let [brandName, setBrandName] = useState(props.peralatanBrand)
 
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -70,10 +70,8 @@ function PeralatanRow(props) {
     }
 
     setAddDialogType(type);
-
     setAddPeralatanNamaDefault(name);
     setAddPeralatanGambarDefault(Gambar);
-
     setAddPeralatanKategori(type);
     // addPeralatanGambar.current.value = Gambar,
     // setAddDialogType(type);
@@ -303,7 +301,7 @@ function PeralatanRow(props) {
         <img src={image} className="w-full h-full"></img>
       </div>
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
+        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-start">
           <div className="flex md:hidden mr-2 font-bold">Nama : </div>
           {name} - {brandName}
         </div>
@@ -311,7 +309,7 @@ function PeralatanRow(props) {
           <div className="flex md:hidden mr-2 font-bold">Kategori : </div>
           {category}
         </div>
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
+        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-start">
           <div className="flex md:hidden mr-2 font-bold">Description : </div>
           {description}
         </div>
