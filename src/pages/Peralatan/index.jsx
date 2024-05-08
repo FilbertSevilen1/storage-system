@@ -35,7 +35,7 @@ function Peralatan() {
   const horizontal = "center";
 
   const searchItem = useRef();
-  const [searchCategory, setSearchCategory] = useState("");
+  const [searchCategory, setSearchCategory] = useState(null);
   const [searchType, setSearchType] = useState(null);
   const searchCount = useRef("");
   const [listPeralatan, setListPeralatan] = useState([]);
@@ -127,9 +127,9 @@ function Peralatan() {
     setLoading(true);
     const body = {
       name: searchItem.current.value,
-      // categoryId:searchCategory,
+      categoryId:searchCategory,
       hasIdentifier: searchType,
-      // minimumCount:searchCount.current.value
+      minimumCount:searchCount.current.value
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -337,13 +337,13 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Jumlah tidak boleh kosong");
     }
-    if (!requestPeralatanCategory) {
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-      }, 3000);
-      return setSnackbarMessage("Jenis Peralatan tidak boleh kosong");
-    }
+    // if (!requestPeralatanCategory) {
+    //   setSnackbar(true);
+    //   setTimeout(() => {
+    //     setSnackbar(false);
+    //   }, 3000);
+    //   return setSnackbarMessage("Jenis Peralatan tidak boleh kosong");
+    // }
     if (!requestPeralatanBrand) {
       setSnackbar(true);
       setTimeout(() => {
@@ -364,7 +364,8 @@ function Peralatan() {
       itemDescription: requestPeralatanDeskripsi.current.value,
       itemCount: requestPeralatanCount.current.value,
       reason: requestPeralatanReason.current.value,
-      brandId: requestPeralatanBrand.current.value,
+      brandId: requestPeralatanBrand,
+      peralatanId: null,
     }
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
@@ -424,9 +425,9 @@ function Peralatan() {
   };
 
   const resetFilter = () =>{
-    setSearchCategory("")
+    setSearchCategory(null)
     setSearchType(null)
-    searchCount.current.value = ""
+    searchCount.current.value = null
     getDataPeralatanList();
   }
  

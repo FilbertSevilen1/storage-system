@@ -90,7 +90,6 @@ function Login() {
         navigate("/home");
       })
       .catch((err) => {
-        console.log(err.response.data.message);
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);

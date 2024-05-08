@@ -47,15 +47,15 @@ function Merek() {
     getMerekList();
   }, []);
 
-  useEffect(()=>{
-    getMaxPage()
-  },[listMerek])
+  useEffect(() => {
+    getMaxPage();
+  }, [listMerek]);
 
-  const getMaxPage = () =>{
+  const getMaxPage = () => {
     if (listMerek.length % 5 == 0) {
       setMaxPage(Math.floor(listMerek.length / 5));
     } else setMaxPage(Math.floor(listMerek.length / 5) + 1);
-  }
+  };
 
   const getDataMerekList = () => {
     setLoading(true);
@@ -68,11 +68,11 @@ function Merek() {
       .post(API_URL + "/brand/list", body, {
         headers: {
           Authorization: `Bearer ${token.token}`,
-      },
+        },
       })
       .then((res) => {
         setListMerek(res.data.brands);
-        
+
         setLoading(false);
       })
       .catch((err) => {
@@ -130,7 +130,7 @@ function Merek() {
 
   const handleSearchNameKeyDown = (event) => {
     if (event.key == "Enter") {
-      setPage(1)
+      setPage(1);
       getDataMerekList();
     }
   };
