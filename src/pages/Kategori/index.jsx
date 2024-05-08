@@ -19,7 +19,11 @@ import PeralatanHeader from "../../components/PeralatanHeader";
 import Heading from "../../components/base/Heading";
 import KategoriHeader from "../../components/KategoriHeader";
 import KategoriRow from "../../components/KategoriRow";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function Kategori() {
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -31,28 +35,55 @@ function Kategori() {
   const [AddDialog, setAddDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");
 
-  const [listTipe, setListTipe] = useState([
-    'Berseri',
-    'Tidak Berseri',
-  ])
+  const [listTipe, setListTipe] = useState(["Berseri", "Tidak Berseri"]);
 
   const searchItem = useRef();
-  const [listKategori, setListKategori] = useState([
-    {
-      category_id: "1",
-      category_name: "Elektronik",
-      category_type: "Berseri",
-    },
-  ]);
+  const [listKategori, setListKategori] = useState([]);
+
+  const getMaxPage = () => {
+    if (listKategori.length % 5 === 0) {
+      setMaxPage(Math.floor(listKategori.length / 5));
+    } else setMaxPage(Math.floor(listKategori.length / 5) + 1);
+  };
 
   useEffect(() => {
     getKategoriList();
   }, [page]);
 
+  useEffect(() => {
+    getMaxPage();
+  }, [listKategori]);
+
+  const getDataKategoriList = async () => {
+    setLoading(true);
+    let body = {
+      name: searchItem.current.value,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    await axios
+      .post(API_URL + "/category/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setListKategori(res.data.categories);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
   const getKategoriList = () => {
-    if (listKategori.length % 5 === 0) {
-      setMaxPage(Math.floor(listKategori.length / 5));
-    } else setMaxPage(Math.floor(listKategori.length / 5) + 1);
+    getDataKategoriList();
   };
 
   const prevPage = () => {
@@ -73,9 +104,10 @@ function Kategori() {
             <KategoriRow
               index={index}
               key={index}
-              kategoriId={kategori.category_id}
-              kategoriNama={kategori.category_name}
-              kategoriType={kategori.category_type}
+              kategoriIndex={index + 1}
+              kategoriId={kategori.id}
+              kategoriNama={kategori.name}
+              kategoriType={kategori.hasIdentifier}
               page={page}
             ></KategoriRow>
           );
@@ -91,7 +123,7 @@ function Kategori() {
   };
 
   const addKategoriName = useRef("");
-  const [addKategoriType, setAddKategoriType] = useState("");
+  const [addKategoriType, setAddKategoriType] = useState(null);
 
   const [errorAddKategoriNama, setErrorAddKategoriNama] = useState(false);
   const [errorAddKategoriNamaMessage, setErrorAddKategoriNamaMessage] =
@@ -114,20 +146,13 @@ function Kategori() {
     return setErrorAddKategoriNama(false);
   };
 
-  const generateSelectKategoriTipeList = () =>{
-    if(listTipe){
-      return listTipe.map((tipe,index)=>{
-        return(
-          <MenuItem value={tipe}>{tipe}</MenuItem>
-        )
-      })
+  const handleSearchNameKeyDown = (event) => {
+    if (event.key == "Enter") {
+      setPage(1);
+      getDataKategoriList();
     }
-  }
-
-  const resetAddDialog = () => {
-    addKategoriName.current.value = "";
-    setAddKategoriType("");
   };
+
   const onSubmit = () => {
     if (addKategoriName.current.value == "") {
       setSnackbar(true);
@@ -136,7 +161,7 @@ function Kategori() {
       }, 3000);
       return setSnackbarMessage("Nama Kategori tidak boleh kosong");
     }
-    if (addKategoriType == "") {
+    if (addKategoriType == null) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -144,7 +169,34 @@ function Kategori() {
       return setSnackbarMessage("Tipe Kategori tidak boleh kosong");
     }
 
-    resetAddDialog();
+    const body = {
+      name: addKategoriName.current.value,
+      hasIdentifier: addKategoriType,
+    };
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/category/create", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Berhasil Merekam Data");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Merekam Data");
+      });
+
     return closeAddDialog();
   };
 
@@ -166,8 +218,8 @@ function Kategori() {
                 error={errorAddKategoriNama}
                 onChange={checkKategoriNama}
                 margin="dense"
-                id="name"
-                name="name"
+                id="kategoriName"
+                name="kategoriName"
                 label="Nama"
                 type="text"
                 fullWidth
@@ -185,14 +237,15 @@ function Kategori() {
                 </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
-                  id="kategori"
+                  id="kategoriType"
                   value={addKategoriType}
                   label="Kategori"
                   onChange={handleInputKategoriType}
                   placeholder="Kategori"
                   fullWidth
                 >
-                 {generateSelectKategoriTipeList()}
+                  <MenuItem value={true}>Berseri</MenuItem>
+                  <MenuItem value={false}>Tidak Berseri</MenuItem>
                 </Select>
               </FormControl>
               <div className="text-red-500 text-md">{errorAddKategoriType}</div>
@@ -226,6 +279,7 @@ function Kategori() {
           </svg>
           <div className="w-full ml-4">
             <Input
+              onKeyDown={handleSearchNameKeyDown}
               inputRef={searchItem}
               id=""
               label="Username"
@@ -250,7 +304,8 @@ function Kategori() {
           </div>
           <div className="bg-white w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
             <KategoriHeader></KategoriHeader>
-            {generateKategoriData()}
+            {loading ? <></> : <>{generateKategoriData()}</>}
+
             <div className="w-full justify-end items-center mt-4 flex">
               <Button onClick={prevPage}>
                 <svg

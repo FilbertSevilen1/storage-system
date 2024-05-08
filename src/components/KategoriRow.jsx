@@ -11,13 +11,16 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 import React, { useRef, useState } from "react";
+const API_URL = process.env.REACT_APP_API_URL;
 function KategoriRow(props) {
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
   const horizontal = "center";
 
+  let [index, setIndex] = useState(props.kategoriIndex);
   let [id, setID] = useState(props.kategoriId);
   let [name, setName] = useState(props.kategoriNama);
   let [type, setType] = useState(props.kategoriType);
@@ -36,10 +39,10 @@ function KategoriRow(props) {
     setEditKategoriType(event.target.value);
   };
 
-  const resetErrorMessage = () =>{
+  const resetErrorMessage = () => {
     setErrorEditKategoriNamaMessage("");
     setErrorEditKategoriNama(false);
-  }
+  };
 
   const openEditDialog = (name, type) => {
     setEditKategoriNamaDefault(name);
@@ -72,7 +75,35 @@ function KategoriRow(props) {
       }, 3000);
       return setSnackbarMessage("Nama Kategori tidak boleh kosong");
     }
-    return closeEditDialog()
+
+    const body = {
+      id: id,
+      name: editKategoriNama.current.value,
+      hasIdentifier: editKategoriType,
+    };
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .put(API_URL + "/category/update", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Ubah Kategori Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Ubah Kategori Gagal");
+      });
   };
 
   return (
@@ -121,8 +152,8 @@ function KategoriRow(props) {
                   fullWidth
                   disabled
                 >
-                  <MenuItem value={"Berseri"}>Berseri</MenuItem>
-                  <MenuItem value={"Tidak Berseri"}>Tidak Berseri</MenuItem>
+                  <MenuItem value={true}>Berseri</MenuItem>
+                  <MenuItem value={false}>Tidak Berseri</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -137,8 +168,8 @@ function KategoriRow(props) {
       </Dialog>
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Id : </div>
-          {id}
+          <div className="flex md:hidden mr-2 font-bold">No : </div>
+          {index}
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama : </div>
@@ -146,7 +177,7 @@ function KategoriRow(props) {
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Tipe : </div>
-          {type}
+          {type == true ? "Berseri" : "Tidak Berseri"}
         </div>
         <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
           <div

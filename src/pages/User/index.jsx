@@ -48,6 +48,16 @@ function User() {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(()=>{
+    getMaxPage()
+  },[listUser])
+
+  const getMaxPage = () =>{
+    if (listUser.length % 5 == 0) {
+      setMaxPage(Math.floor(listUser.length / 5));
+    } else setMaxPage(Math.floor(listUser.length / 5) + 1);
+  }
+
   const getDataUserList = async () => {
     setLoading(true);
     let body = {
@@ -56,6 +66,7 @@ function User() {
       gender: searchUserGender,
     };
     const token = JSON.parse(localStorage.getItem("bearer_token"));
+    
     await axios
       .post(API_URL + "/user/list", body, {
         headers: {
@@ -67,9 +78,6 @@ function User() {
 
         if (data) {
           setListUser(data);
-          if (listUser.length % 5 === 0) {
-            setMaxPage(Math.floor(listUser.length / 5));
-          } else setMaxPage(Math.floor(listUser.length / 5) + 1);
           generateUserData();
           setLoading(false);
         } else {
@@ -164,15 +172,18 @@ function User() {
   };
 
   const handleInputSearchJabatan = (event) => {
+    setPage(1)
     setSearchUserRole(event.target.value);
   };
 
   const handleInputSearchGender = (event) => {
+    setPage(1)
     setSearchUserGender(event.target.value);
   };
 
   const handleSearchNameKeyDown = (event) =>{
     if (event.key == 'Enter') {
+      setPage(1)
       getDataUserList();
     }
   }
