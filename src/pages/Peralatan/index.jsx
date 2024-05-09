@@ -21,6 +21,9 @@ import HorizontalDivider from "../../components/base/HorizontalDivider";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
+
 const API_URL = process.env.REACT_APP_API_URL;
 function Peralatan() {
   const [loading, setLoading] = useState(false);
@@ -39,18 +42,14 @@ function Peralatan() {
   const [searchType, setSearchType] = useState(null);
   const searchCount = useRef("");
   const [listPeralatan, setListPeralatan] = useState([]);
-
   const [listKategori, setListKategori] = useState([]);
-
   const [listBrand, setListBrand] = useState([]);
-
   const [listTipe, setListTipe] = useState(["Berseri", "Tidak Berseri"]);
 
   useEffect(() => {
     getDataKategoriList();
     getDataBrandList();
-    
-  },[]);
+  }, []);
 
   useEffect(() => {
     getPeralatanList();
@@ -144,9 +143,9 @@ function Peralatan() {
       })
       .then((res) => {
         setListPeralatan(res.data.peralatans);
-        setTimeout(()=>{
+        setTimeout(() => {
           setLoading(false);
-        },10)
+        }, 10);
       })
       .catch((err) => {
         setLoading(false);
@@ -171,7 +170,7 @@ function Peralatan() {
   const generatePeralatanData = () => {
     if (listPeralatan) {
       return listPeralatan.map((peralatan, index) => {
-        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5){
+        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5) {
           return (
             <PeralatanRow
               index={index}
@@ -237,6 +236,7 @@ function Peralatan() {
 
   const changeUploadAddImage = (event) => {
     const file = event.target.files[0];
+    setAddPeralatanImage(file);
     const reader = new FileReader();
 
     reader.onload = (event) => {
@@ -245,6 +245,46 @@ function Peralatan() {
 
     reader.readAsDataURL(file);
   };
+
+  // const uploadPerlatanImageToFirebase = () => {
+  //   const firebaseConfig = {
+  //     apiKey: "AIzaSyAf5GnpEKVsZ8iPnbYHO9oJD-hdSk0TWao",
+  //     authDomain: "storage-system-135a2.firebaseapp.com",
+  //     projectId: "storage-system-135a2",
+  //     storageBucket: "storage-system-135a2.appspot.com",
+  //     messagingSenderId: "6215443319",
+  //     appId: "1:6215443319:web:7e35fea7c364cf0035b772",
+  //   };
+
+  //   if (!firebase.apps.length) {
+  //     firebase.initializeApp(firebaseConfig);
+  //   }
+
+  //   const storageRef = firebase
+  //     .storage()
+  //     .ref(`images/${addPeralatanImage.name}`);
+  //   const uploadTask = storageRef.put(addPeralatanImage);
+
+  //   uploadTask.on(
+  //     "state_changed",
+  //     (snapshot) => {
+  //       // Progress function
+  //       const progress =
+  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //       console.log("Upload is " + progress + "% done");
+  //     },
+  //     (error) => {
+  //       console.error(error);
+  //     },
+  //     () => {
+  //       // Complete function
+  //       uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+  //         console.log("File available at", downloadURL);
+  //         setAddPeralatanImage(downloadURL);
+  //       });
+  //     }
+  //   );
+  // };
 
   const onSubmit = () => {
     if (!addPeralatanName.current.value) {
@@ -282,6 +322,8 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
+
+    // uploadPerlatanImageToFirebase();
 
     let body = {
       name: addPeralatanName.current.value,
