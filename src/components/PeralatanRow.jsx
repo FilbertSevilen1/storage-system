@@ -12,12 +12,15 @@ import {
   TextField,
   TextareaAutosize,
 } from "@mui/material";
+import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function PeralatanRow(props) {
   const navigate = useNavigate();
-  let user = useSelector((state)=>state.user)
+  let user = useSelector((state) => state.user);
   let [showAdd, setShowAdd] = useState(props.showAdd || false);
 
   let [id, setID] = useState(props.peralatanId);
@@ -28,7 +31,8 @@ function PeralatanRow(props) {
   let [stock, setStock] = useState(props.peralatanStock);
   let [available, setAvailable] = useState(props.peralatanAvailable);
   let [hasIdentifier, setHasIdentifier] = useState(props.hasIdentifier);
-  let [brandName, setBrandName] = useState(props.peralatanBrand)
+  let [brandId, setBrandId] = useState(props.peralatanBrandId)
+  let [brandName, setBrandName] = useState(props.peralatanBrand);
 
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -56,17 +60,17 @@ function PeralatanRow(props) {
 
   //Request
   const requestPeralatanNama = useRef("");
-  const [requestPeralatanNamaDefault, setRequestPeralatanNamaDefault] = useState("");
+  const [requestPeralatanNamaDefault, setRequestPeralatanNamaDefault] =
+    useState("");
   const requestPeralatanCount = useRef("");
   const requestPeralatanReason = useRef("");
 
   const openAddDialog = (name, Gambar, type, description) => {
-
-    console.log(type)
-    if(user.role == "User"){
-      setRequestDialog(true)
+    console.log(type);
+    if (user.role == "User") {
+      setRequestDialog(true);
       setRequestPeralatanNamaDefault(name);
-      return 
+      return;
     }
 
     setAddDialogType(type);
@@ -82,10 +86,9 @@ function PeralatanRow(props) {
   const closeAddDialog = () => {
     setAddDialog(false);
   };
-  const closeRequestDialog = () =>{
+  const closeRequestDialog = () => {
     setRequestDialog(false);
-  }
-
+  };
 
   const handleInputCategory = (event) => {
     setAddPeralatanKategori(event.target.value);
@@ -99,7 +102,7 @@ function PeralatanRow(props) {
       }, 3000);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
-    
+
     if (addPeralatanDescription.current.value == "" && addDialogType == true) {
       setSnackbar(true);
       setTimeout(() => {
@@ -121,9 +124,73 @@ function PeralatanRow(props) {
       }, 3000);
       return setSnackbarMessage("Jumlah tidak boleh kosong");
     }
+
+    if (hasIdentifier) {
+      const body = {
+        peralatanId: id,
+        name: addPeralatanNomorSeri.current.value,
+        description: addPeralatanDescription.current.value,
+        totalPrice: addPeralatanPrice.current.value,
+      };
+
+      const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+      axios
+        .post(API_URL + "/peralatan-detail/create", body, {
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+          },
+        })
+        .then((res) => {
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+            window.location.reload();
+          }, 1000);
+          return setSnackbarMessage("Tambah Stok Berhasil");
+        })
+        .catch((err) => {
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          return setSnackbarMessage("Tambah Stok Gagal");
+        });
+    } else {
+      const body = {
+        id: id,
+        count: addPeralatanCount.current.value,
+        totalPrice: addPeralatanPrice.current.value
+      };
+
+      const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+      axios
+        .put(API_URL + "/peralatan/update/count", body, {
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+          },
+        })
+        .then((res) => {
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+            window.location.reload();
+          }, 1000);
+          return setSnackbarMessage("Tambah Stok Berhasil");
+        })
+        .catch((err) => {
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          return setSnackbarMessage("Tambah Stok Gagal");
+        });
+    }
   };
 
   const onSubmitRequest = () => {
+    console.log(brandId)
     if (!requestPeralatanNama.current.value) {
       setSnackbar(true);
       setTimeout(() => {
@@ -145,6 +212,40 @@ function PeralatanRow(props) {
       }, 3000);
       return setSnackbarMessage("Alasan tidak boleh kosong");
     }
+
+    const body = {
+      itemName:requestPeralatanNama.current.value,
+      itemDescription: description,
+      itemCount: requestPeralatanCount.current.value,
+      reason: requestPeralatanReason.current.value,
+      brandId: brandId,
+      peralatanId: id,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/request/create", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Pengajuan Stok Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Pengajuan Stok Gagal");
+      });
+
   };
 
   const [requestDialog, setRequestDialog] = useState(false);
@@ -222,7 +323,7 @@ function PeralatanRow(props) {
             </div>
           </div>
           {hasIdentifier == true ? (
-          <div className="p-2 w-full flex flex-col">
+            <div className="p-2 w-full flex flex-col">
               <div className="mt-2">Deskripsi</div>
               <TextareaAutosize
                 className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
@@ -232,10 +333,9 @@ function PeralatanRow(props) {
                 ref={addPeralatanDescription}
               />
             </div>
-            ) : (
-              <>
-              </>
-            )}
+          ) : (
+            <></>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={closeAddDialog}>Cancel</Button>
@@ -324,7 +424,9 @@ function PeralatanRow(props) {
         <div className="w-full md:w-1/12 flex md:mx-2 p-2 rounded-xl flex justify-center items-center">
           {showAdd ? (
             <button
-              onClick={() => openAddDialog(name, image, hasIdentifier, description)}
+              onClick={() =>
+                openAddDialog(name, image, hasIdentifier, description)
+              }
               className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
             >
               <svg

@@ -50,6 +50,7 @@ function User() {
 
   useEffect(()=>{
     getMaxPage()
+
   },[listUser])
 
   const getMaxPage = () =>{
@@ -113,6 +114,8 @@ function User() {
     setPage(page + 1);
   };
 
+
+  
   const generateUserData = () => {
     console.log("LIST", listUser);
     if (listUser) {

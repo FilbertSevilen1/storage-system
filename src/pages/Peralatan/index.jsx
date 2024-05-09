@@ -47,9 +47,13 @@ function Peralatan() {
   const [listTipe, setListTipe] = useState(["Berseri", "Tidak Berseri"]);
 
   useEffect(() => {
-    getPeralatanList();
     getDataKategoriList();
     getDataBrandList();
+    
+  },[]);
+
+  useEffect(() => {
+    getPeralatanList();
   }, [searchCategory, searchType]);
 
   useEffect(() => {
@@ -90,7 +94,6 @@ function Peralatan() {
         setListKategori(res.data.categories);
       })
       .catch((err) => {
-        setLoading(false);
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
@@ -114,7 +117,6 @@ function Peralatan() {
         setListBrand(res.data.brands);
       })
       .catch((err) => {
-        setLoading(false);
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
@@ -127,9 +129,9 @@ function Peralatan() {
     setLoading(true);
     const body = {
       name: searchItem.current.value,
-      categoryId:searchCategory,
+      categoryId: searchCategory,
       hasIdentifier: searchType,
-      minimumCount:searchCount.current.value
+      minimumCount: searchCount.current.value,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -141,9 +143,10 @@ function Peralatan() {
         },
       })
       .then((res) => {
-        console.log(res);
         setListPeralatan(res.data.peralatans);
-        setLoading(false);
+        setTimeout(()=>{
+          setLoading(false);
+        },10)
       })
       .catch((err) => {
         setLoading(false);
@@ -168,7 +171,7 @@ function Peralatan() {
   const generatePeralatanData = () => {
     if (listPeralatan) {
       return listPeralatan.map((peralatan, index) => {
-        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
+        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5){
           return (
             <PeralatanRow
               index={index}
@@ -177,6 +180,7 @@ function Peralatan() {
               peralatanId={peralatan.id}
               peralatanName={peralatan.name}
               peralatanCategory={peralatan.categoryName}
+              peralatanBrandId={peralatan.brandId}
               peralatanBrand={peralatan.brandName}
               peralatanDescription={peralatan.description}
               peralatanStock={peralatan.count}
@@ -187,6 +191,7 @@ function Peralatan() {
               page={page}
             ></PeralatanRow>
           );
+        }
       });
     }
   };
@@ -200,18 +205,9 @@ function Peralatan() {
   };
 
   const generateSelectPeralatanBrandList = () => {
-    console.log(listBrand);
     if (listBrand) {
       return listBrand.map((brand, index) => {
         return <MenuItem value={brand.id}>{brand.name}</MenuItem>;
-      });
-    }
-  };
-
-  const generateSelectPeralatanTipeList = () => {
-    if (listTipe) {
-      return listTipe.map((tipe, index) => {
-        return <MenuItem value={tipe.id}>{tipe.name}</MenuItem>;
       });
     }
   };
@@ -288,15 +284,13 @@ function Peralatan() {
     }
 
     let body = {
-      peralatan_name: addPeralatanName.current.value,
-      peralatan_description: addPeralatanDeskripsi.current.value,
-      peralatan_image: addPeralatanImage,
-      peralatan_count: 0,
-      category_id: addPeralatanCategory,
-      brand_id: addPeralatanBrand,
+      name: addPeralatanName.current.value,
+      description: addPeralatanDeskripsi.current.value,
+      image: addPeralatanImage,
+      borrowCount: 0,
+      categoryId: addPeralatanCategory,
+      brandId: addPeralatanBrand,
     };
-
-    console.log(body);
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
@@ -310,7 +304,8 @@ function Peralatan() {
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
-        }, 3000);
+          window.location.reload();
+        }, 1000);
         return setSnackbarMessage("Perekaman Data Berhasil");
       })
       .catch((err) => {
@@ -360,37 +355,38 @@ function Peralatan() {
     }
 
     let body = {
-      itemName:requestPeralatanName.current.value,
+      itemName: requestPeralatanName.current.value,
       itemDescription: requestPeralatanDeskripsi.current.value,
       itemCount: requestPeralatanCount.current.value,
       reason: requestPeralatanReason.current.value,
       brandId: requestPeralatanBrand,
       peralatanId: null,
-    }
+    };
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
-    axios.post(API_URL + "/request/create", body, {
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-      },
-    })
-    .then((res)=>{
-      setLoading(false);
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-        window.location.reload()
-      }, 1000);
-      return setSnackbarMessage("Pembuatan Pengajuan Berhasil");
-    })
-    .catch((err)=>{
-      setLoading(false);
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-      }, 3000);
-      return setSnackbarMessage("Pembuatan Pengajuan Gagal");
-    })
+    axios
+      .post(API_URL + "/request/create", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Pembuatan Pengajuan Berhasil");
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Pembuatan Pengajuan Gagal");
+      });
   };
 
   // Request
@@ -424,13 +420,13 @@ function Peralatan() {
     }
   };
 
-  const resetFilter = () =>{
-    setSearchCategory(null)
-    setSearchType(null)
-    searchCount.current.value = null
+  const resetFilter = () => {
+    setSearchCategory("");
+    setSearchType("");
+    searchCount.current.value = null;
     getDataPeralatanList();
-  }
- 
+  };
+
   return (
     <div className="w-full">
       <Snackbar
@@ -551,6 +547,7 @@ function Peralatan() {
                   onChange={handleInputCategory}
                   placeholder="Kategori"
                   fullWidth
+                  disabled={loading}
                 >
                   {generateSelectPeralatanCategoryList()}
                 </Select>
@@ -621,6 +618,7 @@ function Peralatan() {
               variant="standard"
               className="w-full"
               placeholder="Cari Alat Berdasarkan Nama"
+              disabled={loading}
             />
           </div>
         </div>
@@ -635,6 +633,7 @@ function Peralatan() {
                   variant="contained"
                   size="large"
                   fullWidth
+                  disabled={loading}
                 >
                   + Ajukan Peralatan Baru
                 </Button>
@@ -665,6 +664,7 @@ function Peralatan() {
                     onChange={handleSearchCategory}
                     placeholder="Kategori"
                     fullWidth
+                    disabled={loading}
                   >
                     {generateSelectPeralatanCategoryList()}
                   </Select>
@@ -681,6 +681,7 @@ function Peralatan() {
                     onChange={handleSearchType}
                     placeholder="Tipe"
                     fullWidth
+                    disabled={loading}
                   >
                     <MenuItem value={true}>Berseri</MenuItem>
                     <MenuItem value={false}>Tidak Berseri</MenuItem>
@@ -697,10 +698,17 @@ function Peralatan() {
                   label="Jumlah Minimum"
                   variant="outlined"
                   fullWidth
+                  disabled={loading}
                 />
               </div>
               <div className="w-full mt-8">
-                <Button onClick={()=>resetFilter()} variant="contained" size="large" fullWidth>
+                <Button
+                  onClick={() => resetFilter()}
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  disabled={loading}
+                >
                   Reset
                 </Button>
               </div>

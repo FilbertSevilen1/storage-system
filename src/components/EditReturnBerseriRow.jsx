@@ -56,7 +56,6 @@ function EditReturnBerseriRow({
               <Select
                 labelId="demo-simple-select-label"
                 id="peralatanType"
-                // value={detail.peralatan_status}
                 label="Kategori"
                 placeholder="Kategori"
                 fullWidth
