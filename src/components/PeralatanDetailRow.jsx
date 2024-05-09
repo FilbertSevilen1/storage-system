@@ -1,7 +1,17 @@
-import { FormControl, InputLabel, MenuItem, Select, Snackbar, TextField } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+} from "@mui/material";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function PeralatanDetailRow(props) {
+  const [loading, setLoading] = useState(false);
   const [role, setRole] = useState(props.role);
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -12,15 +22,17 @@ function PeralatanDetailRow(props) {
   const [name, setName] = useState(props.peralatanName);
   const [serialNumber, setSerialNumber] = useState(props.peralatanSerialNumber);
   const [description, setDescription] = useState(props.peralatanDescription);
-  const [status, setStatus] = useState(props.peralatanStatus);
+  const [statusId, setStatusId] = useState(props.peralatanStatusId);
+  const [status, setStatus] = useState(props.peralatanStatusName);
 
   const [edit, setEdit] = useState(false);
 
   const editAngkaSeri = useRef("");
-  const editDescription = useRef("")
-  const [editStatus, setEditStatus] = useState("");
+  const editDescription = useRef("");
+  const [editStatus, setEditStatus] = useState(props.peralatanStatusId);
 
   const saveEdit = () => {
+    setLoading(true);
     if (editAngkaSeri.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
@@ -31,7 +43,27 @@ function PeralatanDetailRow(props) {
     setEdit(false);
 
     setSerialNumber(editAngkaSeri.current.value);
-    setDescription(editDescription.current.value)
+    setDescription(editDescription.current.value);
+    setStatusId(editStatus);
+    switch (editStatus) {
+      case "c47aaddc-2d23-472d-b43d-c4de92d5217f":
+        setStatus("Tidak Siap Dipinjam");
+        break;
+      case "309bf632-ca49-4a10-a486-f6a7fd43ac7c":
+        setStatus("Siap Dipinjam");
+        break;
+      case "e61288ae-b95c-4db7-b3fb-04adb4623671":
+        setStatus("Dalam Peminjaman");
+        break;
+      case "10f8dd3d-7f56-4c72-a0de-01bac1a0104a":
+        setStatus("Dalam Perbaikan");
+        break;
+      case "76e7b433-cbca-4cb2-8a0c-dd372b94c475":
+        setStatus("Dibuang");
+        break;
+      default:
+        break;
+    }
 
     setSnackbar(true);
     setTimeout(() => {
@@ -98,23 +130,53 @@ function PeralatanDetailRow(props) {
 
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Status : </div>
-          
+
           {edit ? (
             <div className="w-48">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                {
+                  statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"?
+                  <Select
+                  labelId="demo-simple-select-label"
+                  value={editStatus}
+                  id="demo-simple-select"
+                  label="Status"
+                  onChange={handleEditStatus}
+                  defaultValue={statusId}
+                  fullWidth
+                  disabled={statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"}
+                >
+                  <MenuItem value={"e61288ae-b95c-4db7-b3fb-04adb4623671"}>
+                    Dalam Peminjaman
+                  </MenuItem>
+
+                </Select>
+                :
                 <Select
                   labelId="demo-simple-select-label"
                   value={editStatus}
                   id="demo-simple-select"
                   label="Status"
                   onChange={handleEditStatus}
-                  placeholder="Status"
-                  defaultValue={status}
+                  defaultValue={statusId}
                   fullWidth
+                  disabled={statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"}
                 >
-                 <MenuItem value="Dalam Peminjaman">Dalam Peminjaman</MenuItem>
+                  <MenuItem value={"c47aaddc-2d23-472d-b43d-c4de92d5217f"}>
+                    Tidak Siap Dipinjam
+                  </MenuItem>
+                  <MenuItem value={"309bf632-ca49-4a10-a486-f6a7fd43ac7c"}>
+                    Siap Dipinjam
+                  </MenuItem>
+                  <MenuItem value={"10f8dd3d-7f56-4c72-a0de-01bac1a0104a"}>
+                    Dalam Perbaikan
+                  </MenuItem>
+                  <MenuItem value={"76e7b433-cbca-4cb2-8a0c-dd372b94c475"}>
+                    Dibuang
+                  </MenuItem>
                 </Select>
+                }
               </FormControl>
             </div>
           ) : (

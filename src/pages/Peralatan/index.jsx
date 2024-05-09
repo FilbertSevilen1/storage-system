@@ -21,8 +21,14 @@ import HorizontalDivider from "../../components/base/HorizontalDivider";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/storage";
+import { initializeApp } from "firebase/compat/app";
+import { getDatabase } from "firebase/compat/database";
+import { getStorage } from "firebase/compat/storage";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/compat/auth";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Peralatan() {
@@ -145,7 +151,7 @@ function Peralatan() {
         setListPeralatan(res.data.peralatans);
         setTimeout(() => {
           setLoading(false);
-        }, 10);
+        }, 100);
       })
       .catch((err) => {
         setLoading(false);
@@ -260,6 +266,7 @@ function Peralatan() {
   //     firebase.initializeApp(firebaseConfig);
   //   }
 
+    
   //   const storageRef = firebase
   //     .storage()
   //     .ref(`images/${addPeralatanImage.name}`);

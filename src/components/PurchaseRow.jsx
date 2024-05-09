@@ -55,7 +55,7 @@ import { useNavigate } from "react-router";
           </div>
           <div className=" w-full md:w-2/12 flex mx-2 rounded-xl flex justify-start md:justify-center items-center">
           <div className="flex md:hidden mr-2 font-bold">Total Harga : </div>
-            {price}
+            Rp. {price.toLocaleString("id-ID")}
           </div>
         </div>
       </div>

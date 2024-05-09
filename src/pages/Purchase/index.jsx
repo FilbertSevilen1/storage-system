@@ -49,26 +49,28 @@ function Purchase() {
   const searchStartDate = useRef();
   const searchEndDate = useRef();
   const [listPurchase, setlistPurchase] = useState([
-    {
-      peralatanName: "Komputer",
-      purchaseDate: "20/20/2024",
-      purchaseCount: "4",
-      purchaseTotalPrice: "Rp. 160.000.000",
-    },
   ]);
 
   useEffect(() => {
-    getPinjamanList();
-  }, [page]);
+    getPembelianList();
+  }, [searchStartDate, searchEndDate]);
 
   useEffect(()=>{
     getMaxPage()
   },[listPurchase])
 
-  const getDataPinjamanList = () =>{
+  const handleSearchNameKeyDown = (event) => {
+    if (event.key == "Enter") {
+      setPage(1);
+      getDataPembelianList();
+    }
+  };
+
+  const getDataPembelianList = () =>{
     setLoading(true);
     const body = {
-
+      startDate:searchStartDate.current.value,
+      endDate:searchEndDate.current.value
     }
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
@@ -98,8 +100,8 @@ function Purchase() {
     } else setMaxPage(Math.floor(listPurchase.length / 5) + 1);
   }
 
-  const getPinjamanList = () => {
-    getDataPinjamanList();
+  const getPembelianList = () => {
+    getDataPembelianList();
   };
 
   const generateMenuIemStatus = () => {
@@ -118,9 +120,9 @@ function Purchase() {
               key={index}
               purchaseNo={index + 1}
               purchaseNama={purchase.peralatanName}
-              purchaseDate={purchase.purchaseDate}
-              purchaseCount={purchase.purchaseCount}
-              purchaseTotalPrice={purchase.purchaseTotalPrice}
+              purchaseDate={purchase.date}
+              purchaseCount={purchase.count}
+              purchaseTotalPrice={purchase.totalPrice}
               page={page}
             ></PurchaseRow>
           );
@@ -163,7 +165,8 @@ function Purchase() {
               label="Username"
               variant="standard"
               className="w-full"
-              placeholder="Cari Nama Pelapor"
+              placeholder="Cari Nama Alat"
+              onKeyDown={handleSearchNameKeyDown}
             />
           </div>
         </div>
@@ -179,6 +182,7 @@ function Purchase() {
                 variant="outlined"
                 inputRef={searchStartDate}
                 fullWidth
+                onChange={getDataPembelianList}
               />
             </div>
             <div className="w-full mt-4">
@@ -190,6 +194,7 @@ function Purchase() {
                 variant="outlined"
                 inputRef={searchEndDate}
                 fullWidth
+                onChange={getDataPembelianList}
               />
             </div>
             <div className="w-full mt-8">
