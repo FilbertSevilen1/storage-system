@@ -20,6 +20,7 @@ function PeralatanDetailRow(props) {
   const horizontal = "center";
 
   const [index, setIndex] = useState(props.index);
+  const [detailId, setDetailId] = useState(props.peralatanDetailId);
   const [name, setName] = useState(props.peralatanName);
   const [serialNumber, setSerialNumber] = useState(props.peralatanSerialNumber);
   const [description, setDescription] = useState(props.peralatanDescription);
@@ -48,7 +49,7 @@ function PeralatanDetailRow(props) {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
-    if (editStatus== "") {
+    if (editStatus == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -57,28 +58,12 @@ function PeralatanDetailRow(props) {
     }
     setEdit(false);
 
-    // let body = {
-
-    // };
-
-    // const token = JSON.parse(localStorage.getItem("bearer_token"));
-
-    // axios
-    //   .put(API_URL + "/peralatan-detail/update", body, {
-    //     headers: {
-    //       Authorization: `Bearer ${token.token}`,
-    //     },
-    //   })
-    // .then((res)=>{
-
-    // })
-    // .catch((err)=>{
-    //   setSnackbar(true);
-    //   setTimeout(() => {
-    //     setSnackbar(false);
-    //   }, 3000);
-    //   return setSnackbarMessage("Simpan Data Gagal");
-    // })
+    let body = {
+      id: detailId,
+      name: editAngkaSeri.current.value,
+      description: editDescription.current.value,
+      statusItemId: editStatus,
+    };
 
     setSerialNumber(editAngkaSeri.current.value);
     setDescription(editDescription.current.value);
@@ -102,12 +87,29 @@ function PeralatanDetailRow(props) {
       default:
         break;
     }
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
-    setSnackbar(true);
-    setTimeout(() => {
-      setSnackbar(false);
-    }, 3000);
-    return setSnackbarMessage("Simpan Sukses!");
+    axios
+      .put(API_URL + "/peralatan-detail/update", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Simpan Data Berhasil");
+      })
+      .catch((err) => {
+        console.log(err);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Simpan Data Gagal");
+      });
   };
 
   const handleEditStatus = (event) => {
@@ -173,48 +175,50 @@ function PeralatanDetailRow(props) {
             <div className="w-48">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Status</InputLabel>
-                {
-                  statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"?
+                {statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671" ? (
                   <Select
-                  labelId="demo-simple-select-label"
-                  value={editStatus}
-                  id="demo-simple-select"
-                  label="Status"
-                  onChange={handleEditStatus}
-                  defaultValue={statusId}
-                  fullWidth
-                  disabled={statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"}
-                >
-                  <MenuItem value={"e61288ae-b95c-4db7-b3fb-04adb4623671"}>
-                    Dalam Peminjaman
-                  </MenuItem>
-
-                </Select>
-                :
-                <Select
-                  labelId="demo-simple-select-label"
-                  value={editStatus}
-                  id="demo-simple-select"
-                  label="Status"
-                  onChange={handleEditStatus}
-                  defaultValue={statusId}
-                  fullWidth
-                  disabled={statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"}
-                >
-                  <MenuItem value={"c47aaddc-2d23-472d-b43d-c4de92d5217f"}>
-                    Tidak Siap Dipinjam
-                  </MenuItem>
-                  <MenuItem value={"309bf632-ca49-4a10-a486-f6a7fd43ac7c"}>
-                    Siap Dipinjam
-                  </MenuItem>
-                  <MenuItem value={"10f8dd3d-7f56-4c72-a0de-01bac1a0104a"}>
-                    Dalam Perbaikan
-                  </MenuItem>
-                  <MenuItem value={"76e7b433-cbca-4cb2-8a0c-dd372b94c475"}>
-                    Dibuang
-                  </MenuItem>
-                </Select>
-                }
+                    labelId="demo-simple-select-label"
+                    value={editStatus}
+                    id="demo-simple-select"
+                    label="Status"
+                    onChange={handleEditStatus}
+                    defaultValue={statusId}
+                    fullWidth
+                    disabled={
+                      statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"
+                    }
+                  >
+                    <MenuItem value={"e61288ae-b95c-4db7-b3fb-04adb4623671"}>
+                      Dalam Peminjaman
+                    </MenuItem>
+                  </Select>
+                ) : (
+                  <Select
+                    labelId="demo-simple-select-label"
+                    value={editStatus}
+                    id="demo-simple-select"
+                    label="Status"
+                    onChange={handleEditStatus}
+                    defaultValue={statusId}
+                    fullWidth
+                    disabled={
+                      statusId == "e61288ae-b95c-4db7-b3fb-04adb4623671"
+                    }
+                  >
+                    <MenuItem value={"c47aaddc-2d23-472d-b43d-c4de92d5217f"}>
+                      Tidak Siap Dipinjam
+                    </MenuItem>
+                    <MenuItem value={"309bf632-ca49-4a10-a486-f6a7fd43ac7c"}>
+                      Siap Dipinjam
+                    </MenuItem>
+                    <MenuItem value={"10f8dd3d-7f56-4c72-a0de-01bac1a0104a"}>
+                      Dalam Perbaikan
+                    </MenuItem>
+                    <MenuItem value={"76e7b433-cbca-4cb2-8a0c-dd372b94c475"}>
+                      Dibuang
+                    </MenuItem>
+                  </Select>
+                )}
               </FormControl>
             </div>
           ) : (

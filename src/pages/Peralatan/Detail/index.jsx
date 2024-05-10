@@ -284,8 +284,8 @@ function PeralatanDetail() {
             index={index}
             key={index}
             role={userRole}
-            peralatanId={peralatan.id}
-            peralatanName={peralatan.name}
+            peralatanDetailId={peralatan.id}
+            peralatanName={peralatan.peralatanName}
             peralatanSerialNumber={peralatan.name}
             peralatanStatusId={peralatan.statusId}
             peralatanStatusName={peralatan.statusName}
