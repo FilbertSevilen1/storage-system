@@ -171,6 +171,7 @@ function User() {
   const addUserCitizenId = useRef("");
 
   const handleInputGender = (event) => {
+    setPage(1)
     setAddUserGender(event.target.value);
   };
 

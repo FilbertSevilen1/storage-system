@@ -73,11 +73,9 @@ function Peralatan() {
 
   const handleSearchCategory = (event) => {
     setSearchCategory(event.target.value);
-    getDataPeralatanList();
   };
   const handleSearchType = (event) => {
     setSearchType(event.target.value);
-    getDataPeralatanList();
   };
 
   const getPeralatanList = () => {
@@ -130,7 +128,7 @@ function Peralatan() {
       });
   };
 
-  const getDataPeralatanList = () => {
+  const getDataPeralatanList = async () => {
     setLoading(true);
     const body = {
       name: searchItem.current.value,
@@ -141,17 +139,26 @@ function Peralatan() {
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
-    axios
+    await axios
       .post(API_URL + "/peralatan/list", body, {
         headers: {
           Authorization: `Bearer ${token.token}`,
         },
       })
       .then((res) => {
-        setListPeralatan(res.data.peralatans);
-        setTimeout(() => {
+        const data = res.data.peralatans;
+
+        if (data) {
+          setListPeralatan(data)
           setLoading(false);
-        }, 100);
+        } else {
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          setLoading(false);
+          return setSnackbarMessage("Get Data Gagal");
+        }
       })
       .catch((err) => {
         setLoading(false);
@@ -266,7 +273,6 @@ function Peralatan() {
   //     firebase.initializeApp(firebaseConfig);
   //   }
 
-    
   //   const storageRef = firebase
   //     .storage()
   //     .ref(`images/${addPeralatanImage.name}`);
@@ -596,7 +602,6 @@ function Peralatan() {
                   onChange={handleInputCategory}
                   placeholder="Kategori"
                   fullWidth
-                  disabled={loading}
                 >
                   {generateSelectPeralatanCategoryList()}
                 </Select>
