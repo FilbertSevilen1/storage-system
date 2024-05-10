@@ -1,5 +1,5 @@
 service firebase.storage {
-  match /b/savephoto-a1cc3.appspot.com/o {
+  match /b/storage-system-135a2.appspot.com/o {
     match /{allPaths=**} {
       // Allow access by all users
       allow read, write;

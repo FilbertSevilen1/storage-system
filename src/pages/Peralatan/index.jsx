@@ -21,14 +21,8 @@ import HorizontalDivider from "../../components/base/HorizontalDivider";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-import { initializeApp } from "firebase/compat/app";
-import { getDatabase } from "firebase/compat/database";
-import { getStorage } from "firebase/compat/storage";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/compat/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Peralatan() {
@@ -149,7 +143,7 @@ function Peralatan() {
         const data = res.data.peralatans;
 
         if (data) {
-          setListPeralatan(data)
+          setListPeralatan(data);
           setLoading(false);
         } else {
           setSnackbar(true);
@@ -235,6 +229,7 @@ function Peralatan() {
 
   const addPeralatanName = useRef("");
   const [addPeralatanImage, setAddPeralatanImage] = useState("");
+  const [addPeralatanImageUrl, setAddPeralatanImageUrl] = useState("");
   const [addPeralatanCategory, setAddPeralatanCategory] = useState("");
   const [addPeralatanBrand, setAddPeralatanBrand] = useState("");
   const addPeralatanDeskripsi = useRef("");
@@ -250,56 +245,68 @@ function Peralatan() {
   const changeUploadAddImage = (event) => {
     const file = event.target.files[0];
     setAddPeralatanImage(file);
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      setAddPeralatanImage(event.target.result);
-    };
-
-    reader.readAsDataURL(file);
   };
 
-  // const uploadPerlatanImageToFirebase = () => {
-  //   const firebaseConfig = {
-  //     apiKey: "AIzaSyAf5GnpEKVsZ8iPnbYHO9oJD-hdSk0TWao",
-  //     authDomain: "storage-system-135a2.firebaseapp.com",
-  //     projectId: "storage-system-135a2",
-  //     storageBucket: "storage-system-135a2.appspot.com",
-  //     messagingSenderId: "6215443319",
-  //     appId: "1:6215443319:web:7e35fea7c364cf0035b772",
-  //   };
+  const uploadPerlatanImageToFirebase = async () => {
+    console.log(addPeralatanImage);
 
-  //   if (!firebase.apps.length) {
-  //     firebase.initializeApp(firebaseConfig);
-  //   }
+    let currentdate = new Date();
+    let day = currentdate.getDate().toString().padStart(2, '0'); // Ensures two digits with leading zero
+    let month = (currentdate.getMonth() + 1).toString().padStart(2, '0'); // Ensures two digits with leading zero
+    let year = currentdate.getFullYear().toString();
+    let hours = currentdate.getHours().toString().padStart(2, '0'); // Ensures two digits with leading zero
+    let minutes = currentdate.getMinutes().toString().padStart(2, '0'); // Ensures two digits with leading zero
+    let seconds = currentdate.getSeconds().toString().padStart(2, '0'); // Ensures two digits with leading zero
+    
+    let datetime = day + month + year + hours + minutes + seconds;
+    let filename = addPeralatanImage.name.split(".");
+    filename[0] = datetime
 
-  //   const storageRef = firebase
-  //     .storage()
-  //     .ref(`images/${addPeralatanImage.name}`);
-  //   const uploadTask = storageRef.put(addPeralatanImage);
+    let combinedfilename = filename[0] + '.' + filename[1]
+    console.log(combinedfilename);
 
-  //   uploadTask.on(
-  //     "state_changed",
-  //     (snapshot) => {
-  //       // Progress function
-  //       const progress =
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //       console.log("Upload is " + progress + "% done");
-  //     },
-  //     (error) => {
-  //       console.error(error);
-  //     },
-  //     () => {
-  //       // Complete function
-  //       uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-  //         console.log("File available at", downloadURL);
-  //         setAddPeralatanImage(downloadURL);
-  //       });
-  //     }
-  //   );
-  // };
+    const firebaseConfig = {
+      apiKey: "AIzaSyAf5GnpEKVsZ8iPnbYHO9oJD-hdSk0TWao",
+      authDomain: "storage-system-135a2.firebaseapp.com",
+      projectId: "storage-system-135a2",
+      storageBucket: "storage-system-135a2.appspot.com",
+      messagingSenderId: "6215443319",
+      appId: "1:6215443319:web:7e35fea7c364cf0035b772",
+    };
 
-  const onSubmit = () => {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const storageRef = firebase
+      .storage()
+      .ref(`peralatan/${combinedfilename}`);
+    const uploadTask = storageRef.put(addPeralatanImage);
+
+    await uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Progress function
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        console.error(error);
+      },
+      () => {
+        // Complete function
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setAddPeralatanImageUrl(downloadURL);
+          console.log(downloadURL)
+          createPeralatanData(downloadURL);
+        });
+      }
+    );
+  };
+
+  const onSubmit = async () => {
     if (!addPeralatanName.current.value) {
       setSnackbar(true);
       setTimeout(() => {
@@ -335,13 +342,14 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
+    await uploadPerlatanImageToFirebase()
+  };
 
-    // uploadPerlatanImageToFirebase();
-
+  const createPeralatanData = (imgurl) =>{
     let body = {
       name: addPeralatanName.current.value,
       description: addPeralatanDeskripsi.current.value,
-      image: addPeralatanImage,
+      image: imgurl,
       borrowCount: 0,
       categoryId: addPeralatanCategory,
       brandId: addPeralatanBrand,
@@ -370,7 +378,7 @@ function Peralatan() {
         }, 3000);
         return setSnackbarMessage("Perekaman Data Gagal");
       });
-  };
+  }
 
   const onSubmitRequest = () => {
     if (!requestPeralatanName.current.value) {
