@@ -17,6 +17,9 @@ import PeralatanDetailRow from "../../../components/PeralatanDetailRow";
 import { useLocation } from "react-router";
 import axios from "axios";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
+
 const API_URL = process.env.REACT_APP_API_URL;
 function PeralatanDetail() {
   const [loading, setLoading] = useState(false);
@@ -41,6 +44,7 @@ function PeralatanDetail() {
   const [peralatanType, setPeralatanType] = useState("");
   const [peralatanJumlah, setPeralatanJumlah] = useState("");
   const [peralatanAvailable, setPeralatanAvailable] = useState("");
+  const [peralatanBorrowCount, setPeralatanBorrowCount] = useState("")
   const [peralatanDeskripsi, setPeralatanDeskripsi] = useState("");
   const [peralatanImage, setPeralatanImage] = useState("");
 
@@ -123,6 +127,7 @@ function PeralatanDetail() {
         setPeralatanName(data.name);
         setPeralatanJumlah(data.count);
         setPeralatanAvailable(data.count - data.borrowCount);
+        setPeralatanBorrowCount(data.borrowCount)
         setPeralatanImage(data.image);
         setPeralatanCategoryId(data.categoryId);
         setPeralatanCategoryName(data.categoryName);
@@ -200,6 +205,7 @@ function PeralatanDetail() {
   const editPeralatanJumlah = useRef("");
   const editPeralatanDeskripsi = useRef("");
   const [editPeralatanImage, setEditPeralatanImage] = useState("");
+  const [editPeralatanImageUrl, setEditPeralatanImageUrl] = useState("");
   const [editPeralatanCategory, setEditPeralatanCategory] =
     useState(peralatanCategoryId);
   const [editPeralatanBrand, setEditPeralatanBrand] =
@@ -232,13 +238,73 @@ function PeralatanDetail() {
   };
 
   const saveEdit = () => {
-    let body = {
+    if (editPeralatanNama.current.value == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Nama tidak boleh kosong");
+    }
+    if (editPeralatanDeskripsi.current.value == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Deskripsi tidak boleh kosong");
+    }
+    if (editPeralatanCategory == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Kategori tidak boleh kosong");
+    }
+    if (editPeralatanBrand == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Merek tidak boleh kosong");
+    }
+
+    if (editPeralatanImage) {
+      uploadPeralatanImageToFirebase();
+    }
+
+    // if (!peralatanType) {
+    //   if (editPeralatanJumlah.current.value > peralatanJumlah) {
+    //     setSnackbar(true);
+    //     setTimeout(() => {
+    //       setSnackbar(false);
+    //     }, 3000);
+    //     return setSnackbarMessage(
+    //       "Tambah peralatan hanya dapat dilakukan di Halaman Peralatan List"
+    //     );
+    //   }
+    //   if (editPeralatanJumlah.current.value < peralatanJumlah - peralatanAvailable) {
+    //     setSnackbar(true);
+    //     setTimeout(() => {
+    //       setSnackbar(false);
+    //     }, 3000);
+    //     return setSnackbarMessage(
+    //       `Alat tidak boleh kurang dari ${peralatanJumlah - peralatanAvailable}`
+    //     );
+    //   }
+    // }
+    // console.log(peralatanJumlah, peralatanAvailable);
+    // let borrowCount = 0;
+    // if (peralatanType) {
+    //   borrowCount = peralatanJumlah;
+    // } else {
+    //   borrowCount = editPeralatanJumlah.current.value;
+    // }
+    const body = {
       name: editPeralatanNama.current.value,
       description: editPeralatanDeskripsi.current.value,
       image: peralatanImage,
       categoryId: editPeralatanCategory,
       brandId: editPeralatanBrand,
-      borrowCount: peralatanJumlah - peralatanAvailable,
+      borrowCount: peralatanBorrowCount,
       id: peralatanId,
     };
 
@@ -300,7 +366,48 @@ function PeralatanDetail() {
 
   const changePeralatanImage = (event) => {
     setEditPeralatanImage(event.target.files[0]);
-    setPeralatanImage(URL.createObjectURL(event.target.files[0]));
+  };
+
+  const uploadPeralatanImageToFirebase = async () => {
+    console.log(editPeralatanImage);
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAf5GnpEKVsZ8iPnbYHO9oJD-hdSk0TWao",
+      authDomain: "storage-system-135a2.firebaseapp.com",
+      projectId: "storage-system-135a2",
+      storageBucket: "storage-system-135a2.appspot.com",
+      messagingSenderId: "6215443319",
+      appId: "1:6215443319:web:7e35fea7c364cf0035b772",
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    if (editPeralatanImage) {
+      // Reference to the Firebase Storage location where you want to replace the image
+      const storageRef = firebase.storage().refFromURL(peralatanImage);
+
+      // Upload the new image
+      const uploadTask = storageRef.put(editPeralatanImage);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Progress monitoring if needed
+        },
+        (error) => {
+          console.error(error);
+        },
+        () => {
+          // Image uploaded successfully, get the new URL
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            // Update the URL in your database or perform any other actions with the URL
+            console.log("File available at", downloadURL);
+          });
+        }
+      );
+    }
   };
 
   return (
@@ -423,7 +530,7 @@ function PeralatanDetail() {
                 />
               </div>
             ) : ( */}
-            <div className="ml-2">{peralatanJumlah} Buah</div>
+              <div className="ml-2">{peralatanJumlah} Buah</div>
             {/* )} */}
           </div>
           <div className="text-xl md:text-2xl mb-2 flex">
