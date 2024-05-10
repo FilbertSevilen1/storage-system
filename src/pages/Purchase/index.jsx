@@ -91,7 +91,12 @@ function Purchase() {
       }, 3000);
       return setSnackbarMessage("Gagal mendapatkan data");
     })
+  }
 
+  const resetFilter = () =>{
+    searchStartDate.current.value = ""
+    searchEndDate.current.value = ""
+    getDataPembelianList();
   }
 
   const getMaxPage = () =>{
@@ -120,7 +125,7 @@ function Purchase() {
               key={index}
               purchaseNo={index + 1}
               purchaseNama={purchase.peralatanName}
-              purchaseDate={purchase.date}
+              purchaseDate={purchase.purchaseDate}
               purchaseCount={purchase.count}
               purchaseTotalPrice={purchase.totalPrice}
               page={page}
@@ -199,6 +204,7 @@ function Purchase() {
             </div>
             <div className="w-full mt-8">
               <Button
+                onClick={()=>resetFilter()}
                 variant="contained"
                 size="large"
                 fullWidth

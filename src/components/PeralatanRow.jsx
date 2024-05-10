@@ -338,7 +338,7 @@ function PeralatanRow(props) {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeAddDialog}>Cancel</Button>
+          <Button onClick={closeAddDialog}>Batal</Button>
           <Button onClick={onSubmit} type="submit">
             <b>Tambah</b>
           </Button>

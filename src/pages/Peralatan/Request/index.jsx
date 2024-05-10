@@ -18,7 +18,11 @@ import Heading from "../../../components/base/Heading";
 import PengajuanPeralatanHeader from "../../../components/PengajuanPeralatanHeader";
 import PengajuanPeralatanRow from "../../../components/PengajuanPeralatanRow";
 import SubHeading from "../../../components/base/SubHeading";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function PengajuanPeralatan() {
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -27,19 +31,73 @@ function PengajuanPeralatan() {
   const vertical = "top";
   const horizontal = "center";
 
+  const searchItem = useRef();
+  const searchStartDate = useRef();
+  const searchEndDate = useRef();
   const [searchStatus, setSearchStatus] = useState("");
 
   const handleSearchStatus = (event) => {
     setSearchStatus(event.target.value);
   };
 
-  useEffect(() => {
-    getRequestData();
-  },[])
+  const [listRequest, setListRequest] = useState([
+  ]);
 
-  const getRequestData = () =>{
+  useEffect(() => {
+    getRequestList();
+  }, [searchStartDate, searchEndDate, searchStatus]);
+
+  useEffect(() => {
     getMaxPage();
-  }
+  }, [listRequest]);
+
+  const getDataRequestList = () => {
+    setLoading(true);
+    const body = {
+      itemName: searchItem.current.value,
+      statusId: searchStatus,
+      startDate: searchStartDate.current.value,
+      endDate: searchEndDate.current.value,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/request/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setListRequest(res.data.requests)
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal mendapatkan data");
+      });
+  };
+
+  const resetFilter = () => {
+    setSearchStatus("");
+    searchStartDate.current.value = "";
+    searchEndDate.current.value = "";
+  };
+
+  const getRequestList = () => {
+    getDataRequestList();
+  };
+
+  const handleSearchNameKeyDown = (event) => {
+    if (event.key == "Enter") {
+      setPage(1);
+      getDataRequestList();
+    }
+  };
 
   const getMaxPage = () => {
     if (listRequest.length % 5 === 0) {
@@ -53,9 +111,7 @@ function PengajuanPeralatan() {
     "Selesai",
   ]);
 
-  const searchItem = useRef();
-  const searchStartDate = useRef();
-  const searchEndDate = useRef();
+
 
   const prevPage = () => {
     if (page <= 1) return;
@@ -67,48 +123,34 @@ function PengajuanPeralatan() {
     setPage(page + 1);
   };
 
-  const generateMenuIemStatus = () =>{
+  const generateMenuIemStatus = () => {
     return listStatus.map((status, index) => {
-        return(
-            <MenuItem value={status}>{status}</MenuItem>
-        )
-    })
-  }
+      return <MenuItem value={status}>{status}</MenuItem>;
+    });
+  };
 
-  const [listRequest, setListRequest] = useState([
-    {
-        request_id:"1",
-        user_id : "1",
-        user_name : "Jack",
-        brand_id : "1",
-        brand_name : "Lenovo",
-        request_item_name : "Laptop A",
-        request_item_count : "1",
-        request_item_description : "A",
-        approval_id : "",
-        request_status : "Waiting for Approval",
-        request_reason : "Butuh Banyak"
-    },
-])
-
-  const generateRequestData = () =>{
-    return listRequest.map((item, index)=>{
-        return <PengajuanPeralatanRow
-            requestId = {item.request_id}
-            userId = {item.user_id}
-            userName = {item.user_name}
-            brandId = {item.brand_id}
-            brandName = {item.brand_name}
-            requestItemName = {item.request_item_name}
-            requestItemCount = {item.request_item_count}
-            requestItemDescription = {item.request_item_description}
-            approvalId = {item.approval_id}
-            requestReason = {item.request_reason}
-            requestStatus = {item.request_status}
-        >
-        </PengajuanPeralatanRow>
-    })
-  }
+  const generateRequestData = () => {
+    return listRequest.map((item, index) => {
+      return (
+        <PengajuanPeralatanRow
+          key={item.id}
+          requestIndex = {index+1}
+          requestId={item.id}
+          userId={item.userId}
+          userName={item.userName}
+          brandId={item.brandId}
+          brandName={item.brandName}
+          requestItemName={item.itemName}
+          requestItemCount={item.itemCount}
+          requestItemDescription={item.itemDescription}
+          requestDate={item.date}
+          approvalId={item.approvalId}
+          approvalStatus={item.approvalStatus}
+          requestReason={item.reason}
+        ></PengajuanPeralatanRow>
+      );
+    });
+  };
   return (
     <div className="w-full">
       <Snackbar
@@ -143,7 +185,8 @@ function PengajuanPeralatan() {
               label="Username"
               variant="standard"
               className="w-full"
-              placeholder="Cari Nama Pengaju di sini"
+              placeholder="Cari Nama Alat di sini"
+              onKeyDown={handleSearchNameKeyDown}
             />
           </div>
         </div>
@@ -163,7 +206,9 @@ function PengajuanPeralatan() {
                     placeholder="Status"
                     fullWidth
                   >
-                    {generateMenuIemStatus()}
+                    <MenuItem value={"e3946b09-fb28-4d97-89e2-d2a2a54ba9a7"}>Menunggu Persetujuan</MenuItem>
+                    <MenuItem value={"6344d1b5-6b9b-4cd8-b612-f6a3e64fb837"}>Disetujui</MenuItem>
+                    <MenuItem value={"5fcc9739-cbdc-4dec-866d-5f7b059213f1"}>Ditolak</MenuItem>
                   </Select>
                 </FormControl>
               </div>
@@ -176,6 +221,7 @@ function PengajuanPeralatan() {
                   variant="outlined"
                   inputRef={searchStartDate}
                   fullWidth
+                  onChange={getDataRequestList}
                 />
               </div>
               <div className="w-full mt-4">
@@ -187,13 +233,24 @@ function PengajuanPeralatan() {
                   variant="outlined"
                   inputRef={searchEndDate}
                   fullWidth
+                  onChange={getDataRequestList}
                 />
+              </div>
+              <div className="w-full mt-8">
+                <Button
+                  onClick={resetFilter}
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                >
+                  Reset
+                </Button>
               </div>
             </div>
           </div>
           <div className="bg-white w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
             <PengajuanPeralatanHeader></PengajuanPeralatanHeader>
-            {generateRequestData()}
+            {loading ? <></> : <>{generateRequestData()}</>}
             <div className="w-full justify-end items-center mt-4 flex">
               <Button onClick={prevPage}>
                 <svg

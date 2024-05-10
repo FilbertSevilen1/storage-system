@@ -36,12 +36,13 @@ function PeralatanDetail() {
   const [listKategori, setListKategori] = useState("");
   const [listBrand, setListBrand] = useState("");
 
+  const [peralatanId, setPeralatanId] = useState("");
   const [peralatanName, setPeralatanName] = useState("");
   const [peralatanType, setPeralatanType] = useState("");
   const [peralatanJumlah, setPeralatanJumlah] = useState("");
   const [peralatanAvailable, setPeralatanAvailable] = useState("");
   const [peralatanDeskripsi, setPeralatanDeskripsi] = useState("");
-  const [perlatanImage, setPeralatanImage] = useState("");
+  const [peralatanImage, setPeralatanImage] = useState("");
 
   const [peralatanCategoryId, setPeralatanCategoryId] = useState("");
   const [peralatanCategoryName, setPeralatanCategoryName] = useState("");
@@ -118,6 +119,7 @@ function PeralatanDetail() {
       })
       .then((res) => {
         const data = res.data.peralatan;
+        setPeralatanId(data.id);
         setPeralatanName(data.name);
         setPeralatanJumlah(data.count);
         setPeralatanAvailable(data.count - data.borrowCount);
@@ -230,11 +232,41 @@ function PeralatanDetail() {
   };
 
   const saveEdit = () => {
-    setPeralatanName(editPeralatanNama.current.value);
-    setPeralatanDeskripsi(editPeralatanDeskripsi.current.value);
-    setPeralatanCategoryId(editPeralatanCategory)
-    setPeralatanBrandId(editPeralatanBrand)
-    setEdit(false);
+    let body = {
+      name: editPeralatanNama.current.value,
+      description: editPeralatanDeskripsi.current.value,
+      image: peralatanImage,
+      categoryId: editPeralatanCategory,
+      brandId: editPeralatanBrand,
+      borrowCount: peralatanJumlah - peralatanAvailable,
+      id: peralatanId,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .put(API_URL + "/peralatan/update", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        getDataPeralatan();
+        setEdit(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Edit Alat Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setEdit(false);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Edit Alat Gagal");
+      });
   };
 
   const cancelEdit = () => {
@@ -247,22 +279,21 @@ function PeralatanDetail() {
   const generatePeralatanDetail = () => {
     if (listPeralatanDetail) {
       return listPeralatanDetail.map((peralatan, index) => {
-        
-          return (
-            <PeralatanDetailRow
-              index={index}
-              key={index}
-              role={userRole}
-              peralatanId={peralatan.id}
-              peralatanName={peralatan.name}
-              peralatanSerialNumber={peralatan.name}
-              peralatanStatusId={peralatan.statusId}
-              peralatanStatusName={peralatan.statusName}
-              peralatanDescription={peralatan.description}
-              brandName={peralatan.brandName}
-              page={page}
-            ></PeralatanDetailRow>
-          );
+        return (
+          <PeralatanDetailRow
+            index={index}
+            key={index}
+            role={userRole}
+            peralatanId={peralatan.id}
+            peralatanName={peralatan.name}
+            peralatanSerialNumber={peralatan.name}
+            peralatanStatusId={peralatan.statusId}
+            peralatanStatusName={peralatan.statusName}
+            peralatanDescription={peralatan.description}
+            brandName={peralatan.brandName}
+            page={page}
+          ></PeralatanDetailRow>
+        );
       });
     }
   };
@@ -288,7 +319,7 @@ function PeralatanDetail() {
         <div className="w-full md:w-[275px] h-fit flex flex-col p-4 bg-white shadow-md md:mr-2 mb-4 items-center">
           <div className="w-[250px] h-[250px] bg-gray-200">
             <img
-              src={perlatanImage}
+              src={peralatanImage}
               className="w-full h-full object-cover"
             ></img>
           </div>
@@ -378,7 +409,7 @@ function PeralatanDetail() {
           </div>
           <div className="text-xl md:text-2xl mb-2 flex items-center">
             <b>Jumlah Alat: </b>
-            {edit && peralatanType != true ? (
+            {/* {edit && peralatanType != true ? (
               <div className="ml-2">
                 <TextField
                   inputRef={editPeralatanJumlah}
@@ -391,9 +422,9 @@ function PeralatanDetail() {
                   defaultValue={peralatanJumlah}
                 />
               </div>
-            ) : (
-              <div className="ml-2">{peralatanJumlah} Buah</div>
-            )}
+            ) : ( */}
+            <div className="ml-2">{peralatanJumlah} Buah</div>
+            {/* )} */}
           </div>
           <div className="text-xl md:text-2xl mb-2 flex">
             <b>Available: </b>

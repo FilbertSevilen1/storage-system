@@ -6,6 +6,7 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -40,7 +41,44 @@ function PeralatanDetailRow(props) {
       }, 3000);
       return setSnackbarMessage("Angka Seri tidak boleh kosong");
     }
+    if (editDescription.current.value == "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Deskripsi tidak boleh kosong");
+    }
+    if (editStatus== "") {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Status tidak boleh kosong");
+    }
     setEdit(false);
+
+    // let body = {
+
+    // };
+
+    // const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    // axios
+    //   .put(API_URL + "/peralatan-detail/update", body, {
+    //     headers: {
+    //       Authorization: `Bearer ${token.token}`,
+    //     },
+    //   })
+    // .then((res)=>{
+
+    // })
+    // .catch((err)=>{
+    //   setSnackbar(true);
+    //   setTimeout(() => {
+    //     setSnackbar(false);
+    //   }, 3000);
+    //   return setSnackbarMessage("Simpan Data Gagal");
+    // })
 
     setSerialNumber(editAngkaSeri.current.value);
     setDescription(editDescription.current.value);
