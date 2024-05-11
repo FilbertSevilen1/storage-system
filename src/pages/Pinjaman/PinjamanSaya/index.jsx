@@ -1,4 +1,12 @@
-import { Button, FormControl, Input, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Input,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import Heading from "../../../components/base/Heading";
 import PinjamanHeader from "../../../components/PinjamanHeader";
@@ -7,9 +15,13 @@ import HorizontalDivider from "../../../components/base/HorizontalDivider";
 import SubHeading from "../../../components/base/SubHeading";
 import MyPinjamanHeader from "../../../components/MyPinjamanHeader";
 import MyPinjamanRow from "../../../components/MyPinjamanRow";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function PinjamanSaya() {
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState("");
+  const [maxPage, setMaxPage] = useState(0);
 
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -28,72 +40,60 @@ function PinjamanSaya() {
     "Selesai",
   ]);
 
-
   const searchItem = useRef();
   const searchStartDate = useRef();
   const searchEndDate = useRef();
-  const [listPinjaman, setListPinjaman] = useState([
-    {
-      borrow_id: "1",
-      user_id:"1",
-      user_name: "Anton",
-      approval_start_id:"1",
-      approval_end_id:"2",
-      borrow_start_date: "2024/01/01",
-      borrow_end_date: "2024/01/02",
-      borrow_duration: "1 Minggu",
-      borrow_count: "6",
-      status_borrow_id: "4",
-      status_borrow_name: "Selesai"
-    },
-    {
-      borrow_id: "2",
-      user_id:"1",
-      user_name: "Anton",
-      approval_start_id:"3",
-      approval_end_id:"4",
-      borrow_start_date: "2024/01/01",
-      borrow_end_date: "2024/01/02",
-      borrow_duration: "1 Minggu",
-      borrow_count: "6",
-      status_borrow_id: "2",
-      status_borrow_name: "Menunggu Approval"
-    },
-    {
-      borrow_id: "3",
-      user_id:"1",
-      user_name: "Anton",
-      approval_start_id:"3",
-      approval_end_id:"4",
-      borrow_start_date: "2024/01/01",
-      borrow_end_date: "2024/01/02",
-      borrow_duration: "1 Minggu",
-      borrow_count: "3",
-      status_borrow_id:"3",
-      status_borrow_name: "Dalam Peminjaman",
-    },
-  ]);
+  const [listPinjaman, setListPinjaman] = useState([]);
 
   useEffect(() => {
-    getPinjamanData();
-  }, [page]);
-  const getPinjamanData = () =>{
     getPinjamanList();
-  }
+  }, [searchStatus, searchStartDate, searchEndDate]);
 
-  const getPinjamanList = () => {
-    if (listPinjaman.length % 5 === 0) {
-      setMaxPage(Math.floor(listPinjaman.length / 5));
-    } else setMaxPage(Math.floor(listPinjaman.length / 5) + 1);
+  const getDataPinjamanList = () => {
+    setLoading(true)
+    const body = {
+      userName: "",
+      statusBorrowId: searchStatus,
+      startDate: searchStartDate.current.value,
+      endDate: searchEndDate.current.value,
+      me: true,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/borrow/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setListPinjaman(res.data.borrows);
+        if (res.data.borrows.length % 5 === 0) {
+          setMaxPage(Math.floor(res.data.borrows.length / 5));
+        }
+        else setMaxPage(Math.floor(res.data.borrows.length / 5) + 1);
+        setLoading(false)
+      })
+      .catch((err)=>{
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      })
   };
 
-  const generateMenuIemStatus = () =>{
+  const getPinjamanList = () => {
+    getDataPinjamanList();
+  };
+
+  const generateMenuIemStatus = () => {
     return listStatus.map((status, index) => {
-        return(
-            <MenuItem value={status}>{status}</MenuItem>
-        )
-    })
-  }
+      return <MenuItem value={status}>{status}</MenuItem>;
+    });
+  };
 
   const generatePinjamanData = () => {
     if (listPinjaman) {
@@ -102,14 +102,14 @@ function PinjamanSaya() {
           return (
             <MyPinjamanRow
               index={index}
-              key={index}
-              pinjamanId={pinjaman.borrow_id}
-              pinjamanNama={pinjaman.user_name}
-              pinjamanStartDate={pinjaman.borrow_start_date}
-              pinjamanEndDate={pinjaman.borrow_end_date}
-              pinjamanDurasi={pinjaman.borrow_duration}
-              pinjamanJumlah={pinjaman.borrow_count}
-              pinjamanStatus={pinjaman.status_borrow_name}
+              key={pinjaman.id}
+              pinjamanIndex={index + 1}
+              pinjamanId={pinjaman.id}
+              pinjamanNama={pinjaman.userName}
+              pinjamanStartDate={pinjaman.startDate}
+              pinjamanEndDate={pinjaman.endDate}
+              pinjamanDurasi={""}
+              pinjamanStatus={pinjaman.statusName}
               page={page}
             ></MyPinjamanRow>
           );
@@ -126,36 +126,19 @@ function PinjamanSaya() {
     if (page >= maxPage) return;
     setPage(page + 1);
   };
+
+  const resetFilter = () => {
+    setSearchStatus();
+    searchStartDate.current.value = null;
+    searchEndDate.current.value = null;
+    getPinjamanList()
+  };
+
   return (
     <div className="w-full">
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
-        <div>
+        <div className="mb-4">
           <Heading title="Pinjaman Saya"></Heading>
-        </div>
-
-
-        <div className="bg-white w-full flex items-center mt-8 shadow-md px-8 py-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="currentColor"
-              d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5q0-2.725 1.888-4.612T9.5 3q2.725 0 4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5q0-1.875-1.312-3.187T9.5 5Q7.625 5 6.313 6.313T5 9.5q0 1.875 1.313 3.188T9.5 14"
-            />
-          </svg>
-          <div className="w-full ml-4">
-            <Input
-              inputRef={searchItem}
-              id=""
-              label="Username"
-              variant="standard"
-              className="w-full"
-              placeholder="Cari Pinjaman ID di sini"
-            />
-          </div>
         </div>
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
           <div className="bg-white w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
@@ -164,8 +147,8 @@ function PinjamanSaya() {
                 + Buat Pinjaman
               </Button>
             </div>
-            <HorizontalDivider/>
-            <SubHeading title="Filter"/>
+            <HorizontalDivider />
+            <SubHeading title="Filter" />
             <div className="w-full mt-4">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Status</InputLabel>
@@ -178,8 +161,21 @@ function PinjamanSaya() {
                   placeholder="Status"
                   fullWidth
                 >
-                {generateMenuIemStatus()}
-
+                  <MenuItem value={"faa77eff-50d4-4633-acce-78c0aae92cf0"}>
+                    Menunggu Persetujuan
+                  </MenuItem>
+                  <MenuItem value={"de52b2d0-7cdd-4929-aed4-d09a1287b52f"}>
+                    Siap Dipinjam
+                  </MenuItem>
+                  <MenuItem value={"5d4c9168-f08b-4a9c-b354-44a595168129"}>
+                    Dalam Peminjaman
+                  </MenuItem>
+                  <MenuItem value={"73c03313-bfdb-467d-98bb-02dd4a93ff54"}>
+                    Selesai
+                  </MenuItem>
+                  <MenuItem value={"781f0b17-7546-415d-a74b-162b4a67e8f9"}>
+                    Dibatalkan
+                  </MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -191,6 +187,7 @@ function PinjamanSaya() {
                 label="Tanggal Mulai"
                 variant="outlined"
                 inputRef={searchStartDate}
+                onChange={getPinjamanList}
                 fullWidth
               />
             </div>
@@ -202,12 +199,18 @@ function PinjamanSaya() {
                 label="Tanggal Selesai"
                 variant="outlined"
                 inputRef={searchEndDate}
+                onChange={getPinjamanList}
                 fullWidth
               />
             </div>
             <div className="w-full mt-8">
-              <Button onClick={()=>getPinjamanData()} variant="contained" size="large" fullWidth>
-                Cari
+              <Button
+                onClick={() => resetFilter()}
+                variant="contained"
+                size="large"
+                fullWidth
+              >
+                Reset
               </Button>
             </div>
           </div>

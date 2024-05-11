@@ -117,7 +117,6 @@ function User() {
 
   
   const generateUserData = () => {
-    console.log("LIST", listUser);
     if (listUser) {
       return listUser.map((user, index) => {
         if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)

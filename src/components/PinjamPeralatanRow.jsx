@@ -51,6 +51,7 @@ function PinjamPeralatanRow({
     if (tersedia > 0) {
       setJumlah(jumlah + 1);
       setTersedia(tersedia - 1);
+      console.log(jumlah)
     }
     incrementTotal(peralatan);
   };
@@ -72,7 +73,7 @@ function PinjamPeralatanRow({
   const generateSerialNumber = () =>{
     if(peralatanDetail){
       return peralatanDetail.map((detail, index)=>{
-        return <div>{detail.peralatan_detail_name}{index !=-1? `,`:""}</div>
+        return <div>{detail.detailName}{index !=-1? `,`:""}</div>
       })
     }
   }
@@ -141,7 +142,7 @@ function PinjamPeralatanRow({
           <div className="flex md:hidden mr-2 font-bold">
             {"Jumlah (Tersedia)"} :{" "}
           </div>
-          <div>{`${peralatanDetail?peralatanDetail.length:jumlah} ${peralatanDetail?"":`(tersedia ${tersedia})`}`}</div>
+          <div>{`${jumlah}`}</div>
         </div>
         {editable ? (
           <div className="w-full md:w-2/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">

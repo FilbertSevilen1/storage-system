@@ -7,7 +7,6 @@ function MyPinjamanHeader() {
         <div className="w-2/12 flex justify-center">ID Pinjaman</div>
         <div className="w-2/12 flex justify-center">Tanggal Mulai</div>
         <div className="w-2/12 flex justify-center">Tanggal Selesai</div>
-        <div className="w-1/12 flex justify-center">Jumlah</div>
         <div className="w-2/12 flex justify-center">Status</div>
         <div className="w-2/12 flex justify-center">Aksi</div>
       </div>

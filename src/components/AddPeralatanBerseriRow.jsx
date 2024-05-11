@@ -31,11 +31,11 @@ import {
         <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
           <div className="w-full md:w-4/12 flex flex-wrap justify-start mx-2 md:justify-center">
             <div className="flex md:hidden mr-2 font-bold">Nomor Seri : </div>
-            <div>{detail.peralatan_detail_name}</div>
+            <div>{detail.detailName}</div>
           </div>
           <div className="w-full md:w-4/12 flex flex-wrap justify-start mx-2 md:justify-center">
             <div className="flex md:hidden mr-2 font-bold">Status: </div>
-            <div>{detail.peralatan_status}</div>
+            <div>{detail.status}</div>
           </div>
           <div className="w-full md:w-4/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">
               <div className="flex">
