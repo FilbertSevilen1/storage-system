@@ -47,7 +47,6 @@ function CreatePinjaman() {
   const createEndDate = useRef("");
   const createReason = useRef("");
 
-
   const searchAddNama = useRef("");
   const searchAddDetailNama = useRef("");
 
@@ -105,82 +104,7 @@ function CreatePinjaman() {
     generatePinjamPeralatan();
   }, [listAddPeralatan]);
 
-  const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([
-    // {
-    //   id: "1",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   has_identifier: true,
-    //   category_name: "Elektronik",
-    //   count: 3,
-    //   available: 3,
-    //   brand_name: "Lenovo",
-    //   peralatanDetails: [
-    //     {
-    //       detailId: "1",
-    //       peralatanDetails_name: "KOMP001-0001",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //     {
-    //       detailId: "2",
-    //       peralatanDetails_name: "KOMP001-0002",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //     {
-    //       detailId: "3",
-    //       peralatanDetails_name: "KOMP001-0003",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "2",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Komputer",
-    //   has_identifier: false,
-    //   brand_name: "Lenovo",
-    //   category_name: "Elektronik",
-    //   count: 5,
-    //   available: 2,
-    // },
-    // {
-    //   id: "3",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Monitor",
-    //   has_identifier: false,
-    //   brand_name: "Lenovo",
-    //   category_name: "Elektronik",
-    //   count: 3,
-    //   available: 4,
-    // },
-    // {
-    //   id: "4",
-    //   peralatan_image: "test",
-    //   peralatan_name: "Mobil",
-    //   has_identifier: true,
-    //   brand_name: "Lenovo",
-    //   category_name: "Otomotif",
-    //   count: 3,
-    //   available: 3,
-    //   peralatanDetails: [
-    //     {
-    //       detailId: "1",
-    //       peralatanDetails_name: "MOB001-0001",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //     {
-    //       detailId: "2",
-    //       peralatanDetails_name: "MOB001-0002",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //     {
-    //       detailId: "3",
-    //       peralatanDetails_name: "MOB001-0003",
-    //       peralatan_status: "Siap Dipinjam",
-    //     },
-    //   ],
-    // },
-  ]);
+  const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([]);
 
   const [listKategori, setListKategori] = useState([
     "Elektronik",
@@ -481,7 +405,7 @@ function CreatePinjaman() {
   const generateAddPeralatanList = () => {
     if (listSearchAddPeralatan) {
       return listSearchAddPeralatan.map((peralatan, index) => {
-        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5) {
+        if (true) {
           return (
             <AddPeralatanRow
               index={index}
@@ -649,16 +573,21 @@ function CreatePinjaman() {
             </div>
           </div>
           <AddPeralatanHeader></AddPeralatanHeader>
-          {generateAddPeralatanList()}
+          <div className="max-h-[350px] sm:max-h-[600px] overflow-y-scroll">
+            {generateAddPeralatanList()}
+          </div>
         </DialogContent>
         <DialogActions></DialogActions>
       </Dialog>
 
-      <Dialog open={confirmationDialog} onClose={()=>setConfirmationDialog(false)}>
+      <Dialog
+        open={confirmationDialog}
+        onClose={() => setConfirmationDialog(false)}
+      >
         <DialogTitle>Konfirmasi Pembuatan Pinjaman</DialogTitle>
         <DialogContent>Apakah Anda yakin ingin membuat pinjaman?</DialogContent>
         <DialogActions>
-          <Button onClick={()=>setConfirmationDialog(false)}>Tidak</Button>
+          <Button onClick={() => setConfirmationDialog(false)}>Tidak</Button>
           <Button onClick={() => onSubmit()} type="submit">
             <b>Ya</b>
           </Button>
@@ -768,7 +697,10 @@ function CreatePinjaman() {
             </div>
           </div>
           <PinjamPeralatanHeader></PinjamPeralatanHeader>
+          <div className="w-full max-h-[400px] sm:max-h-[600px] overflow-y-scroll">
           {loading ? <></> : <>{generatePinjamPeralatan()}</>}
+          </div>
+          
           {/* <div className="w-full justify-end items-center mt-4 flex">
             <Button onClick={prevPage}>
               <svg
@@ -807,7 +739,11 @@ function CreatePinjaman() {
             </Button>
           </div>
           <div className="md:ml-2">
-            <Button onClick={() => setConfirmationDialog(true)} variant="contained" size="large">
+            <Button
+              onClick={() => setConfirmationDialog(true)}
+              variant="contained"
+              size="large"
+            >
               Buat Pinjaman
             </Button>
           </div>
