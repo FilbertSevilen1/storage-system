@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
   Input,
+  Snackbar,
   TextField,
   TextareaAutosize,
 } from "@mui/material";
@@ -222,14 +223,53 @@ function DetailPinjaman() {
       });
   };
 
+  const onCancelBorrow = () => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    const body = {};
+
+    axios
+      .put(API_URL + `/borrow/update/cancel/${id}`, body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Berhasil membatalkan pinjaman");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Pembatalan pinjaman gagal");
+      });
+  };
+
   const rejectReason = useRef("");
   const [rejectConfirmationDialog, setRejectConfirmationDialog] =
     useState(false);
   const [approveConfirmationDialog, setApproveConfirmationDialog] =
     useState(false);
 
+  const [cancelConfirmationDialog, setCancelConfirmationDialog] =
+    useState(false);
+  const [startConfirmationDialog, setStartConfirmationDialog] = useState(false);
+
   return (
     <div className="w-full">
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={snackbar}
+        autoHideDuration={3000}
+        message={snackbarMessage}
+        key={"top" + "center"}
+      />
       <Dialog
         open={rejectConfirmationDialog}
         onClose={() => setRejectConfirmationDialog(false)}
@@ -270,6 +310,33 @@ function DetailPinjaman() {
             Batal
           </Button>
           <Button onClick={() => onApproveBorrow()} type="submit">
+            <b>Ya</b>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={cancelConfirmationDialog}
+        onClose={() => setCancelConfirmationDialog(false)}
+      >
+        <DialogTitle>Batalkan Pinjaman</DialogTitle>
+        <DialogContent>
+          <div className="w-96">
+            <TextField
+              margin="dense"
+              label="Alasan"
+              type="text"
+              variant="outlined"
+              inputRef={rejectReason}
+              fullWidth
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setCancelConfirmationDialog(false)}>
+            Batal
+          </Button>
+          <Button onClick={() => onCancelBorrow()} type="submit">
             <b>Ya</b>
           </Button>
         </DialogActions>
@@ -421,6 +488,33 @@ function DetailPinjaman() {
                 size="large"
               >
                 Setujui Peminjaman
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
+
+        {statusName == "Siap Dipinjam" ? (
+          <div className="w-full flex justify-end mb-8">
+            <div className="md:ml-2">
+              <Button
+                onClick={() => setCancelConfirmationDialog(true)}
+                color="error"
+                variant="contained"
+                size="large"
+              >
+                Batalkan Pinjaman
+              </Button>
+            </div>
+            <div className="md:ml-2">
+              <Button
+                onClick={() => setStartConfirmationDialog(true)}
+                color="primary"
+                variant="contained"
+                size="large"
+              >
+                Mulai Pinjaman
               </Button>
             </div>
           </div>
