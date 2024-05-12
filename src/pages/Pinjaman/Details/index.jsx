@@ -16,9 +16,11 @@ import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
 import { useLocation, useNavigate } from "react-router";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function DetailPinjaman() {
+  const user = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -169,6 +171,14 @@ function DetailPinjaman() {
   const onRejectBorrow = () => {
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
+    if (!rejectReason.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Alasan tidak boleh kosong");
+    }
+
     const body = {
       reason: rejectReason.current.value,
     };
@@ -226,6 +236,14 @@ function DetailPinjaman() {
   const onCancelBorrow = () => {
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
+    if (!cancelReason.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Alasan tidak boleh kosong");
+    }
+
     const body = {};
 
     axios
@@ -251,12 +269,54 @@ function DetailPinjaman() {
       });
   };
 
+  const onStartBorrow = () => {
+    console.log(listPinjamPeralatan);
+
+    // let flag = false
+    // listPinjamPeralatan.forEach(item => {
+    //   if(item.peralatanDetails){
+    //     item.peralatanDetails.forEach(subitem => {
+
+    //     });
+    //   }
+    // });
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    const body = {
+      reason : "test"
+    };
+
+    axios
+      .put(API_URL + `/borrow/update/start/${id}`, body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Pinjaman dimulai");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Setujui pinjaman gagal");
+      });
+  };
+
   const rejectReason = useRef("");
   const [rejectConfirmationDialog, setRejectConfirmationDialog] =
     useState(false);
   const [approveConfirmationDialog, setApproveConfirmationDialog] =
     useState(false);
 
+  const cancelReason = useRef("");
   const [cancelConfirmationDialog, setCancelConfirmationDialog] =
     useState(false);
   const [startConfirmationDialog, setStartConfirmationDialog] = useState(false);
@@ -327,7 +387,7 @@ function DetailPinjaman() {
               label="Alasan"
               type="text"
               variant="outlined"
-              inputRef={rejectReason}
+              inputRef={cancelReason}
               fullWidth
             />
           </div>
@@ -337,6 +397,24 @@ function DetailPinjaman() {
             Batal
           </Button>
           <Button onClick={() => onCancelBorrow()} type="submit">
+            <b>Ya</b>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={startConfirmationDialog}
+        onClose={() => setStartConfirmationDialog(false)}
+      >
+        <DialogTitle>Setujui Pinjaman</DialogTitle>
+        <DialogContent>
+          Apakah Anda yakin ingin menyetujui pinjaman?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setStartConfirmationDialog(false)}>
+            Batal
+          </Button>
+          <Button onClick={() => onStartBorrow()} type="submit">
             <b>Ya</b>
           </Button>
         </DialogActions>
@@ -468,58 +546,64 @@ function DetailPinjaman() {
 
           <div className="w-full justify-end items-center mt-4 flex"></div>
         </div>
-        {statusName == "Menunggu Persetujuan" ? (
-          <div className="w-full flex justify-end mb-8">
-            <div className="md:ml-2">
-              <Button
-                onClick={() => setRejectConfirmationDialog(true)}
-                color="error"
-                variant="contained"
-                size="large"
-              >
-                Tolak Peminjaman
-              </Button>
-            </div>
-            <div className="md:ml-2">
-              <Button
-                onClick={() => setApproveConfirmationDialog(true)}
-                color="success"
-                variant="contained"
-                size="large"
-              >
-                Setujui Peminjaman
-              </Button>
-            </div>
-          </div>
-        ) : (
+        {user.role == "User" ? (
           <></>
-        )}
+        ) : (
+          <>
+            {statusName == "Menunggu Persetujuan" ? (
+              <div className="w-full flex justify-end mb-8">
+                <div className="md:ml-2">
+                  <Button
+                    onClick={() => setRejectConfirmationDialog(true)}
+                    color="error"
+                    variant="contained"
+                    size="large"
+                  >
+                    Tolak Peminjaman
+                  </Button>
+                </div>
+                <div className="md:ml-2">
+                  <Button
+                    onClick={() => setApproveConfirmationDialog(true)}
+                    color="success"
+                    variant="contained"
+                    size="large"
+                  >
+                    Setujui Peminjaman
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
 
-        {statusName == "Siap Dipinjam" ? (
-          <div className="w-full flex justify-end mb-8">
-            <div className="md:ml-2">
-              <Button
-                onClick={() => setCancelConfirmationDialog(true)}
-                color="error"
-                variant="contained"
-                size="large"
-              >
-                Batalkan Pinjaman
-              </Button>
-            </div>
-            <div className="md:ml-2">
-              <Button
-                onClick={() => setStartConfirmationDialog(true)}
-                color="primary"
-                variant="contained"
-                size="large"
-              >
-                Mulai Pinjaman
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <></>
+            {statusName == "Siap Dipinjam" ? (
+              <div className="w-full flex justify-end mb-8">
+                <div className="md:ml-2">
+                  <Button
+                    onClick={() => setCancelConfirmationDialog(true)}
+                    color="error"
+                    variant="contained"
+                    size="large"
+                  >
+                    Batalkan Pinjaman
+                  </Button>
+                </div>
+                <div className="md:ml-2">
+                  <Button
+                    onClick={() => setStartConfirmationDialog(true)}
+                    color="primary"
+                    variant="contained"
+                    size="large"
+                  >
+                    Mulai Pinjaman
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </>
         )}
       </div>
     </div>
