@@ -12,7 +12,11 @@ import Heading from "../../../components/base/Heading";
 import PinjamanHeader from "../../../components/PinjamanHeader";
 import PinjamanRow from "../../../components/PinjamanRow";
 import SubHeading from "../../../components/base/SubHeading";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function ListPinjaman() {
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -28,55 +32,88 @@ function ListPinjaman() {
   const [listPinjaman, setListPinjaman] = useState([
     {
       borrow_id: "1",
-      user_id:"1",
+      user_id: "1",
       user_name: "Anton",
-      approval_start_id:"1",
-      approval_end_id:"2",
+      approval_start_id: "1",
+      approval_end_id: "2",
       borrow_start_date: "2024/01/01",
       borrow_end_date: "2024/01/02",
       borrow_duration: "1 Minggu",
       borrow_count: "6",
       status_borrow_id: "4",
-      status_borrow_name: "Selesai"
+      status_borrow_name: "Selesai",
     },
     {
       borrow_id: "2",
-      user_id:"1",
+      user_id: "1",
       user_name: "Anton",
-      approval_start_id:"3",
-      approval_end_id:"4",
+      approval_start_id: "3",
+      approval_end_id: "4",
       borrow_start_date: "2024/01/01",
       borrow_end_date: "2024/01/02",
       borrow_duration: "1 Minggu",
       borrow_count: "6",
       status_borrow_id: "2",
-      status_borrow_name: "Menunggu Approval"
+      status_borrow_name: "Menunggu Approval",
     },
     {
       borrow_id: "3",
-      user_id:"1",
+      user_id: "1",
       user_name: "Anton",
-      approval_start_id:"3",
-      approval_end_id:"4",
+      approval_start_id: "3",
+      approval_end_id: "4",
       borrow_start_date: "2024/01/01",
       borrow_end_date: "2024/01/02",
       borrow_duration: "1 Minggu",
       borrow_count: "3",
-      status_borrow_id:"3",
+      status_borrow_id: "3",
       status_borrow_name: "Dalam Peminjaman",
     },
   ]);
 
+  const getDataPinjamanList = () => {
+    setLoading(true);
+    const body = {
+      userName: "",
+      statusBorrowId: searchStatus,
+      startDate: searchStartDate.current.value,
+      endDate: searchEndDate.current.value,
+      me: false,
+    };
 
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/borrow/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setListPinjaman(res.data.borrows);
+        if (res.data.borrows.length % 5 === 0) {
+          setMaxPage(Math.floor(res.data.borrows.length / 5));
+        } else setMaxPage(Math.floor(res.data.borrows.length / 5) + 1);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
+  const getPinjamanList = () => {
+    getDataPinjamanList();
+  };
 
   useEffect(() => {
-    getPinjamanData();
+    getPinjamanList();
   }, [page]);
 
-  const getPinjamanData = () =>{
-    getMaxPage();
-  }
-  
   const getMaxPage = () => {
     if (listPinjaman.length % 5 === 0) {
       setMaxPage(Math.floor(listPinjaman.length / 5));
@@ -90,14 +127,15 @@ function ListPinjaman() {
           return (
             <PinjamanRow
               index={index}
-              key={index}
-              pinjamanId={pinjaman.borrow_id}
-              pinjamanNama={pinjaman.user_name}
-              pinjamanStartDate={pinjaman.borrow_start_date}
-              pinjamanEndDate={pinjaman.borrow_end_date}
-              pinjamanDurasi={pinjaman.borrow_duration}
+              key={pinjaman.id}
+              pinjamanIndex={index + 1}
+              pinjamanId={pinjaman.id}
+              pinjamanNama={pinjaman.userName}
+              pinjamanStartDate={pinjaman.startDate}
+              pinjamanEndDate={pinjaman.endDate}
+              pinjamanDurasi={""}
               pinjamanJumlah={pinjaman.borrow_count}
-              pinjamanStatus={pinjaman.status_borrow_name}
+              pinjamanStatus={pinjaman.statusName}
               page={page}
             ></PinjamanRow>
           );
@@ -121,17 +159,23 @@ function ListPinjaman() {
     "Selesai",
   ]);
 
-  const generateMenuIemStatus = () =>{
+  const generateMenuIemStatus = () => {
     return listStatus.map((status, index) => {
-        return(
-            <MenuItem value={status}>{status}</MenuItem>
-        )
-    })
-  }
+      return <MenuItem value={status}>{status}</MenuItem>;
+    });
+  };
 
   const handleSearchStatus = (event) => {
     setSearchStatus(event.target.value);
   };
+
+  const resetFilter = () => {
+    setSearchStatus();
+    searchStartDate.current.value = null;
+    searchEndDate.current.value = null;
+    getPinjamanList();
+  };
+
   return (
     <div className="w-full">
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
@@ -165,7 +209,7 @@ function ListPinjaman() {
         </div>
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
           <div className="bg-white w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
-            <SubHeading title="Filter"/>
+            <SubHeading title="Filter" />
             <div className="w-full mt-4">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Status</InputLabel>
@@ -178,7 +222,7 @@ function ListPinjaman() {
                   placeholder="Status"
                   fullWidth
                 >
-                 {generateMenuIemStatus()}
+                  {generateMenuIemStatus()}
                 </Select>
               </FormControl>
             </div>
@@ -190,6 +234,7 @@ function ListPinjaman() {
                 label="Tanggal Mulai"
                 variant="outlined"
                 inputRef={searchStartDate}
+                onChange={getPinjamanList}
                 fullWidth
               />
             </div>
@@ -201,18 +246,25 @@ function ListPinjaman() {
                 label="Tanggal Selesai"
                 variant="outlined"
                 inputRef={searchEndDate}
+                onChange={getPinjamanList}
                 fullWidth
               />
             </div>
             <div className="w-full mt-8">
-              <Button onClick={()=>getPinjamanData()} variant="contained" size="large" fullWidth>
-                Cari
+              <Button
+                onClick={() => resetFilter()}
+                variant="contained"
+                size="large"
+                fullWidth
+              >
+                Reset
               </Button>
             </div>
           </div>
           <div className="bg-white w-full h-full xl:w-3/4 p-4 shadow-xl mt-4 md:mt-0 xl:ml-4 flex-col justify-between">
             <PinjamanHeader></PinjamanHeader>
-            {generatePinjamanData()}
+            {loading ? <></> : <>{generatePinjamanData()}</>}
+
             <div className="w-full justify-end items-center mt-4 flex">
               <Button onClick={prevPage}>
                 <svg

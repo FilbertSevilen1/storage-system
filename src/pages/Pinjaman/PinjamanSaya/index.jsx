@@ -16,9 +16,11 @@ import SubHeading from "../../../components/base/SubHeading";
 import MyPinjamanHeader from "../../../components/MyPinjamanHeader";
 import MyPinjamanRow from "../../../components/MyPinjamanRow";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PinjamanSaya() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(0);
@@ -143,7 +145,7 @@ function PinjamanSaya() {
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
           <div className="bg-white w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full mb-4">
-              <Button variant="contained" size="large" fullWidth>
+              <Button onClick={()=>navigate('/borrow/create')} variant="contained" size="large" fullWidth>
                 + Buat Pinjaman
               </Button>
             </div>

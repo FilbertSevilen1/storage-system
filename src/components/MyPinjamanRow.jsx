@@ -29,6 +29,21 @@ import { useNavigate } from "react-router";
     let [total, setTotal] = useState(props.pinjamanJumlah)
     let [status, setStatus] = useState(props.pinjamanStatus)
 
+    const formatDate = (date) =>{
+      const dateformat = new Date(date);
+
+      const year = dateformat.getFullYear();
+      const month = String(dateformat.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1
+      const day = String(dateformat.getDate()).padStart(2, "0");
+      const hours = String(dateformat.getHours()).padStart(2, "0");
+      const minutes = String(dateformat.getMinutes()).padStart(2, "0");
+      const seconds = String(dateformat.getSeconds()).padStart(2, "0");
+    
+      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+      return formattedDate
+    }
+
     return (
       <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
         <Snackbar
@@ -49,11 +64,11 @@ import { useNavigate } from "react-router";
           </div>
           <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center text-center">
             <div className="flex md:hidden mr-2 font-bold">Tanggal Mulai : </div>
-            {startDate}
+            {formatDate(startDate)}
           </div>
           <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center text-center">
             <div className="flex md:hidden mr-2 font-bold">Tanggal Selesai : </div>
-            {endDate}
+            {formatDate(endDate)}
           </div>
           <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center text-center">
             <div className="flex md:hidden mr-2 font-bold">Status : </div>
