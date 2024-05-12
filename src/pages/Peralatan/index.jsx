@@ -232,6 +232,7 @@ function Peralatan() {
   const [addPeralatanImageUrl, setAddPeralatanImageUrl] = useState("");
   const [addPeralatanCategory, setAddPeralatanCategory] = useState("");
   const [addPeralatanBrand, setAddPeralatanBrand] = useState("");
+  const addPeralatanDenda = useRef("");
   const addPeralatanDeskripsi = useRef("");
 
   const handleInputCategory = (event) => {
@@ -251,18 +252,18 @@ function Peralatan() {
     console.log(addPeralatanImage);
 
     let currentdate = new Date();
-    let day = currentdate.getDate().toString().padStart(2, '0'); // Ensures two digits with leading zero
-    let month = (currentdate.getMonth() + 1).toString().padStart(2, '0'); // Ensures two digits with leading zero
+    let day = currentdate.getDate().toString().padStart(2, "0"); // Ensures two digits with leading zero
+    let month = (currentdate.getMonth() + 1).toString().padStart(2, "0"); // Ensures two digits with leading zero
     let year = currentdate.getFullYear().toString();
-    let hours = currentdate.getHours().toString().padStart(2, '0'); // Ensures two digits with leading zero
-    let minutes = currentdate.getMinutes().toString().padStart(2, '0'); // Ensures two digits with leading zero
-    let seconds = currentdate.getSeconds().toString().padStart(2, '0'); // Ensures two digits with leading zero
-    
+    let hours = currentdate.getHours().toString().padStart(2, "0"); // Ensures two digits with leading zero
+    let minutes = currentdate.getMinutes().toString().padStart(2, "0"); // Ensures two digits with leading zero
+    let seconds = currentdate.getSeconds().toString().padStart(2, "0"); // Ensures two digits with leading zero
+
     let datetime = day + month + year + hours + minutes + seconds;
     let filename = addPeralatanImage.name.split(".");
-    filename[0] = datetime
+    filename[0] = datetime;
 
-    let combinedfilename = filename[0] + '.' + filename[1]
+    let combinedfilename = filename[0] + "." + filename[1];
     console.log(combinedfilename);
 
     const firebaseConfig = {
@@ -278,9 +279,7 @@ function Peralatan() {
       firebase.initializeApp(firebaseConfig);
     }
 
-    const storageRef = firebase
-      .storage()
-      .ref(`peralatan/${combinedfilename}`);
+    const storageRef = firebase.storage().ref(`peralatan/${combinedfilename}`);
     const uploadTask = storageRef.put(addPeralatanImage);
 
     await uploadTask.on(
@@ -299,7 +298,7 @@ function Peralatan() {
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
           console.log("File available at", downloadURL);
           setAddPeralatanImageUrl(downloadURL);
-          console.log(downloadURL)
+          console.log(downloadURL);
           createPeralatanData(downloadURL);
         });
       }
@@ -342,10 +341,10 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
-    await uploadPerlatanImageToFirebase()
+    await uploadPerlatanImageToFirebase();
   };
 
-  const createPeralatanData = (imgurl) =>{
+  const createPeralatanData = (imgurl) => {
     let body = {
       name: addPeralatanName.current.value,
       description: addPeralatanDeskripsi.current.value,
@@ -378,7 +377,7 @@ function Peralatan() {
         }, 3000);
         return setSnackbarMessage("Perekaman Data Gagal");
       });
-  }
+  };
 
   const onSubmitRequest = () => {
     if (!requestPeralatanName.current.value) {
@@ -632,8 +631,18 @@ function Peralatan() {
                 </Select>
               </FormControl>
             </div>
-
-            <div className="p-2 w-1/2"></div>
+            <div className="p-2 w-1/2">
+              <TextField
+                margin="dense"
+                id="peralatanName"
+                name="name"
+                label="Denda per Jam"
+                type="number"
+                fullWidth
+                variant="outlined"
+                inputRef={addPeralatanDenda}
+              />
+            </div>
             <div className="p-2 w-full flex flex-col">
               <div className="mt-2">Deskripsi</div>
               <TextareaAutosize
@@ -644,7 +653,6 @@ function Peralatan() {
                 ref={addPeralatanDeskripsi}
               />
             </div>
-            <div className="p-2 w-1/2 mt-2"></div>
           </div>
         </DialogContent>
         <DialogActions>

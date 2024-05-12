@@ -71,9 +71,13 @@ function PinjamPeralatanRow({
     deletePinjamPeralatanData();
   };
   const generateSerialNumber = () =>{
+    console.log(peralatanDetail)
     if(peralatanDetail){
       return peralatanDetail.map((detail, index)=>{
-        return <div>{detail.detailName}{index !=-1? `,`:""}</div>
+        if(detail.peralatanDetailName){
+          return <div>{detail.peralatanDetailName}{index !=peralatanDetail.length-1? `,`:""}</div>
+        }
+        else return <div>{detail.detailName}{index !=peralatanDetail.length-1? `,`:""}</div>
       })
     }
   }
@@ -127,7 +131,7 @@ function PinjamPeralatanRow({
       </Dialog>
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
         <div className="w-full md:w-2/12 h-24 sm:w-24 md:h-full bg-gray-700 rounded-lg">
-          <img src={image} className="w-full h-full"></img>
+          <img src={image} className="w-full h-full object-contain"></img>
         </div>
         <div className="w-full md:w-2/12 flex flex-col flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>

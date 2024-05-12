@@ -661,6 +661,15 @@ function CreatePinjaman() {
                   placeholder="Alasan Peminjaman"
                   ref={createReason}
                 />
+                <div className="font-bold text-red-500 text-xl mt-4">
+                  CATATAN PENTING!
+                </div>
+                <div className="text-l text-red-500 w-full mt-2 text-justify">
+                  {"*)"} Peminjam diberikan kompensasi keterlambatan selama 1 jam, Jika peminjaman melewati waktu tersebut, maka user akan terkena hukuman berupa <b>timeout peminjaman dan denda tiap alat per jam keterlambatan.</b>  Hal ini dimohon menjadi catatan karena dapat mengganggu peminjaman alat oleh pengguna lain.
+                </div>
+                <div className="text-l text-red-500 w-full mt-2 text-justify">
+                  {"**) Dalam kasus tertentu akibat ada kerusakan alat atau keterlambatan pengembalian dari pengguna lain, admin dapat mengubah alat yang akan dipinjam atau membatalkan pinjaman yang telah disetujui apabila tidak ada alat lain yang tersedia."}
+                </div>
               </div>
             </div>
           </div>
@@ -700,32 +709,6 @@ function CreatePinjaman() {
           <div className="w-full max-h-[400px] sm:max-h-[600px] overflow-y-scroll">
           {loading ? <></> : <>{generatePinjamPeralatan()}</>}
           </div>
-          
-          {/* <div className="w-full justify-end items-center mt-4 flex">
-            <Button onClick={prevPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path fill="currentColor" d="m14 17l-5-5l5-5z" />
-              </svg>
-            </Button>
-            <div className="mx-2">
-              {page} / {maxPage}
-            </div>
-            <Button onClick={nextPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path fill="currentColor" d="M10 17V7l5 5z" />
-              </svg>
-            </Button>
-          </div> */}
         </div>
         <div className="w-full flex justify-end mb-8">
           <div>

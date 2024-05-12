@@ -83,7 +83,7 @@ function AddPeralatanRow({
       </Dialog>
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
         <div className="w-full md:w-2/12 h-24 sm:w-24 md:h-full bg-gray-700 rounded-lg">
-          <img src={image} className="w-full h-full"></img>
+          <img src={image} className="w-full h-full object-cover"></img>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>

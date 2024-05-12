@@ -1,12 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Heading from "../../../components/base/Heading";
-import { Button, Input, TextField, TextareaAutosize } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Input,
+  TextField,
+  TextareaAutosize,
+} from "@mui/material";
 import SubHeading from "../../../components/base/SubHeading";
 import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function DetailPinjaman() {
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -15,65 +29,105 @@ function DetailPinjaman() {
   const vertical = "top";
   const horizontal = "center";
 
-  const [id, setId] = useState("0001");
-  const [name, setName] = useState("User")
+  const path = useLocation().pathname.substring(8);
+
+  const [id, setId] = useState(path);
+  const [name, setName] = useState("User");
   const [startDate, setStartDate] = useState("01/01/2024");
   const [endDate, setEndDate] = useState("01/12/2024");
   const [reason, setReason] = useState("Testing");
-  const [status, setStatus] = useState("Menunggu Approval Pengembalian");
+  const [statusId, setStatusId] = useState("");
+  const [statusName, setStatusName] = useState(
+    "Menunggu Approval Pengembalian"
+  );
 
-  const [listPinjamPeralatan, setListPinjamPeralatan] = useState([
-    {
-      peralatan_id: "1",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      peralatan_type: "Berseri",
-      category_name: "Elektronik",
-      peralatan_count: 2,
-      peralatan_available: 4,
-      peralatan_detail: [
-        {
-          peralatan_detail_name: "KOMP001-0001",
+  const formatDate = (date) => {
+    const dateformat = new Date(date);
+
+    const year = dateformat.getFullYear();
+    const month = String(dateformat.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1
+    const day = String(dateformat.getDate()).padStart(2, "0");
+    const hours = String(dateformat.getHours()).padStart(2, "0");
+    const minutes = String(dateformat.getMinutes()).padStart(2, "0");
+    const seconds = String(dateformat.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
+  };
+
+  const [listPinjamPeralatan, setListPinjamPeralatan] = useState([]);
+
+  const getDetailPeralatan = (borrowperalatan) => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    for (let i = 0; i < borrowperalatan.length; i++) {
+      axios
+        .get(API_URL + `/peralatan/get/${borrowperalatan[i].peralatanId}`, {
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+          },
+        })
+        .then((res) => {
+          borrowperalatan[i] = {
+            ...borrowperalatan[i],
+            peralatanImage: res.data.peralatan.image,
+            categoryId: res.data.peralatan.categoryId,
+            categoryName: res.data.peralatan.categoryName,
+            brandId: res.data.peralatan.brandId,
+            brandName: res.data.peralatan.brandName,
+          };
+
+          if (i == borrowperalatan.length - 1) {
+            setListPinjamPeralatan(borrowperalatan);
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          return setSnackbarMessage("Gagal Mendapatkan Data");
+        });
+    }
+  };
+
+  const getDataDetailPinjaman = () => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .get(API_URL + `/borrow/get/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
         },
-        {
-          peralatan_detail_name: "KOMP001-0002",
-        },
-      ],
-    },
-    {
-      peralatan_id: "2",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      peralatan_type: "Tidak Berseri",
-      category_name: "Elektronik",
-      peralatan_count: 5,
-      peralatan_available: 2,
-    },
-  ]);
+      })
+      .then((res) => {
+        setName(res.data.borrow.userName);
+        setStartDate(res.data.borrow.startDate);
+        setEndDate(res.data.borrow.endDate);
+        setReason(res.data.borrow.reason);
+        setStatusName(res.data.borrow.statusName);
+
+        getDetailPeralatan(res.data.borrow.peralatans);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
+  const getDetailPinjaman = () => {
+    getDataDetailPinjaman();
+  };
 
   useEffect(() => {
-    getDataPinjamPeralatan();
+    getDetailPinjaman();
   }, []);
-
-  const getDataPinjamPeralatan = () => {
-    getPinjamPeralatanList();
-  };
-
-  const getPinjamPeralatanList = () => {
-    if (listPinjamPeralatan.length % 5 === 0) {
-      setMaxPage(Math.floor(listPinjamPeralatan.length / 5));
-    } else setMaxPage(Math.floor(listPinjamPeralatan.length / 5) + 1);
-  };
-
-  const prevPage = () => {
-    if (page <= 1) return;
-    setPage(page - 1);
-  };
-
-  const nextPage = () => {
-    if (page >= maxPage) return;
-    setPage(page + 1);
-  };
 
   const deletePinjamPeralatanData = (index) => {
     // Use setListPinjamPeralatan to update the state
@@ -87,19 +141,22 @@ function DetailPinjaman() {
   const generatePinjamPeralatan = () => {
     if (listPinjamPeralatan) {
       return listPinjamPeralatan.map((peralatan, index) => {
-        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
+        if (true)
           return (
             <PinjamPeralatanRow
               editable={false}
               index={index}
-              key={index}
-              peralatanImage={peralatan.peralatan_image}
-              peralatanName={peralatan.peralatan_name}
-              peralatanType={peralatan.peralatan_type}
-              peralatanCategory={peralatan.category_name}
-              peralatanTotal={peralatan.peralatan_count}
-              peralatanAvailable={peralatan.peralatan_available}
-              peralatanDetail={peralatan.peralatanDetail}
+              key={peralatan.peralatanId}
+              peralatanImage={peralatan.peralatanImage}
+              peralatanName={peralatan.peralatanName}
+              peralatanType={
+                peralatan.peralatanDetails.length > 0 ? true : false
+              }
+              peralatanCategory={peralatan.categoryName}
+              peralatanTotal={peralatan.peralatanBorrowCount}
+              peralatanAvailable={""}
+              peralatanDetail={peralatan.peralatanDetails}
+              brandName={peralatan.brandName}
               page={page}
               deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
             ></PinjamPeralatanRow>
@@ -107,15 +164,124 @@ function DetailPinjaman() {
       });
     }
   };
+
+  const onRejectBorrow = () => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    const body = {
+      reason: rejectReason.current.value,
+    };
+
+    axios
+      .put(API_URL + `/borrow/update/reject/${id}`, body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Berhasil menolak pinjaman");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Tolak pinjaman gagal");
+      });
+  };
+  const onApproveBorrow = () => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    const body = {};
+
+    axios
+      .put(API_URL + `/borrow/update/approve/${id}`, body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        return setSnackbarMessage("Berhasil menyetujui pinjaman");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Setujui pinjaman gagal");
+      });
+  };
+
+  const rejectReason = useRef("");
+  const [rejectConfirmationDialog, setRejectConfirmationDialog] =
+    useState(false);
+  const [approveConfirmationDialog, setApproveConfirmationDialog] =
+    useState(false);
+
   return (
     <div className="w-full">
+      <Dialog
+        open={rejectConfirmationDialog}
+        onClose={() => setRejectConfirmationDialog(false)}
+      >
+        <DialogTitle>Tolak Pinjaman</DialogTitle>
+        <DialogContent>
+          <div className="w-96">
+            <TextField
+              margin="dense"
+              label="Alasan"
+              type="text"
+              variant="outlined"
+              inputRef={rejectReason}
+              fullWidth
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRejectConfirmationDialog(false)}>
+            Batal
+          </Button>
+          <Button onClick={() => onRejectBorrow()} type="submit">
+            <b>Ya</b>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={approveConfirmationDialog}
+        onClose={() => setRejectConfirmationDialog(false)}
+      >
+        <DialogTitle>Setujui Pinjaman</DialogTitle>
+        <DialogContent>
+          Apakah Anda yakin ingin menyetujui pinjaman?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setApproveConfirmationDialog(false)}>
+            Batal
+          </Button>
+          <Button onClick={() => onApproveBorrow()} type="submit">
+            <b>Ya</b>
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
           <Heading title="Detail Pinjaman"></Heading>
         </div>
         <div className="bg-white w-full flex flex-col items-center mt-8 shadow-md px-4 py-4">
           <div className="w-full flex flex-wrap items-center">
-            <div className="flex w-1/4">
+            <div className="flex w-full md:w-1/2 xl:w-1/4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -132,7 +298,7 @@ function DetailPinjaman() {
                 {id}
               </div>
             </div>
-            <div className="flex w-1/4">
+            <div className="flex w-full md:w-1/2 xl:w-1/4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -161,7 +327,7 @@ function DetailPinjaman() {
           </div>
           <div className="w-1/4 flex flex-wrap mb-4 items-center"></div>
           <div className="w-full flex flex-wrap">
-            <div className="w-full md:w-1/4 flex items-center mb-4">
+            <div className="flex w-full md:w-1/2 xl:w-1/4 flex items-center mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -174,10 +340,10 @@ function DetailPinjaman() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Mulai :</b> {startDate}
+                <b>Tanggal Mulai :</b> {formatDate(startDate)}
               </div>
             </div>
-            <div className="w-full md:w-1/4 flex items-center mb-4">
+            <div className="flex w-full md:w-1/2 xl:w-1/4 flex items-center mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -190,20 +356,20 @@ function DetailPinjaman() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Selesai :</b> {endDate}
+                <b>Tanggal Selesai :</b> {formatDate(endDate)}
               </div>
             </div>
             <div className="w-full flex flex-wrap">
-              <div className="w-full md:w-1/4">
+              <div className="flex w-full md:w-1/2 xl:w-1/4">
                 <div>
                   <b>Alasan Peminjaman</b>
                   <div>{reason}</div>
                 </div>
               </div>
-              <div className="w-full md:w-1/4">
+              <div className="flex w-full md:w-1/2 xl:w-1/4">
                 <div>
                   <b>Status Peminjaman</b>
-                  <div>{status}</div>
+                  <div>{statusName}</div>
                 </div>
               </div>
             </div>
@@ -213,56 +379,54 @@ function DetailPinjaman() {
           <div className="w-full flex items-center mb-4">
             <SubHeading title="Peralatan yang Dipinjam"></SubHeading>
             <div className="ml-4">
-              <Button
-                variant="contained"
-                size="large"
-                onClick={()=>navigate('/borrow/edit/1')}
-              >
-                Edit
-              </Button>
+              {statusName == "Menunggu Persetujuan" ||
+              statusName == "Siap Dipinjam" ? (
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => navigate(`/borrow/edit/${id}`)}
+                >
+                  Edit
+                </Button>
+              ) : (
+                <></>
+              )}
             </div>
             <div className="ml-4"></div>
           </div>
           <PinjamPeralatanHeader></PinjamPeralatanHeader>
-          {generatePinjamPeralatan()}
-          <div className="w-full justify-end items-center mt-4 flex">
-            <Button onClick={prevPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
+          <div className="w-full max-h-[400px] sm:max-h-[600px] overflow-y-scroll">
+            {loading ? <></> : <>{generatePinjamPeralatan()}</>}
+          </div>
+
+          <div className="w-full justify-end items-center mt-4 flex"></div>
+        </div>
+        {statusName == "Menunggu Persetujuan" ? (
+          <div className="w-full flex justify-end mb-8">
+            <div className="md:ml-2">
+              <Button
+                onClick={() => setRejectConfirmationDialog(true)}
+                color="error"
+                variant="contained"
+                size="large"
               >
-                <path fill="currentColor" d="m14 17l-5-5l5-5z" />
-              </svg>
-            </Button>
-            <div className="mx-2">
-              {page} / {maxPage}
+                Tolak Peminjaman
+              </Button>
             </div>
-            <Button onClick={nextPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
+            <div className="md:ml-2">
+              <Button
+                onClick={() => setApproveConfirmationDialog(true)}
+                color="success"
+                variant="contained"
+                size="large"
               >
-                <path fill="currentColor" d="M10 17V7l5 5z" />
-              </svg>
-            </Button>
+                Setujui Peminjaman
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className="w-full flex justify-end mb-8">
-          <div className="md:ml-2">
-            <Button color="error" variant="contained" size="large">
-              Tolak Peminjaman
-            </Button>
-          </div>
-          <div className="md:ml-2">
-            <Button color="success" variant="contained" size="large">
-             Setujui Peminjaman
-            </Button>
-          </div>
-        </div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

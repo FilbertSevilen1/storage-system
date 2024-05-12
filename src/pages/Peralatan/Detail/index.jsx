@@ -44,9 +44,10 @@ function PeralatanDetail() {
   const [peralatanType, setPeralatanType] = useState("");
   const [peralatanJumlah, setPeralatanJumlah] = useState("");
   const [peralatanAvailable, setPeralatanAvailable] = useState("");
-  const [peralatanBorrowCount, setPeralatanBorrowCount] = useState("")
+  const [peralatanBorrowCount, setPeralatanBorrowCount] = useState("");
   const [peralatanDeskripsi, setPeralatanDeskripsi] = useState("");
   const [peralatanImage, setPeralatanImage] = useState("");
+  const [peralatanDenda, setPeralatanDenda] = useState("");
 
   const [peralatanCategoryId, setPeralatanCategoryId] = useState("");
   const [peralatanCategoryName, setPeralatanCategoryName] = useState("");
@@ -127,7 +128,7 @@ function PeralatanDetail() {
         setPeralatanName(data.name);
         setPeralatanJumlah(data.count);
         setPeralatanAvailable(data.count - data.borrowCount);
-        setPeralatanBorrowCount(data.borrowCount)
+        setPeralatanBorrowCount(data.borrowCount);
         setPeralatanImage(data.image);
         setPeralatanCategoryId(data.categoryId);
         setPeralatanCategoryName(data.categoryName);
@@ -210,6 +211,7 @@ function PeralatanDetail() {
     useState(peralatanCategoryId);
   const [editPeralatanBrand, setEditPeralatanBrand] =
     useState(peralatanBrandId);
+  const [editPeralatanDenda, setEditPeralatanDenda] = useState("")
 
   const generateSelectPeralatanCategoryList = () => {
     if (listKategori) {
@@ -530,7 +532,7 @@ function PeralatanDetail() {
                 />
               </div>
             ) : ( */}
-              <div className="ml-2">{peralatanJumlah} Buah</div>
+            <div className="ml-2">{peralatanJumlah} Buah</div>
             {/* )} */}
           </div>
           <div className="text-xl md:text-2xl mb-2 flex">
@@ -585,6 +587,27 @@ function PeralatanDetail() {
               <div className="ml-2">{peralatanBrandName}</div>
             )}
           </div>
+
+          <div className="text-xl md:text-2xl mb-2 flex items-center">
+            <b>Denda Setiap Jam: </b>
+            {edit ? (
+              <div className="w-64 ml-2">
+                <TextField
+                  inputRef={editPeralatanDenda}
+                  id="peralatanNama"
+                  label="Denda Setiap Jam"
+                  margin="dense"
+                  variant="outlined"
+                  hide-details
+                  size="normal"
+                  defaultValue={peralatanDenda}
+                />
+              </div>
+            ) : (
+              <div className="ml-2">{editPeralatanDenda}</div>
+            )}
+          </div>
+
           <div className="text-xl md:text-2xl mb-2">
             <b>Deskripsi: </b>
             {edit ? (
