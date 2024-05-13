@@ -138,6 +138,7 @@ function PeralatanDetail() {
         setPeralatanType(data.hasIdentifier);
         setEditPeralatanCategory(data.categoryId);
         setEditPeralatanBrand(data.brandId);
+        setPeralatanDenda(data.fine)
 
         if (data.hasIdentifier) {
           getDataPeralatanDetails();
@@ -211,7 +212,7 @@ function PeralatanDetail() {
     useState(peralatanCategoryId);
   const [editPeralatanBrand, setEditPeralatanBrand] =
     useState(peralatanBrandId);
-  const [editPeralatanDenda, setEditPeralatanDenda] = useState("")
+  const editPeralatanDenda = useRef("")
 
   const generateSelectPeralatanCategoryList = () => {
     if (listKategori) {
@@ -269,37 +270,17 @@ function PeralatanDetail() {
       return setSnackbarMessage("Merek tidak boleh kosong");
     }
 
+    if(editPeralatanDenda.current.value ==""){
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Denda tidak boleh kosong");
+    }
+
     if (editPeralatanImage) {
       uploadPeralatanImageToFirebase();
     }
-
-    // if (!peralatanType) {
-    //   if (editPeralatanJumlah.current.value > peralatanJumlah) {
-    //     setSnackbar(true);
-    //     setTimeout(() => {
-    //       setSnackbar(false);
-    //     }, 3000);
-    //     return setSnackbarMessage(
-    //       "Tambah peralatan hanya dapat dilakukan di Halaman Peralatan List"
-    //     );
-    //   }
-    //   if (editPeralatanJumlah.current.value < peralatanJumlah - peralatanAvailable) {
-    //     setSnackbar(true);
-    //     setTimeout(() => {
-    //       setSnackbar(false);
-    //     }, 3000);
-    //     return setSnackbarMessage(
-    //       `Alat tidak boleh kurang dari ${peralatanJumlah - peralatanAvailable}`
-    //     );
-    //   }
-    // }
-    // console.log(peralatanJumlah, peralatanAvailable);
-    // let borrowCount = 0;
-    // if (peralatanType) {
-    //   borrowCount = peralatanJumlah;
-    // } else {
-    //   borrowCount = editPeralatanJumlah.current.value;
-    // }
     const body = {
       name: editPeralatanNama.current.value,
       description: editPeralatanDeskripsi.current.value,
@@ -308,6 +289,7 @@ function PeralatanDetail() {
       brandId: editPeralatanBrand,
       borrowCount: peralatanBorrowCount,
       id: peralatanId,
+      peralatanFine: parseFloat(editPeralatanDenda.current.value)
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -594,7 +576,8 @@ function PeralatanDetail() {
               <div className="w-64 ml-2">
                 <TextField
                   inputRef={editPeralatanDenda}
-                  id="peralatanNama"
+                  id="denda"
+                  type="number"
                   label="Denda Setiap Jam"
                   margin="dense"
                   variant="outlined"
@@ -604,7 +587,7 @@ function PeralatanDetail() {
                 />
               </div>
             ) : (
-              <div className="ml-2">{editPeralatanDenda}</div>
+              <div className="ml-2">Rp. {peralatanDenda.toLocaleString("id-ID")}</div>
             )}
           </div>
 

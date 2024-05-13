@@ -341,6 +341,13 @@ function Peralatan() {
       }, 3000);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
+    if (!addPeralatanDenda.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Denda tidak boleh kosong");
+    }
     await uploadPerlatanImageToFirebase();
   };
 
@@ -350,6 +357,7 @@ function Peralatan() {
       description: addPeralatanDeskripsi.current.value,
       image: imgurl,
       borrowCount: 0,
+      peralatanFine: parseFloat(addPeralatanDenda.current.value),
       categoryId: addPeralatanCategory,
       brandId: addPeralatanBrand,
     };
@@ -634,8 +642,7 @@ function Peralatan() {
             <div className="p-2 w-1/2">
               <TextField
                 margin="dense"
-                id="peralatanName"
-                name="name"
+                id="denda"
                 label="Denda per Jam"
                 type="number"
                 fullWidth
