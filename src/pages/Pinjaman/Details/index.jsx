@@ -284,7 +284,7 @@ function DetailPinjaman() {
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     const body = {
-      reason : "test"
+      reason: "test",
     };
 
     axios
@@ -597,6 +597,23 @@ function DetailPinjaman() {
                     size="large"
                   >
                     Mulai Pinjaman
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+
+            {statusName == "Dalam Peminjaman" ? (
+              <div className="w-full flex justify-end mb-8">
+                <div className="md:ml-2">
+                  <Button
+                    onClick={() => navigate(`/borrow/return/${id}`)}
+                    color="primary"
+                    variant="contained"
+                    size="large"
+                  >
+                    Selesaikan Pinjaman
                   </Button>
                 </div>
               </div>

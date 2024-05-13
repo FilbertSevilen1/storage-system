@@ -47,21 +47,21 @@ function PinjamPeralatanRow({
   const [editDialogBerseri, setEditDialogBerseri] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
 
-  const [detail, setDetail] = useState(peralatanDetail)
+  const [detail, setDetail] = useState(peralatanDetail);
 
   const addJumlah = () => {
     if (tersedia > 0) {
       setJumlah(jumlah + 1);
       setTersedia(tersedia - 1);
+      incrementTotal(peralatan);
     }
-    incrementTotal(peralatan);
   };
   const minJumlah = () => {
     if (jumlah > 1) {
       setJumlah(jumlah - 1);
       setTersedia(tersedia + 1);
+      decrementTotal(peralatan);
     }
-    decrementTotal(peralatan);
   };
 
   const openDeleteDialog = () => {
@@ -92,14 +92,13 @@ function PinjamPeralatanRow({
     }
   };
 
-  const getCount = () =>{
-    if (peralatanDetail.length>0) {
-      return peralatanDetail.length
+  const getCount = () => {
+    if (peralatanDetail.length > 0) {
+      return peralatanDetail.length;
+    } else {
+      return peralatanTotal;
     }
-    else{
-      return peralatanTotal
-    }
-  }
+  };
 
   const closeEditDialog = () => {
     setEditDialogBerseri(false);

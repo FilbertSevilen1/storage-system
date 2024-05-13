@@ -15,8 +15,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddPeralatanBerseriHeader from "./AddPeralatanBerseriHeader";
 import EditPeralatanBerseriRow from "./EditPeralatanBerseriRow";
-import EditReturnBerseriRow from "./EditReturnBerseriRow";
-import EditReturnBerseriHeader from "./EditReturnBerseriHeader";
+import ReturnPeralatanBerseriRow from "./ReturnPeralatanBerseriRow";
 function ReturnPinjamanRow({
   peralatan,
   editable,
@@ -31,8 +30,10 @@ function ReturnPinjamanRow({
   page,
   deletePinjamPeralatanData,
   deletePinjamPeralatanBerseri,
-  changeReturnStatus,
+  incrementTotal,
+  decrementTotal,
   brandName,
+  maxCount
 }) {
   const dispatch = useDispatch();
 
@@ -47,23 +48,27 @@ function ReturnPinjamanRow({
 
   const [editDialogBerseri, setEditDialogBerseri] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
-  const [jumlahReturn, setJumlahReturn] = useState();
 
-  useEffect(()=>{
-    setJumlahReturn(peralatanTotal)
-  },[])
+  const [detail, setDetail] = useState(peralatanDetail)
 
   const addJumlah = () => {
-    if (jumlahReturn<jumlah) {
-      setJumlahReturn(jumlahReturn + 1);
+    if (jumlah < maxCount) {
+      setJumlah(jumlah + 1);
       setTersedia(tersedia - 1);
+      incrementTotal(peralatan);
     }
+   
+    
   };
   const minJumlah = () => {
-    if (jumlahReturn > 0) {
-      setJumlahReturn(jumlahReturn - 1);
+    
+    if (jumlah > 1) {
+      setJumlah(jumlah - 1);
       setTersedia(tersedia + 1);
+      console.log(jumlah)
+      decrementTotal(peralatan);
     }
+   
   };
 
   const openDeleteDialog = () => {
@@ -73,45 +78,66 @@ function ReturnPinjamanRow({
     setDeleteDialog(false);
     deletePinjamPeralatanData();
   };
-  const generateSerialNumber = () =>{
-    if(peralatanDetail){
-      return peralatanDetail.map((detail, index)=>{
-        return <div>{detail.peralatan_detail_name}{index !=-1? `,`:""}</div>
-      })
+  const generateSerialNumber = () => {
+    if (peralatanDetail) {
+      return peralatanDetail.map((detail, index) => {
+        if (detail.peralatanDetailName) {
+          return (
+            <div>
+              {detail.peralatanDetailName}
+              {index != peralatanDetail.length - 1 ? `,` : ""}
+            </div>
+          );
+        } else
+          return (
+            <div>
+              {detail.detailName}
+              {index != peralatanDetail.length - 1 ? `,` : ""}
+            </div>
+          );
+      });
+    }
+  };
+
+  const getCount = () =>{
+    if (peralatanDetail.length>0) {
+      return peralatanDetail.length
+    }
+    else{
+      return jumlah
     }
   }
 
-  const closeEditDialog = () =>{
+  const closeEditDialog = () => {
     setEditDialogBerseri(false);
-  }
+  };
 
-  const generateEditPeralatanBerseri = () =>{
-    if(peralatanDetail){
-      return peralatanDetail.map((detail, index)=>{
-        if(detail.peralatan_status == "Dalam Peminjaman"){
-          detail.peralatan_status = "Siap Dipinjam"
-        }
-        return <EditReturnBerseriRow
-          key={index}
-          peralatan={peralatan}
-          detail={detail}
-          index={index}
-          deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
-          changeReturnStatus={changeReturnStatus}
-          closeEditDialog={()=>closeEditDialog()}
-        >
-        </EditReturnBerseriRow>
-      })
+  const generateEditPeralatanBerseri = () => {
+    if (peralatanDetail) {
+      return peralatanDetail.map((detail, index) => {
+        return (
+          <ReturnPeralatanBerseriRow
+            key={index}
+            peralatan={peralatan}
+            detail={detail}
+            index={index}
+            deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
+            closeEditDialog={() => closeEditDialog()}
+          ></ReturnPeralatanBerseriRow>
+        );
+      });
     }
-  }
+  };
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
-      <Dialog open={editDialogBerseri} onClose={() => setEditDialogBerseri(false)}>
-        <DialogTitle>Ubah Status {nama}</DialogTitle> 
+      <Dialog
+        open={editDialogBerseri}
+        onClose={() => setEditDialogBerseri(false)}
+      >
+        <DialogTitle>Edit {nama}</DialogTitle>
         <DialogContent>
           <div className="w-full md:w-[550px]">
-            <EditReturnBerseriHeader>
-            </EditReturnBerseriHeader>
+            <AddPeralatanBerseriHeader></AddPeralatanBerseriHeader>
             {generateEditPeralatanBerseri()}
           </div>
         </DialogContent>
@@ -121,8 +147,8 @@ function ReturnPinjamanRow({
         <DialogTitle>Delete Peralatan</DialogTitle>
         <DialogContent>
           <div className="w-full">
-            Apakah Anda yakin ingin menghilangkan {nama} dari Peralatan yang akan
-            dipinjam?
+            Apakah Anda yakin ingin menghilangkan {nama} dari Peralatan yang
+            akan dipinjam?
           </div>
         </DialogContent>
         <DialogActions>
@@ -134,11 +160,15 @@ function ReturnPinjamanRow({
       </Dialog>
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
         <div className="w-full md:w-2/12 h-24 sm:w-24 md:h-full bg-gray-700 rounded-lg">
-          <img src={image} className="w-full h-full"></img>
+          <img src={image} className="w-full h-full object-contain"></img>
         </div>
         <div className="w-full md:w-2/12 flex flex-col flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>
-          <div><b>{nama} - {namaMerek}</b></div>
+          <div>
+            <b>
+              {nama} - {namaMerek}
+            </b>
+          </div>
           <div className="flex flex-wrap">{generateSerialNumber()}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
@@ -146,22 +176,17 @@ function ReturnPinjamanRow({
           <div>{kategori}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">
-            {"Jumlah Dipinjam"} :{" "}
-          </div>
-          <div>{`${peralatanDetail?peralatanDetail.length:jumlah}`}</div>
-        </div>
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">
-            {"Jumlah Dikembalikan"} :{" "}
-          </div>
-          <div>{`${peralatanDetail?peralatanDetail.length:jumlahReturn}`}</div>
+          <div className="flex md:hidden mr-2 font-bold">{"Jumlah"} : </div>
+          <div>{getCount()}</div>
         </div>
         {editable ? (
           <div className="w-full md:w-2/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">
-            {hasIdentifier == true? (
+            {hasIdentifier == true ? (
               <div className="flex">
-                <button onClick={()=>setEditDialogBerseri(true)} className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
+                <button
+                  onClick={() => setEditDialogBerseri(true)}
+                  className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"

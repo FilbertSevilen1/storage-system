@@ -18,14 +18,18 @@ import {
 import SubHeading from "../../../components/base/SubHeading";
 import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import PeralatanHeader from "../../../components/PeralatanHeader";
 import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
 import AddPeralatanRow from "../../../components/AddPeralatanRow";
 import { useSelector } from "react-redux";
+import axios from "axios";
 import ReturnPinjamanRow from "../../../components/ReturnPinjamanRow";
-import ReturnPinjamanHeader from "../../../components/ReturnPinjamanHeader";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function ReturnPinjaman() {
+  const [loading, setLoading] = useState(false);
+  const pathname = useLocation();
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -42,128 +46,138 @@ function ReturnPinjaman() {
   const createReason = useRef("");
 
   const [addDialog, setAddDialog] = useState(false);
-  const searchAddNama = useRef();
+  const searchAddNama = useRef("");
+  const searchAddDetailNama = useRef("");
+
+  const [searchAddNamaInput, setSearchAddNamaInput] = useState("");
+  const [searchAddNamaDetailInput, setSearchAddNamaDetailInput] = useState("");
+
   const [searchAddCategory, setSearchAddCategory] = useState("");
 
-  const [id, setId] = useState("0001");
+  const [disableAdd, setDisableAdd] = useState(true);
+
+  const [id, setId] = useState(pathname.pathname.substring(15));
   const [name, setName] = useState("User");
   const [startDate, setStartDate] = useState("01/01/2024");
   const [endDate, setEndDate] = useState("01/12/2024");
   const [reason, setReason] = useState("Testing");
-  const [status, setStatus] = useState("Menunggu Approval Pengembalian");
+  const [statusId, setStatusId] = useState("");
+  const [statusName, setStatusName] = useState("");
 
-  const [listAddPeralatan, setListAddPeralatan] = useState([
-    {
-      peralatan_id: "1",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      has_identifier: true,
-      category_name: "Elektronik",
-      peralatan_count: 3,
-      peralatan_available: 3,
-      brand_name: "Lenovo",
-      peralatan_detail: [
-        {
-          peralatan_detail_id: "1",
-          peralatan_detail_name: "KOMP001-0001",
-          peralatan_status: "Dalam Peminjaman",
-        },
-        {
-          peralatan_detail_id: "2",
-          peralatan_detail_name: "KOMP001-0002",
-          peralatan_status: "Dalam Peminjaman",
-        },
-      ],
-    },
-    {
-      peralatan_id: "2",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      has_identifier: false,
-      brand_name: "Lenovo",
-      category_name: "Elektronik",
-      peralatan_count: 5,
-      peralatan_available: 2,
-    },
-  ]);
+  const [listAddPeralatan, setListAddPeralatan] = useState([]);
 
+  const getDataPeralatanAvailable = () => {
+    if (!startDate || !endDate) {
+      return;
+    }
 
-  const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([
-    {
-      peralatan_id: "1",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      has_identifier: true,
-      category_name: "Elektronik",
-      peralatan_count: 3,
-      peralatan_available: 3,
-      brand_name: "Lenovo",
-      peralatan_detail: [
-        {
-          peralatan_detail_id: "1",
-          peralatan_detail_name: "KOMP001-0001",
-          peralatan_status: "Siap Dipinjam",
+    const body = {
+      startDate: createStartDate.current.value,
+      endDate: createEndDate.current.value,
+      peralatanName: searchAddNamaInput,
+      peralatanDetailName: searchAddNamaDetailInput,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/peralatan/available", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
         },
-        {
-          peralatan_detail_id: "2",
-          peralatan_detail_name: "KOMP001-0002",
-          peralatan_status: "Siap Dipinjam",
+      })
+      .then((res) => {
+        setListSearchAddPeralatan(res.data.peralatanAvailables);
+      })
+      .catch((err) => {});
+  };
+
+  const getPeralatanAvailable = () => {
+    if (createStartDate.current.value && createEndDate.current.value) {
+      setDisableAdd(false);
+    } else {
+      setDisableAdd(true);
+    }
+    getDataPeralatanAvailable();
+  };
+
+  const getDetailPeralatan = (borrowperalatan) => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    for (let i = 0; i < borrowperalatan.length; i++) {
+      axios
+        .get(API_URL + `/peralatan/get/${borrowperalatan[i].peralatanId}`, {
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+          },
+        })
+        .then((res) => {
+          borrowperalatan[i] = {
+            ...borrowperalatan[i],
+            max: borrowperalatan[i].peralatanBorrowCount,
+            id: borrowperalatan[i].peralatanId,
+            image: res.data.peralatan.image,
+            categoryId: res.data.peralatan.categoryId,
+            categoryName: res.data.peralatan.categoryName,
+            brandId: res.data.peralatan.brandId,
+            brandName: res.data.peralatan.brandName,
+            available: res.data.peralatan.count - res.data.peralatan.borrowCount,
+
+          };
+
+          if (i == borrowperalatan.length - 1) {
+            setListAddPeralatan(borrowperalatan);
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          return setSnackbarMessage("Gagal Mendapatkan Data");
+        });
+    }
+  };
+
+  const getDataDetailPinjaman = () => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .get(API_URL + `/borrow/get/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
         },
-        {
-          peralatan_detail_id: "3",
-          peralatan_detail_name: "KOMP001-0003",
-          peralatan_status: "Siap Dipinjam",
-        },
-      ],
-    },
-    {
-      peralatan_id: "2",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      has_identifier: false,
-      brand_name: "Lenovo",
-      category_name: "Elektronik",
-      peralatan_count: 5,
-      peralatan_available: 2,
-    },
-    {
-      peralatan_id: "3",
-      peralatan_image: "test",
-      peralatan_name: "Monitor",
-      has_identifier: false,
-      brand_name: "Lenovo",
-      category_name: "Elektronik",
-      peralatan_count: 3,
-      peralatan_available: 4,
-    },
-    {
-      peralatan_id: "4",
-      peralatan_image: "test",
-      peralatan_name: "Mobil",
-      has_identifier: true,
-      brand_name: "Lenovo",
-      category_name: "Otomotif",
-      peralatan_count: 3,
-      peralatan_available: 3,
-      peralatan_detail: [
-        {
-          peralatan_detail_id: "1",
-          peralatan_detail_name: "MOB001-0001",
-          peralatan_status: "Siap Dipinjam",
-        },
-        {
-          peralatan_detail_id: "2",
-          peralatan_detail_name: "MOB001-0002",
-          peralatan_status: "Siap Dipinjam",
-        },
-        {
-          peralatan_detail_id: "3",
-          peralatan_detail_name: "MOB001-0003",
-          peralatan_status: "Siap Dipinjam",
-        },
-      ],
-    },
-  ]);
+      })
+      .then((res) => {
+        setName(res.data.borrow.userName);
+        setStartDate(res.data.borrow.startDate);
+        setEndDate(res.data.borrow.endDate);
+        setReason(res.data.borrow.reason);
+        setStatusName(res.data.borrow.statusName);
+
+        getDetailPeralatan(res.data.borrow.peralatans);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
+  const getDetailPinjaman = () => {
+    getDataDetailPinjaman();
+  };
+
+  useEffect(() => {
+    getDetailPinjaman();
+    getPeralatanAvailable();
+  }, []);
+
+  const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([]);
 
   const [listKategori, setListKategori] = useState([
     "Elektronik",
@@ -172,18 +186,12 @@ function ReturnPinjaman() {
   ]);
 
   useEffect(() => {
-    getDataPinjamPeralatan();
+    console.log("ROLE", user.role);
   }, []);
 
-  const getDataPinjamPeralatan = () => {
-    getPinjamPeralatanList();
-  };
-
-  const getPinjamPeralatanList = () => {
-    if (listAddPeralatan.length % 5 === 0) {
-      setMaxPage(Math.floor(listAddPeralatan.length / 5));
-    } else setMaxPage(Math.floor(listAddPeralatan.length / 5) + 1);
-  };
+  useEffect(() => {
+    generatePinjamPeralatan();
+  }, [listAddPeralatan]);
 
   const prevPage = () => {
     if (page <= 1) return;
@@ -195,55 +203,245 @@ function ReturnPinjaman() {
     setPage(page + 1);
   };
 
+  const addPinjamPeralatanDataBerseri = (alat, detail) => {
+    alat = { ...alat, peralatanDetails: [detail] };
 
+    let found = false;
+    listAddPeralatan.forEach((item) => {
+      if (item.id == alat.id) {
+        let detailFound = false;
 
-  const changeReturnStatus = (id, detail) => {
-    let listReturn = listAddPeralatan
-    for(let i=0;i<listReturn.length;i++){
-        if(listReturn.peralatan_id == id){
-            for(let j=0;j<listReturn[i].peralatan_detail;i++){
-                if(listReturn[i].peralatan_detail[j].peralatan_detail_id == detail.peralatan_detail_id){
-                    listReturn[i].peralatan_detail[j] = detail
-                }
+        item.peralatanDetails.forEach((itemdetail) => {
+          if (
+            itemdetail.detailId == detail.detailId ||
+            (itemdetail.peralatanDetailId == detail.peralatanDetailId &&
+              itemdetail.peralatanDetailId != undefined &&
+              detail.peralatanDetailId != undefined)
+          ) {
+            detailFound = true;
+            setAddDialog(false);
+            setSnackbar(true);
+            setTimeout(() => {
+              setSnackbar(false);
+            }, 3000);
+            return setSnackbarMessage("Alat sudah ada di List");
+          }
+        });
+        if (!detailFound) {
+          item.peralatanDetails.push(detail);
+
+          listSearchAddPeralatan.forEach((itemalat) => {
+            if (itemalat.id == alat.id) {
+              itemalat.count++;
+              itemalat.available--;
             }
-        }
-    }
-    console.log(listReturn)
-    setListAddPeralatan();
-    setListAddPeralatan(listReturn)
+          });
+          listAddPeralatan.forEach((itemalat) => {
+            if (itemalat.id == alat.id) {
+              itemalat.count--;
+              itemalat.peralatanBorrowCount++;
+              itemalat.available--;
+            }
+          });
 
-    // for (let i = 0; i < listSearchAddPeralatan.length; i++) {
-    //   if (listSearchAddPeralatan[i].peralatan_id == alat.peralatan_id) {
-    //     setListSearchAddPeralatan((prevList) => {
-    //       const newList = [...prevList];
-    //       newList[i].peralatan_available -= 1;
-    //       return newList;
-    //     });
-    //   }
-    // }
-    
+          setAddDialog(false);
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          setSnackbarMessage("Tambah Stok Alat Sukses");
+        }
+        found = true;
+      }
+    });
+    if (!found) {
+      alat = {
+        ...alat,
+        count: 1,
+        available: alat.available - 1,
+      };
+      listAddPeralatan.push(alat);
+      listSearchAddPeralatan.forEach((item) => {
+        if (item.id == alat.id) {
+          item.count++;
+          item.available--;
+        }
+      });
+      setAddDialog(false);
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Tambah Alat Sukses");
+    } else {
+    }
+  };
+
+  const addPinjamPeralatanDataTidakBerseri = (alat) => {
+    let found = false;
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (alat.id == listAddPeralatan[i].id) {
+        found = true;
+      }
+    }
+
+    if (!found) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      listAddPeralatan.push({
+        ...alat,
+        count: 1,
+        available: alat.available - 1,
+      });
+      listSearchAddPeralatan.forEach((item) => {
+        if (item.id == alat.id) {
+          item.available--;
+        }
+      });
+      setAddDialog(false);
+      return setSnackbarMessage("Tambah Alat Sukses");
+    } else {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      console.log("TEST");
+      return setSnackbarMessage("Alat sudah ada di List");
+    }
+  };
+
+  const deletePinjamPeralatanData = (index) => {
+    // Use setListSearchAddPeralatan to update the state
+    listAddPeralatan.forEach((item) => {
+      if (item.id == listAddPeralatan[index].id) {
+        item.available++;
+      }
+    });
+    setListAddPeralatan((prevList) => {
+      const newList = [...prevList];
+      newList.splice(index, 1);
+      return newList;
+    });
+    for (let i = 0; i < listSearchAddPeralatan.length; i++) {
+      if (listSearchAddPeralatan[i].id == listAddPeralatan[index].id) {
+        setListSearchAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].available += 1;
+          return newList;
+        });
+      }
+    }
+  };
+
+  const deletePinjamPeralatanBerseri = (alat, detail) => {
+    console.log(alat, detail);
+    listAddPeralatan.forEach((item) => {
+      console.log(item.id, alat.id);
+      if (item.id == alat.id) {
+        for (let i = 0; i < item.peralatanDetails.length; i++) {
+          console.log(item.peralatanDetails[i].detailId, detail.detailId);
+          if (item.peralatanDetails[i].detailId == detail.detailId) {
+            item.peralatanDetails.splice(i, 1);
+          }
+        }
+      }
+    });
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (
+        listAddPeralatan[i].id == alat.id &&
+        listAddPeralatan[i].peralatanDetails.length <= 0
+      ) {
+        setListAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList.splice(i, 1);
+          return newList;
+        });
+      }
+    }
+    for (let i = 0; i < listSearchAddPeralatan.length; i++) {
+      if (listSearchAddPeralatan[i].id == alat.id) {
+        setListSearchAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].available += 1;
+          return newList;
+        });
+      }
+    }
+  };
+
+  const incrementTotal = (alat) => {
+    for (let i = 0; i < listSearchAddPeralatan.length; i++) {
+      if (listSearchAddPeralatan[i].id == alat.id) {
+        setListSearchAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].available -= 1;
+          return newList;
+        });
+      }
+    }
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (listAddPeralatan[i].id == alat.id) {
+        setListAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].count += 1;
+          return newList;
+        });
+      }
+    }
+  };
+  const decrementTotal = (alat) => {
+    for (let i = 0; i < listSearchAddPeralatan.length; i++) {
+      if (listSearchAddPeralatan[i].id == alat.id) {
+        setListSearchAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].available += 1;
+          return newList;
+        });
+      }
+    }
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (listAddPeralatan[i].id == alat.id) {
+        setListAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].count -= 1;
+          return newList;
+        });
+      }
+    }
   };
 
   const generatePinjamPeralatan = () => {
     if (listAddPeralatan) {
       return listAddPeralatan.map((peralatan, index) => {
-        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
+        if(peralatan.peralatanBorrowCount){
+          peralatan.count = peralatan.peralatanBorrowCount
+        }
           return (
             <ReturnPinjamanRow
+              listPeralatan={listSearchAddPeralatan}
               peralatan={peralatan}
               editable={true}
               index={index}
-              key={index}
-              peralatanImage={peralatan.peralatan_image}
-              peralatanName={peralatan.peralatan_name}
-              hasIdentifier={peralatan.has_identifier}
-              peralatanCategory={peralatan.category_name}
-              peralatanTotal={peralatan.peralatan_count}
-              peralatanAvailable={peralatan.peralatan_available}
-              peralatanDetail={peralatan.peralatan_detail}
-              brandName={peralatan.brand_name}
+              key={peralatan.id}
+              peralatanImage={peralatan.image || peralatan.peralatanImage}
+              peralatanName={peralatan.name || peralatan.peralatanName}
+              hasIdentifier={
+                peralatan.hasIdentifier || peralatan.peralatanDetails.length > 0
+              }
+              peralatanCategory={peralatan.categoryName}
+              peralatanTotal={peralatan.count}
+              peralatanAvailable={peralatan.available}
+              peralatanDetail={peralatan.peralatanDetails}
+              brandName={peralatan.brandName}
               page={page}
-              changeReturnStatus={changeReturnStatus}
+              addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
+              deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
+              deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
+              incrementTotal={incrementTotal}
+              decrementTotal={decrementTotal}
+              maxCount={peralatan.max}
             ></ReturnPinjamanRow>
           );
       });
@@ -266,6 +464,116 @@ function ReturnPinjaman() {
     }
   };
 
+  const openAddDialog = () => {
+    setAddDialog(true);
+  };
+
+  const formatDate = (date) => {
+    const dateformat = new Date(date);
+
+    const year = dateformat.getFullYear();
+    const month = String(dateformat.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1
+    const day = String(dateformat.getDate()).padStart(2, "0");
+    const hours = String(dateformat.getHours()).padStart(2, "0");
+    const minutes = String(dateformat.getMinutes()).padStart(2, "0");
+    const seconds = String(dateformat.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
+  };
+
+  const generateAddPeralatanList = () => {
+    if (listSearchAddPeralatan) {
+      return listSearchAddPeralatan.map((peralatan, index) => {
+        if (true) {
+          return (
+            <AddPeralatanRow
+              index={index}
+              key={index}
+              peralatan={peralatan}
+              peralatanImage={peralatan.image}
+              peralatanName={peralatan.name}
+              hasIdentifier={peralatan.hasIdentifier}
+              peralatanCategory={peralatan.categoryName}
+              peralatanTotal={peralatan.count}
+              peralatanAvailable={peralatan.available}
+              peralatanDetail={peralatan.peralatanDetails}
+              brandName={peralatan.brandName}
+              page={page}
+              addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
+              addPinjamPeralatanDataTidakBerseri={() =>
+                addPinjamPeralatanDataTidakBerseri(peralatan)
+              }
+            ></AddPeralatanRow>
+          );
+        }
+      });
+    }
+  };
+
+  const onSubmitEdit = () => {
+    const bodyPeralatan = [];
+    listAddPeralatan.forEach((item) => {
+      let bodyPeralatanDetails = [];
+      item.peralatanDetails.forEach((subitem) => {
+        if (!subitem.detailId) {
+          subitem.detailId = subitem.peralatanDetailId;
+        }
+        bodyPeralatanDetails.push(subitem.detailId);
+      });
+
+      if (!item.count) {
+        item.count = item.peralatanBorrowCount;
+      }
+
+      if(item.peralatanDetails.length>0){
+        item.count = item.peralatanDetails.length
+      }
+
+      bodyPeralatan.push({
+        peralatanId: item.id,
+        peralatanCount: item.count,
+        peralatanDetailId: bodyPeralatanDetails,
+      });
+    });
+
+    const body = {
+      id: id,
+      reason: reason,
+      startDate: startDate,
+      endDate: endDate,
+      peralatan: bodyPeralatan,
+    };
+    console.log(body);
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .put(API_URL + "/borrow/update/peralatan", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          navigate(-1);
+          setSnackbar(false);
+        }, 1000);
+        setLoading(false);
+        return setSnackbarMessage("Edit Pinjaman Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Buat Pinjaman Gagal, Silahkan coba lagi");
+      });
+  };
+
   return (
     <div className="w-full">
       <Snackbar
@@ -275,10 +583,57 @@ function ReturnPinjaman() {
         message={snackbarMessage}
         key={"top" + "center"}
       />
-    
+      <Dialog
+        open={addDialog}
+        onClose={() => setAddDialog(false)}
+        maxWidth="[500px]"
+      >
+        <DialogTitle>Tambah Peralatan</DialogTitle>
+        <DialogContent>
+          <div className="flex flex-col md:flex-row w-full">
+            <div className="w-full md:w-[400px] md:mr-2">
+              <TextField
+                margin="dense"
+                id="peralatanName"
+                name="peralatanName"
+                label="Nama Peralatan"
+                type="text"
+                fullWidth
+                variant="outlined"
+                inputRef={searchAddNama}
+                onChange={() =>
+                  setSearchAddNamaInput(searchAddNama.current.value)
+                }
+              />
+            </div>
+            <div className="w-full md:w-[400px] md:ml-2">
+              <FormControl fullWidth>
+                <TextField
+                  margin="dense"
+                  id="peralatanName"
+                  name="peralatanName"
+                  label="Nomor Seri"
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  inputRef={searchAddDetailNama}
+                  onChange={() =>
+                    setSearchAddNamaDetailInput(
+                      searchAddNamaDetailInput.current.value
+                    )
+                  }
+                />
+              </FormControl>
+            </div>
+          </div>
+          <AddPeralatanHeader></AddPeralatanHeader>
+          {generateAddPeralatanList()}
+        </DialogContent>
+        <DialogActions></DialogActions>
+      </Dialog>
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
-          <Heading title="Edit Pinjaman"></Heading>
+          <Heading title="Penyelesaian Pinjaman"></Heading>
         </div>
         <div className="bg-white w-full flex flex-col items-center mt-8 shadow-md px-4 py-4">
           <div className="w-full flex flex-wrap items-center">
@@ -295,7 +650,7 @@ function ReturnPinjaman() {
                 />
               </svg>
               <div className="ml-2">
-                <b className="mr-1">Pinjaman</b>
+                <b className="mr-1">Pinjaman ID: </b>
                 {id}
               </div>
             </div>
@@ -341,7 +696,7 @@ function ReturnPinjaman() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Mulai :</b> {startDate}
+                <b>Tanggal Mulai :</b> {formatDate(startDate)}
               </div>
             </div>
             <div className="w-full md:w-1/4 flex items-center mb-4">
@@ -357,7 +712,7 @@ function ReturnPinjaman() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Selesai :</b> {endDate}
+                <b>Tanggal Selesai :</b> {formatDate(endDate)}
               </div>
             </div>
             <div className="w-full flex flex-wrap">
@@ -370,7 +725,7 @@ function ReturnPinjaman() {
               <div className="w-full md:w-1/4">
                 <div>
                   <b>Status Peminjaman</b>
-                  <div>{status}</div>
+                  <div>{statusName}</div>
                 </div>
               </div>
             </div>
@@ -378,35 +733,13 @@ function ReturnPinjaman() {
         </div>
         <div className="bg-white w-full flex flex-col items-center mt-8 shadow-md px-4 py-4 mb-8">
           <div className="w-full flex items-center mb-4">
-            <SubHeading title="Alat yang dipinjam"></SubHeading>
+            <SubHeading title="List Peralatan"></SubHeading>
           </div>
-          <ReturnPinjamanHeader></ReturnPinjamanHeader>
-          {generatePinjamPeralatan()}
-          <div className="w-full justify-end items-center mt-4 flex">
-            <Button onClick={prevPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path fill="currentColor" d="m14 17l-5-5l5-5z" />
-              </svg>
-            </Button>
-            <div className="mx-2">
-              {page} / {maxPage}
-            </div>
-            <Button onClick={nextPage}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path fill="currentColor" d="M10 17V7l5 5z" />
-              </svg>
-            </Button>
+          <PinjamPeralatanHeader></PinjamPeralatanHeader>
+          <div className="w-full max-h-[400px] sm:max-h-[600px] overflow-y-scroll">
+            {loading ? <></> : <>{generatePinjamPeralatan()}</>}
           </div>
+          <div className="w-full justify-end items-center mt-4 flex"></div>
         </div>
         <div className="w-full flex justify-end mb-8">
           <div>
@@ -420,7 +753,11 @@ function ReturnPinjaman() {
             </Button>
           </div>
           <div className="md:ml-2">
-            <Button variant="contained" size="large">
+            <Button
+              onClick={() => onSubmitEdit()}
+              variant="contained"
+              size="large"
+            >
               Selesaikan Pinjaman
             </Button>
           </div>
