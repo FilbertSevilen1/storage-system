@@ -24,7 +24,6 @@ import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
 import AddPeralatanRow from "../../../components/AddPeralatanRow";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { TurnedInOutlined } from "@mui/icons-material";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function EditPinjaman() {
@@ -56,12 +55,13 @@ function EditPinjaman() {
 
   const [disableAdd, setDisableAdd] = useState(true);
 
-  const [id, setId] = useState(pathname.pathname.substring(11));
+  const [id, setId] = useState(pathname.pathname.substring(13));
   const [name, setName] = useState("User");
   const [startDate, setStartDate] = useState("01/01/2024");
   const [endDate, setEndDate] = useState("01/12/2024");
   const [reason, setReason] = useState("Testing");
-  const [status, setStatus] = useState("Menunggu Approval Pengembalian");
+  const [statusId, setStatusId] = useState("");
+  const [statusName, setStatusName] = useState("");
 
   const [listAddPeralatan, setListAddPeralatan] = useState([]);
 
@@ -100,6 +100,81 @@ function EditPinjaman() {
     getDataPeralatanAvailable();
   };
 
+  const getDetailPeralatan = (borrowperalatan) => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    for (let i = 0; i < borrowperalatan.length; i++) {
+      axios
+        .get(API_URL + `/peralatan/get/${borrowperalatan[i].peralatanId}`, {
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+          },
+        })
+        .then((res) => {
+          borrowperalatan[i] = {
+            ...borrowperalatan[i],
+            id: borrowperalatan[i].peralatanId,
+            image: res.data.peralatan.image,
+            categoryId: res.data.peralatan.categoryId,
+            categoryName: res.data.peralatan.categoryName,
+            brandId: res.data.peralatan.brandId,
+            brandName: res.data.peralatan.brandName,
+            available:
+              res.data.peralatan.count - res.data.peralatan.borrowCount,
+          };
+
+          if (i == borrowperalatan.length - 1) {
+            setListAddPeralatan(borrowperalatan);
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          return setSnackbarMessage("Gagal Mendapatkan Data");
+        });
+    }
+  };
+
+  const getDataDetailPinjaman = () => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .get(API_URL + `/borrow/get/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setName(res.data.borrow.userName);
+        setStartDate(res.data.borrow.startDate);
+        setEndDate(res.data.borrow.endDate);
+        setReason(res.data.borrow.reason);
+        setStatusName(res.data.borrow.statusName);
+
+        getDetailPeralatan(res.data.borrow.peralatans);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
+  const getDetailPinjaman = () => {
+    getDataDetailPinjaman();
+  };
+
+  useEffect(() => {
+    getDetailPinjaman();
+    getPeralatanAvailable();
+  }, []);
+
   const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([]);
 
   const [listKategori, setListKategori] = useState([
@@ -135,8 +210,12 @@ function EditPinjaman() {
         let detailFound = false;
 
         item.peralatanDetails.forEach((itemdetail) => {
-          console.log("DATA", itemdetail.detailId, detail.detailId);
-          if (itemdetail.detailId == detail.detailId) {
+          if (
+            itemdetail.detailId == detail.detailId ||
+            (itemdetail.peralatanDetailId == detail.peralatanDetailId &&
+              itemdetail.peralatanDetailId != undefined &&
+              detail.peralatanDetailId != undefined)
+          ) {
             detailFound = true;
             setAddDialog(false);
             setSnackbar(true);
@@ -148,7 +227,6 @@ function EditPinjaman() {
         });
         if (!detailFound) {
           item.peralatanDetails.push(detail);
-          console.log(item);
 
           listSearchAddPeralatan.forEach((itemalat) => {
             if (itemalat.id == alat.id) {
@@ -159,6 +237,7 @@ function EditPinjaman() {
           listAddPeralatan.forEach((itemalat) => {
             if (itemalat.id == alat.id) {
               itemalat.count--;
+              itemalat.peralatanBorrowCount++;
               itemalat.available--;
             }
           });
@@ -226,6 +305,7 @@ function EditPinjaman() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      console.log("TEST");
       return setSnackbarMessage("Alat sudah ada di List");
     }
   };
@@ -299,6 +379,15 @@ function EditPinjaman() {
         });
       }
     }
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (listAddPeralatan[i].id == alat.id) {
+        setListAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].count += 1;
+          return newList;
+        });
+      }
+    }
   };
   const decrementTotal = (alat) => {
     for (let i = 0; i < listSearchAddPeralatan.length; i++) {
@@ -310,13 +399,28 @@ function EditPinjaman() {
         });
       }
     }
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (listAddPeralatan[i].id == alat.id) {
+        setListAddPeralatan((prevList) => {
+          const newList = [...prevList];
+          newList[i].count -= 1;
+          return newList;
+        });
+      }
+    }
   };
 
   const generatePinjamPeralatan = () => {
-    console.log(listSearchAddPeralatan);
     if (listAddPeralatan) {
       return listAddPeralatan.map((peralatan, index) => {
-        if (TurnedInOutlined)
+        
+        if (peralatan.peralatanBorrowCount) {
+          peralatan.available -= peralatan.peralatanBorrowCount;
+        }
+        if(peralatan.peralatanBorrowCount){
+          peralatan.count = peralatan.peralatanBorrowCount
+        }
+
           return (
             <PinjamPeralatanRow
               listPeralatan={listSearchAddPeralatan}
@@ -324,9 +428,11 @@ function EditPinjaman() {
               editable={true}
               index={index}
               key={peralatan.id}
-              peralatanImage={peralatan.image}
-              peralatanName={peralatan.name}
-              hasIdentifier={peralatan.hasIdentifier}
+              peralatanImage={peralatan.image || peralatan.peralatanImage}
+              peralatanName={peralatan.name || peralatan.peralatanName}
+              hasIdentifier={
+                peralatan.hasIdentifier || peralatan.peralatanDetails.length > 0
+              }
               peralatanCategory={peralatan.categoryName}
               peralatanTotal={peralatan.count}
               peralatanAvailable={peralatan.available}
@@ -362,7 +468,21 @@ function EditPinjaman() {
 
   const openAddDialog = () => {
     setAddDialog(true);
-    getPeralatanAvailable();
+  };
+
+  const formatDate = (date) => {
+    const dateformat = new Date(date);
+
+    const year = dateformat.getFullYear();
+    const month = String(dateformat.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1
+    const day = String(dateformat.getDate()).padStart(2, "0");
+    const hours = String(dateformat.getHours()).padStart(2, "0");
+    const minutes = String(dateformat.getMinutes()).padStart(2, "0");
+    const seconds = String(dateformat.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
   };
 
   const generateAddPeralatanList = () => {
@@ -392,6 +512,68 @@ function EditPinjaman() {
         }
       });
     }
+  };
+
+  const onSubmitEdit = () => {
+    const bodyPeralatan = [];
+    listAddPeralatan.forEach((item) => {
+      let bodyPeralatanDetails = [];
+      item.peralatanDetails.forEach((subitem) => {
+        if (!subitem.detailId) {
+          subitem.detailId = subitem.peralatanDetailId;
+        }
+        bodyPeralatanDetails.push(subitem.detailId);
+      });
+
+      if (!item.count) {
+        item.count = item.peralatanBorrowCount;
+      }
+
+      if(item.peralatanDetails.length>0){
+        item.count = item.peralatanDetails.length
+      }
+
+      bodyPeralatan.push({
+        peralatanId: item.id,
+        peralatanCount: item.count,
+        peralatanDetailId: bodyPeralatanDetails,
+      });
+    });
+
+    const body = {
+      id: id,
+      reason: reason,
+      startDate: startDate,
+      endDate: endDate,
+      peralatan: bodyPeralatan,
+    };
+    console.log(body);
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .put(API_URL + "/borrow/update/peralatan", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          navigate(-1);
+          setSnackbar(false);
+        }, 1000);
+        setLoading(false);
+        return setSnackbarMessage("Edit Pinjaman Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Buat Pinjaman Gagal, Silahkan coba lagi");
+      });
   };
 
   return (
@@ -516,7 +698,7 @@ function EditPinjaman() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Mulai :</b> {startDate}
+                <b>Tanggal Mulai :</b> {formatDate(startDate)}
               </div>
             </div>
             <div className="w-full md:w-1/4 flex items-center mb-4">
@@ -532,7 +714,7 @@ function EditPinjaman() {
                 />
               </svg>
               <div className="ml-2">
-                <b>Tanggal Selesai :</b> {endDate}
+                <b>Tanggal Selesai :</b> {formatDate(endDate)}
               </div>
             </div>
             <div className="w-full flex flex-wrap">
@@ -545,7 +727,7 @@ function EditPinjaman() {
               <div className="w-full md:w-1/4">
                 <div>
                   <b>Status Peminjaman</b>
-                  <div>{status}</div>
+                  <div>{statusName}</div>
                 </div>
               </div>
             </div>
@@ -592,7 +774,11 @@ function EditPinjaman() {
             </Button>
           </div>
           <div className="md:ml-2">
-            <Button variant="contained" size="large">
+            <Button
+              onClick={() => onSubmitEdit()}
+              variant="contained"
+              size="large"
+            >
               Edit Pinjaman
             </Button>
           </div>

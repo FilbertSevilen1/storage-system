@@ -33,6 +33,14 @@ function EditPeralatanBerseriRow({
     deletePinjamPeralatanBerseri(peralatan, detail);
   }
 
+  if(!detail.detailName){
+    detail.detailName = detail.peralatanDetailName
+  }
+
+  if(!detail.status){
+    detail.status = detail.peralatanDetailStatusName
+  }
+
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">

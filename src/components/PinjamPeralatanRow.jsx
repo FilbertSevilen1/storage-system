@@ -11,7 +11,7 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddPeralatanBerseriHeader from "./AddPeralatanBerseriHeader";
 import EditPeralatanBerseriRow from "./EditPeralatanBerseriRow";
@@ -47,11 +47,12 @@ function PinjamPeralatanRow({
   const [editDialogBerseri, setEditDialogBerseri] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
 
+  const [detail, setDetail] = useState(peralatanDetail)
+
   const addJumlah = () => {
     if (tersedia > 0) {
       setJumlah(jumlah + 1);
       setTersedia(tersedia - 1);
-      console.log(jumlah)
     }
     incrementTotal(peralatan);
   };
@@ -60,7 +61,7 @@ function PinjamPeralatanRow({
       setJumlah(jumlah - 1);
       setTersedia(tersedia + 1);
     }
-    decrementTotal(peralatan)
+    decrementTotal(peralatan);
   };
 
   const openDeleteDialog = () => {
@@ -70,45 +71,66 @@ function PinjamPeralatanRow({
     setDeleteDialog(false);
     deletePinjamPeralatanData();
   };
-  const generateSerialNumber = () =>{
-    console.log(peralatanDetail)
-    if(peralatanDetail){
-      return peralatanDetail.map((detail, index)=>{
-        if(detail.peralatanDetailName){
-          return <div>{detail.peralatanDetailName}{index !=peralatanDetail.length-1? `,`:""}</div>
-        }
-        else return <div>{detail.detailName}{index !=peralatanDetail.length-1? `,`:""}</div>
-      })
+  const generateSerialNumber = () => {
+    if (peralatanDetail) {
+      return peralatanDetail.map((detail, index) => {
+        if (detail.peralatanDetailName) {
+          return (
+            <div>
+              {detail.peralatanDetailName}
+              {index != peralatanDetail.length - 1 ? `,` : ""}
+            </div>
+          );
+        } else
+          return (
+            <div>
+              {detail.detailName}
+              {index != peralatanDetail.length - 1 ? `,` : ""}
+            </div>
+          );
+      });
+    }
+  };
+
+  const getCount = () =>{
+    if (peralatanDetail.length>0) {
+      return peralatanDetail.length
+    }
+    else{
+      return peralatanTotal
     }
   }
 
-  const closeEditDialog = () =>{
+  const closeEditDialog = () => {
     setEditDialogBerseri(false);
-  }
+  };
 
-  const generateEditPeralatanBerseri = () =>{
-    if(peralatanDetail){
-      return peralatanDetail.map((detail, index)=>{
-        return <EditPeralatanBerseriRow
-          key={index}
-          peralatan={peralatan}
-          detail={detail}
-          index={index}
-          deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
-          closeEditDialog={()=>closeEditDialog()}
-        >
-        </EditPeralatanBerseriRow>
-      })
+  const generateEditPeralatanBerseri = () => {
+    if (peralatanDetail) {
+      return peralatanDetail.map((detail, index) => {
+        return (
+          <EditPeralatanBerseriRow
+            key={index}
+            peralatan={peralatan}
+            detail={detail}
+            index={index}
+            deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
+            closeEditDialog={() => closeEditDialog()}
+          ></EditPeralatanBerseriRow>
+        );
+      });
     }
-  }
+  };
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
-      <Dialog open={editDialogBerseri} onClose={() => setEditDialogBerseri(false)}>
-        <DialogTitle>Edit {nama}</DialogTitle> 
+      <Dialog
+        open={editDialogBerseri}
+        onClose={() => setEditDialogBerseri(false)}
+      >
+        <DialogTitle>Edit {nama}</DialogTitle>
         <DialogContent>
           <div className="w-full md:w-[550px]">
-            <AddPeralatanBerseriHeader>
-            </AddPeralatanBerseriHeader>
+            <AddPeralatanBerseriHeader></AddPeralatanBerseriHeader>
             {generateEditPeralatanBerseri()}
           </div>
         </DialogContent>
@@ -118,8 +140,8 @@ function PinjamPeralatanRow({
         <DialogTitle>Delete Peralatan</DialogTitle>
         <DialogContent>
           <div className="w-full">
-            Apakah Anda yakin ingin menghilangkan {nama} dari Peralatan yang akan
-            dipinjam?
+            Apakah Anda yakin ingin menghilangkan {nama} dari Peralatan yang
+            akan dipinjam?
           </div>
         </DialogContent>
         <DialogActions>
@@ -135,7 +157,11 @@ function PinjamPeralatanRow({
         </div>
         <div className="w-full md:w-2/12 flex flex-col flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Nama Peralatan : </div>
-          <div><b>{nama} - {namaMerek}</b></div>
+          <div>
+            <b>
+              {nama} - {namaMerek}
+            </b>
+          </div>
           <div className="flex flex-wrap">{generateSerialNumber()}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
@@ -143,16 +169,17 @@ function PinjamPeralatanRow({
           <div>{kategori}</div>
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">
-            {"Jumlah (Tersedia)"} :{" "}
-          </div>
-          <div>{`${jumlah}`}</div>
+          <div className="flex md:hidden mr-2 font-bold">{"Jumlah"} : </div>
+          <div>{getCount()}</div>
         </div>
         {editable ? (
           <div className="w-full md:w-2/12 flex flex-wrap justify-center md:justify-center mt-4 md:mt-0">
-            {hasIdentifier == true? (
+            {hasIdentifier == true ? (
               <div className="flex">
-                <button onClick={()=>setEditDialogBerseri(true)} className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md">
+                <button
+                  onClick={() => setEditDialogBerseri(true)}
+                  className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
