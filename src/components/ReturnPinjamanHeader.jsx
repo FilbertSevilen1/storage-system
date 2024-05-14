@@ -6,8 +6,7 @@ function ReturnPinjamanHeader() {
         <div className="w-2/12 flex justify-center">Gambar</div>
         <div className="w-2/12 flex justify-center">Nama</div>
         <div className="w-2/12 flex justify-center">Kategori</div>
-        <div className="w-2/12 flex justify-center">Jumlah Dipinjam</div>
-        <div className="w-2/12 flex justify-center">Jumlah Dikembalikan</div>
+        <div className="w-2/12 flex justify-center">Jumlah Alat Dikembalikan</div>
         <div className="w-2/12 flex justify-center">Aksi</div>
       </div>
     </div>

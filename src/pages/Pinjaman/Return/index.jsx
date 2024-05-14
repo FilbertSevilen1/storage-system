@@ -25,6 +25,7 @@ import AddPeralatanRow from "../../../components/AddPeralatanRow";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import ReturnPinjamanRow from "../../../components/ReturnPinjamanRow";
+import ReturnPinjamanHeader from "../../../components/ReturnPinjamanHeader";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function ReturnPinjaman() {
@@ -49,6 +50,7 @@ function ReturnPinjaman() {
   const searchAddNama = useRef("");
   const searchAddDetailNama = useRef("");
 
+  const returnReason = useRef("")
   const [searchAddNamaInput, setSearchAddNamaInput] = useState("");
   const [searchAddNamaDetailInput, setSearchAddNamaDetailInput] = useState("");
 
@@ -65,6 +67,7 @@ function ReturnPinjaman() {
   const [statusName, setStatusName] = useState("");
 
   const [listAddPeralatan, setListAddPeralatan] = useState([]);
+  const [returnConfirmationDialog, setReturnConfirmationDialog] = useState(false)
 
   const getDataPeralatanAvailable = () => {
     if (!startDate || !endDate) {
@@ -122,7 +125,6 @@ function ReturnPinjaman() {
             brandId: res.data.peralatan.brandId,
             brandName: res.data.peralatan.brandName,
             available: res.data.peralatan.count - res.data.peralatan.borrowCount,
-
           };
 
           if (i == borrowperalatan.length - 1) {
@@ -155,6 +157,15 @@ function ReturnPinjaman() {
         setEndDate(res.data.borrow.endDate);
         setReason(res.data.borrow.reason);
         setStatusName(res.data.borrow.statusName);
+
+        for(let i=0;i<res.data.borrow.peralatans.length;i++){
+          for(let j=0;j<res.data.borrow.peralatans[i].peralatanDetails.length;j++){
+            res.data.borrow.peralatans[i].peralatanDetails[j].peralatanDetailStatusId = "309bf632-ca49-4a10-a486-f6a7fd43ac7c";
+            res.data.borrow.peralatans[i].peralatanDetails[j].peralatanDetailStatusName = "Siap Dipinjam";
+          }
+        }
+
+        console.log(res.data.borrow.peralatans)
 
         getDetailPeralatan(res.data.borrow.peralatans);
       })
@@ -386,6 +397,7 @@ function ReturnPinjaman() {
         setListAddPeralatan((prevList) => {
           const newList = [...prevList];
           newList[i].count += 1;
+          newList[i].peralatanBorrowCount += 1;
           return newList;
         });
       }
@@ -406,11 +418,33 @@ function ReturnPinjaman() {
         setListAddPeralatan((prevList) => {
           const newList = [...prevList];
           newList[i].count -= 1;
+          newList[i].peralatanBorrowCount -= 1;
           return newList;
         });
       }
     }
   };
+  
+  const changeReturnStatus = (peralatanId, detailId, statusId, statusName) =>{
+    for(let i=0;i<listAddPeralatan.length;i++){
+      if(peralatanId == listAddPeralatan[i].peralatanId){
+        for(let j=0;j<listAddPeralatan[i].peralatanDetails.length;j++){
+          if(detailId == listAddPeralatan[i].peralatanDetails[j].peralatanDetailId){
+            setListAddPeralatan((prevList) => {
+              const newList = [...prevList];
+              console.log(statusId, statusName)
+
+              newList[i].peralatanDetails[j].peralatanDetailStatusId = statusId;
+              newList[i].peralatanDetails[j].peralatanDetailStatusName = statusName;
+              newList[i].peralatanDetails[j].status = statusName
+              return newList;
+            });
+            console.log(listAddPeralatan)
+          }
+        }
+      }
+    }
+  }
 
   const generatePinjamPeralatan = () => {
     if (listAddPeralatan) {
@@ -442,30 +476,11 @@ function ReturnPinjaman() {
               incrementTotal={incrementTotal}
               decrementTotal={decrementTotal}
               maxCount={peralatan.max}
+              changeReturnStatus={changeReturnStatus}
             ></ReturnPinjamanRow>
           );
       });
     }
-  };
-
-  const batalkanPinjaman = () => {
-    navigate("/home");
-  };
-
-  const handleSearchAddCategory = (event) => {
-    setSearchAddCategory(event.target.value);
-  };
-
-  const generateSearchAddCategoryList = () => {
-    if (listKategori) {
-      return listKategori.map((kategori, index) => {
-        return <MenuItem value={kategori}>{kategori}</MenuItem>;
-      });
-    }
-  };
-
-  const openAddDialog = () => {
-    setAddDialog(true);
   };
 
   const formatDate = (date) => {
@@ -512,7 +527,7 @@ function ReturnPinjaman() {
     }
   };
 
-  const onSubmitEdit = () => {
+  const onSubmitReturn = () => {
     const bodyPeralatan = [];
     listAddPeralatan.forEach((item) => {
       let bodyPeralatanDetails = [];
@@ -520,7 +535,10 @@ function ReturnPinjaman() {
         if (!subitem.detailId) {
           subitem.detailId = subitem.peralatanDetailId;
         }
-        bodyPeralatanDetails.push(subitem.detailId);
+        bodyPeralatanDetails.push({
+          peralatanDetailId: subitem.detailId,
+          statusItemId: subitem.peralatanDetailStatusId
+        });
       });
 
       if (!item.count) {
@@ -533,14 +551,14 @@ function ReturnPinjaman() {
 
       bodyPeralatan.push({
         peralatanId: item.id,
-        peralatanCount: item.count,
+        peralatanReturnCount: item.count,
         peralatanDetailId: bodyPeralatanDetails,
       });
     });
 
     const body = {
       id: id,
-      reason: reason,
+      reason: returnReason.current.value,
       startDate: startDate,
       endDate: endDate,
       peralatan: bodyPeralatan,
@@ -550,7 +568,7 @@ function ReturnPinjaman() {
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
-      .put(API_URL + "/borrow/update/peralatan", body, {
+      .put(API_URL + `/borrow/update/finish/${id}`, body, {
         headers: {
           Authorization: `Bearer ${token.token}`,
         },
@@ -562,7 +580,7 @@ function ReturnPinjaman() {
           setSnackbar(false);
         }, 1000);
         setLoading(false);
-        return setSnackbarMessage("Edit Pinjaman Berhasil");
+        return setSnackbarMessage("Selesaikan Pinjaman Berhasil");
       })
       .catch((err) => {
         setSnackbar(true);
@@ -570,7 +588,7 @@ function ReturnPinjaman() {
           setSnackbar(false);
         }, 3000);
         setLoading(false);
-        return setSnackbarMessage("Buat Pinjaman Gagal, Silahkan coba lagi");
+        return setSnackbarMessage("Selesaikan Pinjaman Gagal, Silahkan coba lagi");
       });
   };
 
@@ -583,53 +601,31 @@ function ReturnPinjaman() {
         message={snackbarMessage}
         key={"top" + "center"}
       />
-      <Dialog
-        open={addDialog}
-        onClose={() => setAddDialog(false)}
-        maxWidth="[500px]"
+       <Dialog
+        open={returnConfirmationDialog}
+        onClose={() => setReturnConfirmationDialog(false)}
       >
-        <DialogTitle>Tambah Peralatan</DialogTitle>
+        <DialogTitle>Selesaikan Pinjaman</DialogTitle>
         <DialogContent>
-          <div className="flex flex-col md:flex-row w-full">
-            <div className="w-full md:w-[400px] md:mr-2">
-              <TextField
-                margin="dense"
-                id="peralatanName"
-                name="peralatanName"
-                label="Nama Peralatan"
-                type="text"
-                fullWidth
-                variant="outlined"
-                inputRef={searchAddNama}
-                onChange={() =>
-                  setSearchAddNamaInput(searchAddNama.current.value)
-                }
-              />
-            </div>
-            <div className="w-full md:w-[400px] md:ml-2">
-              <FormControl fullWidth>
-                <TextField
-                  margin="dense"
-                  id="peralatanName"
-                  name="peralatanName"
-                  label="Nomor Seri"
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  inputRef={searchAddDetailNama}
-                  onChange={() =>
-                    setSearchAddNamaDetailInput(
-                      searchAddNamaDetailInput.current.value
-                    )
-                  }
-                />
-              </FormControl>
-            </div>
+          <div className="w-96">
+            <TextField
+              margin="dense"
+              label="Alasan"
+              type="text"
+              variant="outlined"
+              inputRef={returnReason}
+              fullWidth
+            />
           </div>
-          <AddPeralatanHeader></AddPeralatanHeader>
-          {generateAddPeralatanList()}
         </DialogContent>
-        <DialogActions></DialogActions>
+        <DialogActions>
+          <Button onClick={() => setReturnConfirmationDialog(false)}>
+            Batal
+          </Button>
+          <Button onClick={() => onSubmitReturn()} type="submit">
+            <b>Ya</b>
+          </Button>
+        </DialogActions>
       </Dialog>
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
@@ -735,7 +731,7 @@ function ReturnPinjaman() {
           <div className="w-full flex items-center mb-4">
             <SubHeading title="List Peralatan"></SubHeading>
           </div>
-          <PinjamPeralatanHeader></PinjamPeralatanHeader>
+          <ReturnPinjamanHeader></ReturnPinjamanHeader>
           <div className="w-full max-h-[400px] sm:max-h-[600px] overflow-y-scroll">
             {loading ? <></> : <>{generatePinjamPeralatan()}</>}
           </div>
@@ -754,7 +750,7 @@ function ReturnPinjaman() {
           </div>
           <div className="md:ml-2">
             <Button
-              onClick={() => onSubmitEdit()}
+              onClick={()=>setReturnConfirmationDialog(true)}
               variant="contained"
               size="large"
             >
