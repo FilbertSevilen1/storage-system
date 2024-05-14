@@ -542,18 +542,6 @@ function CreatePinjaman() {
             </div>
             <div className="w-full md:w-[400px] md:ml-2">
               <FormControl fullWidth>
-                {/* <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={searchAddCategory}
-                  label="Kategori"
-                  onChange={handleSearchAddCategory}
-                  placeholder="Kategori"
-                  fullWidth
-                >
-                  {generateSearchAddCategoryList()}
-                </Select> */}
                 <TextField
                   margin="dense"
                   id="peralatanName"

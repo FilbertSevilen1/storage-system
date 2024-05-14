@@ -23,8 +23,15 @@ import AddPeralatanRow from "../../../components/AddPeralatanRow";
 import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
 import SubHeading from "../../../components/base/SubHeading";
 import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
+const API_URL = process.env.REACT_APP_API_URL;
 function BuatLaporan() {
+  const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.user);
+
+  const [listUser, setListUser] = useState();
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
@@ -39,87 +46,20 @@ function BuatLaporan() {
 
   const [addDialog, setAddDialog] = useState(false);
   const searchAddNama = useRef();
+  const searchAddDetailNama = useRef("");
   const [searchAddCategory, setSearchAddCategory] = useState("");
 
+  const [searchAddNamaInput, setSearchAddNamaInput] = useState("");
+  const [searchAddNamaDetailInput, setSearchAddNamaDetailInput] = useState("");
+
   const [isPenalty, setIsPenalty] = useState(false);
+  const fineCount = useRef("");
   const deadlineDate = useRef("");
 
-  const [listCariAlat, setlistCariAlat] = useState([
-    {
-      peralatan_id: "1",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      has_identifier: true,
-      category_name: "Elektronik",
-      peralatan_count: 3,
-      peralatan_available: 3,
-      brand_name: "Lenovo",
-      peralatan_detail: [
-        {
-          peralatan_detail_id: "1",
-          peralatan_detail_name: "KOMP001-0001",
-          peralatan_status: "Siap Dipinjam",
-        },
-        {
-          peralatan_detail_id: "2",
-          peralatan_detail_name: "KOMP001-0002",
-          peralatan_status: "Siap Dipinjam",
-        },
-        {
-          peralatan_detail_id: "3",
-          peralatan_detail_name: "KOMP001-0003",
-          peralatan_status: "Siap Dipinjam",
-        },
-      ],
-    },
-    {
-      peralatan_id: "2",
-      peralatan_image: "test",
-      peralatan_name: "Komputer",
-      has_identifier: false,
-      category_name: "Elektronik",
-      peralatan_count: 5,
-      peralatan_available: 2,
-      brand_name: "Lenovo",
-    },
-    {
-      peralatan_id: "3",
-      peralatan_image: "test",
-      peralatan_name: "Monitor",
-      has_identifier: false,
-      category_name: "Elektronik",
-      peralatan_count: 3,
-      peralatan_available: 4,
-      brand_name: "Lenovo",
-    },
-    {
-      peralatan_id: "4",
-      peralatan_image: "test",
-      peralatan_name: "Mobil",
-      has_identifier: true,
-      category_name: "Otomotif",
-      peralatan_count: 3,
-      peralatan_available: 3,
-      brand_name: "Lenovo",
-      peralatan_detail: [
-        {
-          peralatan_detail_id: "1",
-          peralatan_detail_name: "MOB001-0001",
-          peralatan_status: "Siap Dipinjam",
-        },
-        {
-          peralatan_detail_id: "2",
-          peralatan_detail_name: "MOB001-0002",
-          peralatan_status: "Siap Dipinjam",
-        },
-        {
-          peralatan_detail_id: "3",
-          peralatan_detail_name: "MOB001-0003",
-          peralatan_status: "Siap Dipinjam",
-        },
-      ],
-    },
-  ]);
+  const [laporanType, setLaporanType] = useState("");
+  const [listAddPeralatan, setListAddPeralatan] = useState([]);
+
+  const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([]);
 
   const [listKategori, setListKategori] = useState([
     "Elektronik",
@@ -127,33 +67,121 @@ function BuatLaporan() {
     "Lainnya",
   ]);
 
+  const getPeralatanDetails = (peralatan) => {
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    peralatan.forEach((item) => {
+      if (item.hasIdentifier && item.count > 0) {
+        axios
+          .get(API_URL + `/peralatan-detail/list/${item.id}`, {
+            headers: {
+              Authorization: `Bearer ${token.token}`,
+            },
+          })
+          .then((res) => {
+            let detail = res.data.peralatanDetails;
+            detail.forEach((element) => {
+              element.detailName = element.description;
+              element.status = element.statusName;
+            });
+            item.peralatanDetails = res.data.peralatanDetails;
+            item.available = item.count - item.borrowCount;
+            const list = listSearchAddPeralatan;
+            list.push(item);
+            setListSearchAddPeralatan(list);
+          })
+          .catch((err) => {
+            setSnackbar(true);
+            setTimeout(() => {
+              setSnackbar(false);
+            }, 3000);
+            setLoading(false);
+            return setSnackbarMessage("Get Data Gagal");
+          });
+      } else {
+        item.peralatanDetails = [];
+        item.available = item.count - item.borrowCount;
+        const list = listSearchAddPeralatan;
+        list.push(item);
+        setListSearchAddPeralatan(list);
+      }
+    });
+  };
+
+  const getDataPeralatanAvailable = () => {
+    const body = {};
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/peralatan/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        getPeralatanDetails(res.data.peralatans);
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Get Data Gagal");
+      });
+  };
+
+  const getPeralatanAvailable = () => {
+    getDataPeralatanAvailable();
+  };
+
+  const getDataUser = () =>{
+    const body = {}
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios.post(API_URL + "/user/list", body, {
+      headers: {
+        Authorization: `Bearer ${token.token}`,
+      },
+    })
+    .then((res)=>{
+      let data = []
+      res.data.users.forEach(item => {
+        data.push(item.name)
+      });
+      setListUser(data)
+    })
+    .catch((err)=>{
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      setLoading(false);
+      return setSnackbarMessage("Get Data Gagal");
+    })
+  }
+
   useEffect(() => {
-    getDataPinjamPeralatan();
+    getDataUser();
+    getPeralatanAvailable();
   }, []);
 
-  const getDataPinjamPeralatan = () => {
-    getPinjamPeralatanList();
-  };
-
-  const getPinjamPeralatanList = () => {
-    if (listCariAlat.length % 5 === 0) {
-      setMaxPage(Math.floor(listCariAlat.length / 5));
-    } else setMaxPage(Math.floor(listCariAlat.length / 5) + 1);
-  };
+  useEffect(() => {
+    generatePinjamPeralatan();
+  }, [listAddPeralatan]);
 
   const addPinjamPeralatanDataBerseri = (alat, detail) => {
-    alat = { ...alat, peralatan_detail: [detail] };
+    alat = { ...alat, peralatanDetails: [detail] };
 
     let found = false;
-    listKerusakan.forEach((item) => {
-      if (item.peralatan_id == alat.peralatan_id) {
+    listAddPeralatan.forEach((item) => {
+      if (item.id == alat.id) {
         let detailFound = false;
-        item.peralatan_detail.forEach((itemdetail) => {
-          if (itemdetail.peralatan_detail_id == detail.peralatan_detail_id) {
+        item.peralatanDetails.forEach((itemdetail) => {
+          if (itemdetail.detailId == detail.detailId) {
             detailFound = true;
-            console.log(
-              itemdetail.peralatan_detail_id == detail.peralatan_detail_id
-            );
             setAddDialog(false);
             setSnackbar(true);
             setTimeout(() => {
@@ -163,19 +191,18 @@ function BuatLaporan() {
           }
         });
         if (!detailFound) {
-          item.peralatan_detail.push(detail);
-          console.log(item);
+          item.peralatanDetails.push(detail);
 
-          listCariAlat.forEach((itemalat) => {
-            if (itemalat.peralatan_id == alat.peralatan_id) {
-              itemalat.peralatan_count++;
-              itemalat.peralatan_available--;
+          listSearchAddPeralatan.forEach((itemalat) => {
+            if (itemalat.id == alat.id) {
+              itemalat.count++;
+              itemalat.available--;
             }
           });
-          listKerusakan.forEach((itemalat) => {
-            if (itemalat.peralatan_id == alat.peralatan_id) {
-              itemalat.peralatan_count--;
-              itemalat.peralatan_available--;
+          listAddPeralatan.forEach((itemalat) => {
+            if (itemalat.id == alat.id) {
+              itemalat.count--;
+              itemalat.available--;
             }
           });
 
@@ -192,14 +219,14 @@ function BuatLaporan() {
     if (!found) {
       alat = {
         ...alat,
-        peralatan_count: 1,
-        peralatan_available: alat.peralatan_available - 1,
+        count: 1,
+        available: alat.available - 1,
       };
-      listKerusakan.push(alat);
-      listCariAlat.forEach((item) => {
-        if (item.peralatan_id == alat.peralatan_id) {
-          item.peralatan_count++;
-          item.peralatan_available--;
+      listAddPeralatan.push(alat);
+      listSearchAddPeralatan.forEach((item) => {
+        if (item.id == alat.id) {
+          item.count++;
+          item.available--;
         }
       });
       setAddDialog(false);
@@ -214,8 +241,9 @@ function BuatLaporan() {
 
   const addPinjamPeralatanDataTidakBerseri = (alat) => {
     let found = false;
-    for (let i = 0; i < listKerusakan.length; i++) {
-      if (alat.peralatan_id == listKerusakan[i].peralatan_id) {
+
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (alat.id == listAddPeralatan[i].id) {
         found = true;
       }
     }
@@ -225,14 +253,14 @@ function BuatLaporan() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
-      listKerusakan.push({
+      listAddPeralatan.push({
         ...alat,
-        peralatan_count: 1,
-        peralatan_available: alat.peralatan_available - 1,
+        count: 1,
+        available: alat.available - 1,
       });
-      listCariAlat.forEach((item) => {
-        if (item.peralatan_id == alat.peralatan_id) {
-          item.peralatan_available--;
+      listSearchAddPeralatan.forEach((item) => {
+        if (item.id == alat.id) {
+          item.available--;
         }
       });
       setAddDialog(false);
@@ -247,22 +275,22 @@ function BuatLaporan() {
   };
 
   const deletePinjamPeralatanData = (index) => {
-    // Use setlistCariAlat to update the state
-    listKerusakan.forEach((item) => {
-      if (item.peralatan_id == listKerusakan[index].peralatan_id) {
-        item.peralatan_available++;
+    // Use setListSearchAddPeralatan to update the state
+    listAddPeralatan.forEach((item) => {
+      if (item.id == listAddPeralatan[index].id) {
+        item.available++;
       }
     });
-    setlistKerusakan((prevList) => {
+    setListAddPeralatan((prevList) => {
       const newList = [...prevList];
       newList.splice(index, 1);
       return newList;
     });
-    for (let i = 0; i < listCariAlat.length; i++) {
-      if (listCariAlat[i].peralatan_id == listKerusakan[index].peralatan_id) {
-        setlistCariAlat((prevList) => {
+    for (let i = 0; i < listSearchAddPeralatan.length; i++) {
+      if (listSearchAddPeralatan[i].id == listAddPeralatan[index].id) {
+        setListSearchAddPeralatan((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available += 1;
+          newList[i].available += 1;
           return newList;
         });
       }
@@ -270,41 +298,32 @@ function BuatLaporan() {
   };
 
   const deletePinjamPeralatanBerseri = (alat, detail) => {
-    console.log(alat, detail);
-    listKerusakan.forEach((item) => {
-      console.log(item.peralatan_id, alat.peralatan_id);
-      if (item.peralatan_id == alat.peralatan_id) {
-        for (let i = 0; i < item.peralatan_detail.length; i++) {
-          console.log(
-            item.peralatan_detail[i].peralatan_detail_id,
-            detail.peralatan_detail_id
-          );
-          if (
-            item.peralatan_detail[i].peralatan_detail_id ==
-            detail.peralatan_detail_id
-          ) {
-            item.peralatan_detail.splice(i, 1);
+    listAddPeralatan.forEach((item) => {
+      if (item.id == alat.id) {
+        for (let i = 0; i < item.peralatanDetails.length; i++) {
+          if (item.peralatanDetails[i].detailId == detail.detailId) {
+            item.peralatanDetails.splice(i, 1);
           }
         }
       }
     });
-    for (let i = 0; i < listKerusakan.length; i++) {
+    for (let i = 0; i < listAddPeralatan.length; i++) {
       if (
-        listKerusakan[i].peralatan_id == alat.peralatan_id &&
-        listKerusakan[i].peralatan_detail.length <= 0
+        listAddPeralatan[i].id == alat.id &&
+        listAddPeralatan[i].peralatanDetails.length <= 0
       ) {
-        setlistKerusakan((prevList) => {
+        setListAddPeralatan((prevList) => {
           const newList = [...prevList];
           newList.splice(i, 1);
           return newList;
         });
       }
     }
-    for (let i = 0; i < listCariAlat.length; i++) {
-      if (listCariAlat[i].peralatan_id == alat.peralatan_id) {
-        setlistCariAlat((prevList) => {
+    for (let i = 0; i < listSearchAddPeralatan.length; i++) {
+      if (listSearchAddPeralatan[i].id == alat.id) {
+        setListSearchAddPeralatan((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available += 1;
+          newList[i].available += 1;
           return newList;
         });
       }
@@ -312,22 +331,23 @@ function BuatLaporan() {
   };
 
   const incrementTotal = (alat) => {
-    for (let i = 0; i < listCariAlat.length; i++) {
-      if (listCariAlat[i].peralatan_id == alat.peralatan_id) {
-        setlistCariAlat((prevList) => {
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (listAddPeralatan[i].id == alat.id) {
+        setListAddPeralatan((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available -= 1;
+          newList[i].count += 1;
           return newList;
         });
       }
     }
   };
+
   const decrementTotal = (alat) => {
-    for (let i = 0; i < listCariAlat.length; i++) {
-      if (listCariAlat[i].peralatan_id == alat.peralatan_id) {
-        setlistCariAlat((prevList) => {
+    for (let i = 0; i < listAddPeralatan.length; i++) {
+      if (listAddPeralatan[i].id == alat.id) {
+        setListAddPeralatan((prevList) => {
           const newList = [...prevList];
-          newList[i].peralatan_available += 1;
+          newList[i].count -= 1;
           return newList;
         });
       }
@@ -335,33 +355,31 @@ function BuatLaporan() {
   };
 
   const generatePinjamPeralatan = () => {
-    console.log(listCariAlat);
-    if (listKerusakan) {
-      return listKerusakan.map((peralatan, index) => {
-        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
-          return (
-            <PinjamPeralatanRow
-              listPeralatan={listCariAlat}
-              peralatan={peralatan}
-              editable={true}
-              index={index}
-              key={index}
-              peralatanImage={peralatan.peralatan_image}
-              peralatanName={peralatan.peralatan_name}
-              hasIdentifier={peralatan.has_identifier}
-              peralatanCategory={peralatan.category_name}
-              peralatanTotal={peralatan.peralatan_count}
-              peralatanAvailable={peralatan.peralatan_available}
-              peralatanDetail={peralatan.peralatan_detail}
-              page={page}
-              addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
-              deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
-              deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
-              incrementTotal={incrementTotal}
-              decrementTotal={decrementTotal}
-              brandName={peralatan.brand_name}
-            ></PinjamPeralatanRow>
-          );
+    if (listAddPeralatan) {
+      return listAddPeralatan.map((peralatan, index) => {
+        return (
+          <PinjamPeralatanRow
+            key={peralatan.id}
+            listPeralatan={listSearchAddPeralatan}
+            peralatan={peralatan}
+            editable={true}
+            index={index}
+            peralatanImage={peralatan.image}
+            peralatanName={peralatan.name}
+            hasIdentifier={peralatan.hasIdentifier}
+            peralatanCategory={peralatan.categoryName}
+            peralatanTotal={peralatan.count}
+            peralatanAvailable={peralatan.available}
+            peralatanDetail={peralatan.peralatanDetails}
+            brandName={peralatan.brandName}
+            page={page}
+            addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
+            deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
+            deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
+            incrementTotal={incrementTotal}
+            decrementTotal={decrementTotal}
+          ></PinjamPeralatanRow>
+        );
       });
     }
   };
@@ -387,8 +405,7 @@ function BuatLaporan() {
   };
 
   const openAddDialog = () => {
-    console.log(listKerusakan);
-    if (listKerusakan.length) {
+    if (listAddPeralatan.length) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -399,41 +416,40 @@ function BuatLaporan() {
   };
 
   const generateAddPeralatanList = () => {
-    if (listCariAlat) {
-      return listCariAlat.map((peralatan, index) => {
-        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5) {
-          return (
-            <AddPeralatanRow
-              index={index}
-              key={index}
-              peralatan={peralatan}
-              peralatanImage={peralatan.peralatan_image}
-              peralatanName={peralatan.peralatan_name}
-              hasIdentifier={peralatan.has_identifier}
-              peralatanCategory={peralatan.category_name}
-              peralatanTotal={peralatan.peralatan_count}
-              peralatanAvailable={peralatan.peralatan_available}
-              peralatanDetail={peralatan.peralatan_detail}
-              brandName={peralatan.brand_name}
-              page={page}
-              addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
-              addPinjamPeralatanDataTidakBerseri={() =>
-                addPinjamPeralatanDataTidakBerseri(peralatan)
-              }
-              editable={false}
-            ></AddPeralatanRow>
-          );
-        }
+    if (listSearchAddPeralatan.length > 0) {
+      return listSearchAddPeralatan.map((peralatan, index) => {
+        return (
+          <AddPeralatanRow
+            index={index}
+            key={peralatan.id}
+            peralatan={peralatan}
+            peralatanImage={peralatan.image}
+            peralatanName={peralatan.name}
+            hasIdentifier={peralatan.hasIdentifier}
+            peralatanCategory={peralatan.categoryName}
+            peralatanTotal={peralatan.count}
+            peralatanAvailable={peralatan.available}
+            peralatanDetail={peralatan.peralatanDetails}
+            brandName={peralatan.brandName}
+            page={page}
+            addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
+            addPinjamPeralatanDataTidakBerseri={() =>
+              addPinjamPeralatanDataTidakBerseri(peralatan)
+            }
+            editable={false}
+          ></AddPeralatanRow>
+        );
       });
     }
   };
 
+  useEffect(() => {
+    generateAddPeralatanList();
+  }, [listSearchAddPeralatan]);
   const [listLaporanType, setListLaporanType] = useState([
     "Kehilangan",
     "Kerusakan",
   ]);
-  const [laporanType, setLaporanType] = useState("");
-  const [listKerusakan, setlistKerusakan] = useState([]);
 
   const generateSelectLaporanType = () => {
     if (listLaporanType) {
@@ -486,22 +502,28 @@ function BuatLaporan() {
                 fullWidth
                 variant="outlined"
                 inputRef={searchAddNama}
+                onChange={() =>
+                  setSearchAddNamaInput(searchAddNama.current.value)
+                }
               />
             </div>
-            <div className="w-full md:w-[400px] md:ml-2 pt-2">
+            <div className="w-full md:w-[400px] md:ml-2">
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Kategori</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={searchAddCategory}
-                  label="Kategori"
-                  onChange={handleSearchAddCategory}
-                  placeholder="Kategori"
+                <TextField
+                  margin="dense"
+                  id="peralatanName"
+                  name="peralatanName"
+                  label="Nomor Seri"
+                  type="text"
                   fullWidth
-                >
-                  {generateSearchAddCategoryList()}
-                </Select>
+                  variant="outlined"
+                  inputRef={searchAddDetailNama}
+                  onChange={() =>
+                    setSearchAddNamaDetailInput(
+                      searchAddNamaDetailInput.current.value
+                    )
+                  }
+                />
               </FormControl>
             </div>
           </div>
@@ -516,62 +538,6 @@ function BuatLaporan() {
         </div>
         <div className="bg-white w-full flex items-center mt-8 shadow-md px-4 py-4">
           <div className="w-full flex flex-wrap">
-            {/* <div className="w-full md:w-1/4 flex items-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="M5 22q-.825 0-1.412-.587T3 20V6q0-.825.588-1.412T5 4h1V2h2v2h8V2h2v2h1q.825 0 1.413.588T21 6v14q0 .825-.587 1.413T19 22zm0-2h14V10H5zM5 8h14V6H5zm0 0V6zm7 6q-.425 0-.712-.288T11 13q0-.425.288-.712T12 12q.425 0 .713.288T13 13q0 .425-.288.713T12 14m-4 0q-.425 0-.712-.288T7 13q0-.425.288-.712T8 12q.425 0 .713.288T9 13q0 .425-.288.713T8 14m8 0q-.425 0-.712-.288T15 13q0-.425.288-.712T16 12q.425 0 .713.288T17 13q0 .425-.288.713T16 14m-4 4q-.425 0-.712-.288T11 17q0-.425.288-.712T12 16q.425 0 .713.288T13 17q0 .425-.288.713T12 18m-4 0q-.425 0-.712-.288T7 17q0-.425.288-.712T8 16q.425 0 .713.288T9 17q0 .425-.288.713T8 18m8 0q-.425 0-.712-.288T15 17q0-.425.288-.712T16 16q.425 0 .713.288T17 17q0 .425-.288.713T16 18"
-                />
-              </svg>
-              <div className="w-full px-2">
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Jenis Laporan
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={laporanType}
-                    label="Kategori"
-                    onChange={handleLaporanType}
-                    placeholder="Kategori"
-                    fullWidth
-                  >
-                    {generateSelectLaporanType()}
-                  </Select>
-                </FormControl>
-              </div>
-            </div>
-            <div className="w-full md:w-1/4 flex items-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="M12 14q-.425 0-.712-.288T11 13q0-.425.288-.712T12 12q.425 0 .713.288T13 13q0 .425-.288.713T12 14m-4 0q-.425 0-.712-.288T7 13q0-.425.288-.712T8 12q.425 0 .713.288T9 13q0 .425-.288.713T8 14m8 0q-.425 0-.712-.288T15 13q0-.425.288-.712T16 12q.425 0 .713.288T17 13q0 .425-.288.713T16 14m-4 4q-.425 0-.712-.288T11 17q0-.425.288-.712T12 16q.425 0 .713.288T13 17q0 .425-.288.713T12 18m-4 0q-.425 0-.712-.288T7 17q0-.425.288-.712T8 16q.425 0 .713.288T9 17q0 .425-.288.713T8 18m8 0q-.425 0-.712-.288T15 17q0-.425.288-.712T16 16q.425 0 .713.288T17 17q0 .425-.288.713T16 18M5 22q-.825 0-1.412-.587T3 20V6q0-.825.588-1.412T5 4h1V2h2v2h8V2h2v2h1q.825 0 1.413.588T21 6v14q0 .825-.587 1.413T19 22zm0-2h14V10H5z"
-                />
-              </svg>
-              <div className="w-full px-2">
-                <TextField
-                  id=""
-                  label="Tanggal Laporan"
-                  InputLabelProps={{ shrink: true }}
-                  type="date"
-                  variant="outlined"
-                  className="w-full"
-                  placeholder="Cari Peralatan di sini"
-                  inputRef={laporanDate}
-                />
-              </div>
-            </div> */}
             <div className="w-full flex flex-wrap items-center mb-4">
               <Checkbox
                 checked={isPenalty}
@@ -609,7 +575,7 @@ function BuatLaporan() {
                       <Autocomplete
                         disablePortal
                         id="combo-box-demo"
-                        options={["a", "b", "c"]}
+                        options={listUser}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -650,14 +616,45 @@ function BuatLaporan() {
                           placeholder="Kategori"
                           fullWidth
                         >
-                          <MenuItem value="denda">Denda</MenuItem>
-                          <MenuItem value="penggantian">
+                          <MenuItem value="a44c4cd0-2515-4ac7-bb0e-5199f083f6cd">
+                            Denda
+                          </MenuItem>
+                          <MenuItem value="d72c4834-8161-4da4-9b71-6327d6aff8d3">
                             Penggantian Barang
                           </MenuItem>
                         </Select>
                       </FormControl>
                     </div>
                   </div>
+                  {penaltyType == "a44c4cd0-2515-4ac7-bb0e-5199f083f6cd" ? (
+                    <div className="w-full md:w-1/4 flex items-center mb-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 256 256"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M244.24 60a8 8 0 0 0-7.75-.4c-42.93 21-73.59 11.16-106 .78c-34.09-10.85-69.29-22.1-118 1.68A8 8 0 0 0 8 69.24v119.93a8 8 0 0 0 11.51 7.19c42.93-21 73.59-11.16 106.05-.78c19.24 6.15 38.84 12.42 61 12.42c17.09 0 35.73-3.72 56.91-14.06a8 8 0 0 0 4.49-7.18V66.83a8 8 0 0 0-3.72-6.83M48 152a8 8 0 0 1-16 0V88a8 8 0 0 1 16 0Zm80 8a32 32 0 1 1 32-32a32 32 0 0 1-32 32m96 8a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Z"
+                        />
+                      </svg>
+                      <div className="w-full px-2">
+                        <TextField
+                          id=""
+                          label="Jumlah Denda"
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          variant="outlined"
+                          className="w-full"
+                          placeholder="0"
+                          inputRef={fineCount}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <div className="w-full md:w-1/4 flex items-center mb-4">
                   <svg

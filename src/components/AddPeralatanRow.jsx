@@ -76,7 +76,7 @@ function AddPeralatanRow({
       >
         <DialogTitle>Tambah {nama}</DialogTitle>
         <DialogContent>
-          <div className="w-full md:w-[400px]">Pilih Komputer yang ingin dipinjam</div>
+          <div className="w-full md:w-[400px]">Pilih {nama} yang ingin dipinjam</div>
           <AddPeralatanBerseriHeader></AddPeralatanBerseriHeader>
           {generateAddPeralatanBerseriDetail()}
         </DialogContent>
