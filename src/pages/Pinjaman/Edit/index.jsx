@@ -73,8 +73,8 @@ function EditPinjaman() {
     const body = {
       startDate: createStartDate.current.value,
       endDate: createEndDate.current.value,
-      peralatanName: searchAddNamaInput,
-      peralatanDetailName: searchAddNamaDetailInput,
+      peralatanName: searchAddNama.current.value,
+      peralatanDetailName: searchAddDetailNama.current.value,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -88,7 +88,14 @@ function EditPinjaman() {
       .then((res) => {
         setListSearchAddPeralatan(res.data.peralatanAvailables);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
   };
 
   const getPeralatanAvailable = () => {
@@ -413,39 +420,40 @@ function EditPinjaman() {
   const generatePinjamPeralatan = () => {
     if (listAddPeralatan) {
       return listAddPeralatan.map((peralatan, index) => {
-        
         if (peralatan.peralatanBorrowCount) {
           peralatan.available -= peralatan.peralatanBorrowCount;
         }
-        if(peralatan.peralatanBorrowCount){
-          peralatan.count = peralatan.peralatanBorrowCount
+        
+
+        if (!peralatan.count && peralatan.peralatanBorrowCount) {
+          peralatan.count = peralatan.peralatanBorrowCount;
         }
 
-          return (
-            <PinjamPeralatanRow
-              listPeralatan={listSearchAddPeralatan}
-              peralatan={peralatan}
-              editable={true}
-              index={index}
-              key={peralatan.id}
-              peralatanImage={peralatan.image || peralatan.peralatanImage}
-              peralatanName={peralatan.name || peralatan.peralatanName}
-              hasIdentifier={
-                peralatan.hasIdentifier || peralatan.peralatanDetails.length > 0
-              }
-              peralatanCategory={peralatan.categoryName}
-              peralatanTotal={peralatan.count}
-              peralatanAvailable={peralatan.available}
-              peralatanDetail={peralatan.peralatanDetails}
-              brandName={peralatan.brandName}
-              page={page}
-              addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
-              deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
-              deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
-              incrementTotal={incrementTotal}
-              decrementTotal={decrementTotal}
-            ></PinjamPeralatanRow>
-          );
+        return (
+          <PinjamPeralatanRow
+            listPeralatan={listSearchAddPeralatan}
+            peralatan={peralatan}
+            editable={true}
+            index={index}
+            key={peralatan.id}
+            peralatanImage={peralatan.image || peralatan.peralatanImage}
+            peralatanName={peralatan.name || peralatan.peralatanName}
+            hasIdentifier={
+              peralatan.hasIdentifier || peralatan.peralatanDetails.length > 0
+            }
+            peralatanCategory={peralatan.categoryName}
+            peralatanTotal={peralatan.count}
+            peralatanAvailable={peralatan.available}
+            peralatanDetail={peralatan.peralatanDetails}
+            brandName={peralatan.brandName}
+            page={page}
+            addPinjamPeralatanDataBerseri={addPinjamPeralatanDataBerseri}
+            deletePinjamPeralatanBerseri={deletePinjamPeralatanBerseri}
+            deletePinjamPeralatanData={() => deletePinjamPeralatanData(index)}
+            incrementTotal={incrementTotal}
+            decrementTotal={decrementTotal}
+          ></PinjamPeralatanRow>
+        );
       });
     }
   };
@@ -492,7 +500,7 @@ function EditPinjaman() {
           return (
             <AddPeralatanRow
               index={index}
-              key={index}
+              key={peralatan.id}
               peralatan={peralatan}
               peralatanImage={peralatan.image}
               peralatanName={peralatan.name}
@@ -529,8 +537,8 @@ function EditPinjaman() {
         item.count = item.peralatanBorrowCount;
       }
 
-      if(item.peralatanDetails.length>0){
-        item.count = item.peralatanDetails.length
+      if (item.peralatanDetails.length > 0) {
+        item.count = item.peralatanDetails.length;
       }
 
       bodyPeralatan.push({
@@ -603,9 +611,7 @@ function EditPinjaman() {
                 fullWidth
                 variant="outlined"
                 inputRef={searchAddNama}
-                onChange={() =>
-                  setSearchAddNamaInput(searchAddNama.current.value)
-                }
+                onChange={getDataPeralatanAvailable}
               />
             </div>
             <div className="w-full md:w-[400px] md:ml-2">
@@ -619,11 +625,7 @@ function EditPinjaman() {
                   fullWidth
                   variant="outlined"
                   inputRef={searchAddDetailNama}
-                  onChange={() =>
-                    setSearchAddNamaDetailInput(
-                      searchAddNamaDetailInput.current.value
-                    )
-                  }
+                  onChange={getDataPeralatanAvailable}
                 />
               </FormControl>
             </div>

@@ -16,7 +16,13 @@ import SubHeading from "../../components/base/SubHeading";
 import LaporanHeader from "../../components/LaporanHeader";
 import LaporanRow from "../../components/LaporanList";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function LaporanKerusakan() {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
 
   const [page, setPage] = useState(1);
@@ -42,57 +48,42 @@ function LaporanKerusakan() {
   const searchItem = useRef();
   const searchStartDate = useRef();
   const searchEndDate = useRef();
-  const [listReport, setlistReport] = useState([
-    {
-      borrow_id: "1",
-      user_id: "1",
-      user_name: "Anton",
-      approval_start_id: "1",
-      approval_end_id: "2",
-      report_date: "2024/01/01",
-      borrow_duration: "1 Minggu",
-      borrow_count: "6",
-      status_borrow_id: "4",
-      status_borrow_name: "Selesai",
-    },
-    {
-      borrow_id: "2",
-      user_id: "1",
-      user_name: "Anton",
-      approval_start_id: "3",
-      approval_end_id: "4",
-      report_date: "2024/01/01",
-      borrow_duration: "1 Minggu",
-      borrow_count: "6",
-      status_borrow_id: "2",
-      status_borrow_name: "Menunggu Approval",
-    },
-    {
-      borrow_id: "3",
-      user_id: "1",
-      user_name: "Anton",
-      approval_start_id: "3",
-      approval_end_id: "4",
-      report_date: "2024/01/01",
-      borrow_duration: "1 Minggu",
-      borrow_count: "3",
-      status_borrow_id: "3",
-      status_borrow_name: "Dalam Peminjaman",
-    },
-  ]);
+  const [listReport, setlistReport] = useState([]);
+
+  const getReportData = () => {
+    const body = {
+      startDate:searchStartDate.current.value,
+      endDate:searchEndDate.current.value,
+      peralatanName: searchItem.current.value
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/broken/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setlistReport(res.data.brokens);
+        if (res.data.brokens.length % 5 === 0) {
+          setMaxPage(Math.floor(res.data.brokens.length / 5));
+        } else setMaxPage(Math.floor(res.data.brokens.length / 5) + 1);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
 
   useEffect(() => {
-    getPinjamanData();
-  }, [page]);
-  const getPinjamanData = () => {
-    getPinjamanList();
-  };
-
-  const getPinjamanList = () => {
-    if (listReport.length % 5 === 0) {
-      setMaxPage(Math.floor(listReport.length / 5));
-    } else setMaxPage(Math.floor(listReport.length / 5) + 1);
-  };
+    getReportData();
+  }, [searchStatus, searchStartDate, searchEndDate]);
 
   const generateMenuIemStatus = () => {
     return listStatus.map((status, index) => {
@@ -107,12 +98,14 @@ function LaporanKerusakan() {
           return (
             <LaporanRow
               index={index}
-              key={index}
-              reportId={report.borrow_id}
-              reportNama={report.user_name}
-              reportDate={report.report_date}
+              key={report.id}
+              reportIndex={index + 1}
+              reportId={report.id}
+              reportItemName={report.peralatans.peralatanName}
+              reportNama={report.userName}
+              reportDate={report.dateIn}
               reportJumlah={report.borrow_count}
-              reportStatus={report.status_borrow_name}
+              reportStatus={report.approvalStatus}
               page={page}
             ></LaporanRow>
           );
@@ -128,6 +121,20 @@ function LaporanKerusakan() {
   const nextPage = () => {
     if (page >= maxPage) return;
     setPage(page + 1);
+  };
+
+  const handleSearchNameKeyDown = (event) => {
+    if (event.key == "Enter") {
+      setPage(1);
+      getReportData();
+    }
+  };
+
+  const resetFilter = () => {
+    searchItem.current.value = ""
+    searchStartDate.current.value = ""
+    searchEndDate.current.value = ""
+    getReportData()
   };
   return (
     <div className="w-full">
@@ -155,7 +162,8 @@ function LaporanKerusakan() {
               label="Username"
               variant="standard"
               className="w-full"
-              placeholder="Cari Nama Pelapor"
+              placeholder="Cari Nama Alat"
+              onKeyDown={handleSearchNameKeyDown}
             />
           </div>
         </div>
@@ -164,7 +172,12 @@ function LaporanKerusakan() {
             <div className="w-full mb-4">
               {user.role != "User" ? (
                 <>
-                  <Button variant="contained" size="large" fullWidth>
+                  <Button
+                    onClick={() => navigate("/report/create")}
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                  >
                     + Buat Laporan Baru
                   </Button>
                   <HorizontalDivider />
@@ -175,7 +188,7 @@ function LaporanKerusakan() {
             </div>
 
             <SubHeading title="Filter" />
-            <div className="w-full mt-4">
+            {/* <div className="w-full mt-4">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Status</InputLabel>
                 <Select
@@ -187,10 +200,12 @@ function LaporanKerusakan() {
                   placeholder="Status"
                   fullWidth
                 >
-                  {generateMenuIemStatus()}
+                  <MenuItem value="e3946b09-fb28-4d97-89e2-d2a2a54ba9a7">Menunggu Persetujuan</MenuItem>
+                  <MenuItem value="6344d1b5-6b9b-4cd8-b612-f6a3e64fb837">Disetujui</MenuItem>
+                  <MenuItem value="5fcc9739-cbdc-4dec-866d-5f7b059213f1">Ditolak</MenuItem>
                 </Select>
               </FormControl>
-            </div>
+            </div> */}
             <div className="w-full mt-4">
               <TextField
                 InputLabelProps={{ shrink: true }}
@@ -199,6 +214,7 @@ function LaporanKerusakan() {
                 label="Tanggal Mulai"
                 variant="outlined"
                 inputRef={searchStartDate}
+                onChange={getReportData}
                 fullWidth
               />
             </div>
@@ -210,17 +226,18 @@ function LaporanKerusakan() {
                 label="Tanggal Selesai"
                 variant="outlined"
                 inputRef={searchEndDate}
+                onChange={getReportData}
                 fullWidth
               />
             </div>
             <div className="w-full mt-8">
               <Button
-                onClick={() => getPinjamanData()}
+                onClick={() => resetFilter()}
                 variant="contained"
                 size="large"
                 fullWidth
               >
-                Cari
+                Reset
               </Button>
             </div>
           </div>

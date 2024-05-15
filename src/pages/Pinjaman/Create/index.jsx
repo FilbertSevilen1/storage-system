@@ -66,8 +66,8 @@ function CreatePinjaman() {
     const body = {
       startDate: createStartDate.current.value,
       endDate: createEndDate.current.value,
-      peralatanName: searchAddNamaInput,
-      peralatanDetailName: searchAddNamaDetailInput,
+      peralatanName: searchAddNama.current.value,
+      peralatanDetailName: searchAddDetailNama.current.value,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -295,8 +295,6 @@ function CreatePinjaman() {
   };
 
   const incrementTotal = (alat) => {
-    console.log("ADD ALAT", listAddPeralatan);
-
     for (let i = 0; i < listSearchAddPeralatan.length; i++) {
       if (listSearchAddPeralatan[i].id == alat.id) {
         setListSearchAddPeralatan((prevList) => {
@@ -535,9 +533,9 @@ function CreatePinjaman() {
                 fullWidth
                 variant="outlined"
                 inputRef={searchAddNama}
-                onChange={() =>
-                  setSearchAddNamaInput(searchAddNama.current.value)
-                }
+                onChange={() => {
+                  getPeralatanAvailable();
+                }}
               />
             </div>
             <div className="w-full md:w-[400px] md:ml-2">
@@ -551,11 +549,9 @@ function CreatePinjaman() {
                   fullWidth
                   variant="outlined"
                   inputRef={searchAddDetailNama}
-                  onChange={() =>
-                    setSearchAddNamaDetailInput(
-                      searchAddNamaDetailInput.current.value
-                    )
-                  }
+                  onChange={() => {
+                    getPeralatanAvailable();
+                  }}
                 />
               </FormControl>
             </div>
@@ -653,10 +649,20 @@ function CreatePinjaman() {
                   CATATAN PENTING!
                 </div>
                 <div className="text-l text-red-500 w-full mt-2 text-justify">
-                  {"*)"} Peminjam diberikan kompensasi keterlambatan selama 1 jam, Jika peminjaman melewati waktu tersebut, maka user akan terkena hukuman berupa <b>timeout peminjaman dan denda tiap alat per jam keterlambatan.</b>  Hal ini dimohon menjadi catatan karena dapat mengganggu peminjaman alat oleh pengguna lain.
+                  {"*)"} Peminjam diberikan kompensasi keterlambatan selama 1
+                  jam, Jika peminjaman melewati waktu tersebut, maka user akan
+                  terkena hukuman berupa{" "}
+                  <b>
+                    timeout peminjaman dan denda tiap alat per jam
+                    keterlambatan.
+                  </b>{" "}
+                  Hal ini dimohon menjadi catatan karena dapat mengganggu
+                  peminjaman alat oleh pengguna lain.
                 </div>
                 <div className="text-l text-red-500 w-full mt-2 text-justify">
-                  {"**) Dalam kasus tertentu akibat ada kerusakan alat atau keterlambatan pengembalian dari pengguna lain, admin dapat mengubah alat yang akan dipinjam atau membatalkan pinjaman yang telah disetujui apabila tidak ada alat lain yang tersedia."}
+                  {
+                    "**) Dalam kasus tertentu akibat ada kerusakan alat atau keterlambatan pengembalian dari pengguna lain, admin dapat mengubah alat yang akan dipinjam atau membatalkan pinjaman yang telah disetujui apabila tidak ada alat lain yang tersedia."
+                  }
                 </div>
               </div>
             </div>
@@ -695,7 +701,7 @@ function CreatePinjaman() {
           </div>
           <PinjamPeralatanHeader></PinjamPeralatanHeader>
           <div className="w-full max-h-[400px] sm:max-h-[600px] overflow-y-scroll">
-          {loading ? <></> : <>{generatePinjamPeralatan()}</>}
+            {loading ? <></> : <>{generatePinjamPeralatan()}</>}
           </div>
         </div>
         <div className="w-full flex justify-end mb-8">

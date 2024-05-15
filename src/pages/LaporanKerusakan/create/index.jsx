@@ -31,7 +31,9 @@ function BuatLaporan() {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user);
 
-  const [listUser, setListUser] = useState();
+  const [listUser, setListUser] = useState({
+    name: "",
+  });
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
@@ -45,7 +47,7 @@ function BuatLaporan() {
   const createStartDate = useRef("");
 
   const [addDialog, setAddDialog] = useState(false);
-  const searchAddNama = useRef();
+  const searchAddNama = useRef("");
   const searchAddDetailNama = useRef("");
   const [searchAddCategory, setSearchAddCategory] = useState("");
 
@@ -55,6 +57,8 @@ function BuatLaporan() {
   const [isPenalty, setIsPenalty] = useState(false);
   const fineCount = useRef("");
   const deadlineDate = useRef("");
+  const [penaltyUser, setPenaltyUser] = useState("");
+  const timeout = useRef("");
 
   const [laporanType, setLaporanType] = useState("");
   const [listAddPeralatan, setListAddPeralatan] = useState([]);
@@ -136,32 +140,33 @@ function BuatLaporan() {
     getDataPeralatanAvailable();
   };
 
-  const getDataUser = () =>{
-    const body = {}
+  const getDataUser = () => {
+    const body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
-    axios.post(API_URL + "/user/list", body, {
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-      },
-    })
-    .then((res)=>{
-      let data = []
-      res.data.users.forEach(item => {
-        data.push(item.name)
+    axios
+      .post(API_URL + "/user/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        // let data = [];
+        // res.data.users.forEach((item) => {
+        //   data.push(item.name);
+        // });
+        setListUser(res.data.users);
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Get Data Gagal");
       });
-      setListUser(data)
-    })
-    .catch((err)=>{
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-      }, 3000);
-      setLoading(false);
-      return setSnackbarMessage("Get Data Gagal");
-    })
-  }
+  };
 
   useEffect(() => {
     getDataUser();
@@ -471,8 +476,137 @@ function BuatLaporan() {
     setPenaltyType(event.target.value);
   };
 
+  const handlePenaltyUser = (event, newValue) => {
+    setPenaltyUser(newValue);
+  };
+
   const onSubmit = () => {
-    //Validate Here
+    if (!penaltyUser) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      setLoading(false);
+      return setSnackbarMessage("User tidak boleh kosong!");
+    }
+    if (isPenalty) {
+      if (!penaltyType) {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Jenis hukuman tidak boleh kosong!");
+      }
+      if (
+        penaltyType == "a44c4cd0-2515-4ac7-bb0e-5199f083f6cd" &&
+        !fineCount.current.value
+      ) {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Denda tidak boleh kosong!");
+      }
+      if (!deadlineDate.current.value) {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Tanggal deadline tidak boleh kosong!");
+      }
+
+      if (deadlineDate.current.value) {
+        const selectedDate = new Date(deadlineDate.current.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset the time part for comparison
+
+        if (selectedDate < today) {
+          setSnackbar(true);
+          setTimeout(() => {
+            setSnackbar(false);
+          }, 3000);
+          setLoading(false);
+          return setSnackbarMessage(
+            "Tanggal Deadline tidak boleh tanggal yang sudah lewat!"
+          );
+        }
+      }
+
+      if (!timeout.current.value) {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Timeout tidak boleh kosong!");
+      }
+    }
+
+    if (listAddPeralatan.length <= 0) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      setLoading(false);
+      return setSnackbarMessage("Alat tidak boleh kosong!");
+    }
+
+    console.log(listAddPeralatan[0]);
+    let detailId = null;
+    if (listAddPeralatan[0].peralatanDetails.length > 0) {
+      detailId = listAddPeralatan[0].peralatanDetails[0].id;
+    }
+
+    let description = "";
+    if (penaltyType == "a44c4cd0-2515-4ac7-bb0e-5199f083f6cd") {
+      description = "Denda : Rp. " + fineCount.current.value;
+    } else {
+      description = "Penggantian Barang Serupa atau Sejenis";
+    }
+
+    const body = {
+      description: laporanKeterangan.current.value,
+      count: listAddPeralatan[0].count,
+      userId: penaltyUser.id,
+      peralatanId: listAddPeralatan[0].id,
+      peralatanDetailId: detailId,
+      usePenalty: isPenalty,
+      punishmentTypeId: penaltyType,
+      punishmentDescription: description,
+      punishmentDeadline: deadlineDate.current.value,
+      punishmentTimeoutDuration: parseInt(timeout.current.value),
+    };
+
+    console.log(body);
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/broken/create", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          navigate("/");
+        }, 1000);
+        setLoading(false);
+        return setSnackbarMessage("Buat Laporan Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Buat Laporan Gagal");
+      });
   };
 
   return (
@@ -489,7 +623,7 @@ function BuatLaporan() {
         onClose={() => setAddDialog(false)}
         maxWidth="[500px]"
       >
-        <DialogTitle>Tambah Peralatan</DialogTitle>
+        <DialogTitle>Pilih Peralatan</DialogTitle>
         <DialogContent>
           <div className="flex flex-col md:flex-row w-full">
             <div className="w-full md:w-[400px] md:mr-2">
@@ -502,9 +636,7 @@ function BuatLaporan() {
                 fullWidth
                 variant="outlined"
                 inputRef={searchAddNama}
-                onChange={() =>
-                  setSearchAddNamaInput(searchAddNama.current.value)
-                }
+                onChange={getDataPeralatanAvailable}
               />
             </div>
             <div className="w-full md:w-[400px] md:ml-2">
@@ -518,11 +650,7 @@ function BuatLaporan() {
                   fullWidth
                   variant="outlined"
                   inputRef={searchAddDetailNama}
-                  onChange={() =>
-                    setSearchAddNamaDetailInput(
-                      searchAddNamaDetailInput.current.value
-                    )
-                  }
+                  onChange={getDataPeralatanAvailable}
                 />
               </FormControl>
             </div>
@@ -538,55 +666,35 @@ function BuatLaporan() {
         </div>
         <div className="bg-white w-full flex items-center mt-8 shadow-md px-4 py-4">
           <div className="w-full flex flex-wrap">
+            <div className="w-full xl:w-1/2 px-2">
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={listUser}
+                getOptionLabel={(option) => option.name || ""}
+                value={penaltyUser}
+                onChange={handlePenaltyUser}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="User yang bertanggung Jawab"
+                    className="w-full"
+                  />
+                )}
+              />
+            </div>
             <div className="w-full flex flex-wrap items-center mb-4">
               <Checkbox
                 checked={isPenalty}
                 onChange={changeIsPenalty}
                 inputProps={{ "aria-label": "controlled" }}
               />
-              <div className="">Berikan Penalti untuk Pengguna</div>
+              <div className="">Berikan Penalti untuk User</div>
             </div>
             {isPenalty ? (
               <>
                 <div className="w-full flex flex-wrap">
-                  <div className="w-full md:w-1/4 flex items-center mb-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="32"
-                      height="32"
-                      viewBox="0 0 36 36"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M30.61 24.52a17.16 17.16 0 0 0-25.22 0a1.51 1.51 0 0 0-.39 1v6A1.5 1.5 0 0 0 6.5 33h23a1.5 1.5 0 0 0 1.5-1.5v-6a1.51 1.51 0 0 0-.39-.98"
-                        class="clr-i-solid clr-i-solid-path-1"
-                      />
-                      <circle
-                        cx="18"
-                        cy="10"
-                        r="7"
-                        fill="currentColor"
-                        class="clr-i-solid clr-i-solid-path-2"
-                      />
-                      <path fill="none" d="M0 0h36v36H0z" />
-                    </svg>
-
-                    <div className="w-full px-2">
-                      <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={listUser}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="User yang bertanggung Jawab"
-                            className="w-full"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/4 flex items-center mb-4">
+                  <div className="w-full md:w-1/2 xl:w-1/4 flex items-center mb-4">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
@@ -605,7 +713,7 @@ function BuatLaporan() {
                     <div className="w-full px-2">
                       <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">
-                          Pinalti yang Diberikan
+                          Hukuman yang Diberikan
                         </InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
@@ -627,7 +735,7 @@ function BuatLaporan() {
                     </div>
                   </div>
                   {penaltyType == "a44c4cd0-2515-4ac7-bb0e-5199f083f6cd" ? (
-                    <div className="w-full md:w-1/4 flex items-center mb-4">
+                    <div className="w-full md:w-1/2 xl:w-1/4 flex items-center mb-4">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="32"
@@ -656,7 +764,7 @@ function BuatLaporan() {
                     <></>
                   )}
                 </div>
-                <div className="w-full md:w-1/4 flex items-center mb-4">
+                <div className="w-full md:w-1/2 xl:w-1/4 flex items-center mb-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
@@ -681,7 +789,7 @@ function BuatLaporan() {
                     />
                   </div>
                 </div>
-                <div className="w-full md:w-1/4 flex items-center mb-4">
+                <div className="w-full md:w-1/2 xl:w-1/4 flex items-center mb-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
@@ -702,7 +810,7 @@ function BuatLaporan() {
                       variant="outlined"
                       className="w-full"
                       placeholder="0"
-                      inputRef={deadlineDate}
+                      inputRef={timeout}
                     />
                   </div>
                 </div>
@@ -713,7 +821,7 @@ function BuatLaporan() {
 
             <div className="w-full flex flex-col flex-wrap">
               <div>Keterangan</div>
-              <div className="w-full md:w-1/2">
+              <div className="w-full xl:w-1/2">
                 <TextareaAutosize
                   className="w-full h-48 py-2 px-3 text-l border-2 border-gray-300 rounded-lg mt-2"
                   minRows={4}

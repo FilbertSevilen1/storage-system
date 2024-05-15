@@ -11,14 +11,32 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
+import axios from "axios";
 import React, { useRef, useState } from "react";
+const API_URL = process.env.REACT_APP_API_URL;
 function PenaltyRow(props) {
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
   const horizontal = "center";
 
+  const formatDate = (date) => {
+    const dateformat = new Date(date);
+
+    const year = dateformat.getFullYear();
+    const month = String(dateformat.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1
+    const day = String(dateformat.getDate()).padStart(2, "0");
+    const hours = String(dateformat.getHours()).padStart(2, "0");
+    const minutes = String(dateformat.getMinutes()).padStart(2, "0");
+    const seconds = String(dateformat.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
+  };
+
   let [no, setNo] = useState(props.no);
+  let [id, setId] = useState(props.punishmentId);
   let [name, setName] = useState(props.punishmentUsername);
   let [type, setType] = useState(props.punishmentType);
   let [date, setDate] = useState(props.punishmentDate);
@@ -27,7 +45,7 @@ function PenaltyRow(props) {
   let [description, setDescription] = useState(props.punishmentDescription);
   const [approvalDialog, setApprovalDialog] = useState(false);
 
-  const [approvalReason, setApprovalReason] = useState("");
+  const approvalReason = useRef("");
 
   const editBrandNama = useRef("");
   const [editBrandNamaDefault, setEditBrandNamaDefault] = useState("");
@@ -46,7 +64,33 @@ function PenaltyRow(props) {
     setErrorEditBrandNama(false);
   };
 
+  const getDataResolution = () => {
+    let body = {};
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + `/resolution/get/${id}`, body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setImage(res.data.resolution.image);
+        setDescription(res.data.resolution.description);
+        approvalReason.current.value = res.data.resolution.approvalReason
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal mendapatkan data");
+      });
+  };
+
   const openProofDialog = (name, type) => {
+    getDataResolution();
     return setApprovalDialog(true);
   };
   const closeApprovalDialog = () => {
@@ -62,8 +106,53 @@ function PenaltyRow(props) {
     return setErrorEditBrandNama(false);
   };
 
-  const onSubmit = () => {
-    return closeApprovalDialog();
+  const onSubmit = (statusId) => {
+    if (!approvalReason.current.value) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Alasan tidak boleh kosong!");
+    }
+
+    const body = {
+      punishmentId: id,
+      approvalReason: approvalReason.current.value,
+      approvalStatusId: statusId,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    let successMessage = "";
+    if (statusId == "6344d1b5-6b9b-4cd8-b612-f6a3e64fb837") {
+      successMessage = "Berhasil Menyetujui Bukti";
+    } else {
+      successMessage = "Berhasil Menolak Bukti";
+    }
+
+    axios
+      .put(API_URL + "/resolution/update-status", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        closeApprovalDialog();
+        getDataResolution();
+        setTimeout(() => {
+          window.location.reload()
+          setSnackbar(false);
+        }, 1000);
+        return setSnackbarMessage(successMessage);
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal mengubah data");
+      });
   };
 
   return (
@@ -80,7 +169,14 @@ function PenaltyRow(props) {
         <DialogContent>
           <div className="w-full h-[450px] flex justify-between">
             <div className="p-2 w-96 h-64">
-              <img src="https://static8.depositphotos.com/1040728/935/i/450/depositphotos_9352722-stock-photo-tool-set.jpg"></img>
+              {image ? (
+                <img src={image}></img>
+              ) : (
+                <div className="w-full h-56 center flex justify-center items-center border-[1px] border-black">
+                  Tidak ada Gambar
+                </div>
+              )}
+
               <div className="my-4">
                 <TextField
                   className="w-full my-4"
@@ -92,8 +188,8 @@ function PenaltyRow(props) {
               <div className="my-4">
                 <TextField
                   className="w-full my-4"
-                  value={approvalReason}
-                  defaultValue={description}
+                  inputRef={approvalReason}
+                  defaultValue={approvalReason}
                   label="Alasan Tolak/Setuju"
                 ></TextField>
               </div>
@@ -101,8 +197,15 @@ function PenaltyRow(props) {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => onSubmit("reject")}>Tolak</Button>
-          <Button onClick={() => onSubmit("approve")} type="submit">
+          <Button
+            onClick={() => onSubmit("5fcc9739-cbdc-4dec-866d-5f7b059213f1")}
+          >
+            Tolak
+          </Button>
+          <Button
+            onClick={() => onSubmit("6344d1b5-6b9b-4cd8-b612-f6a3e64fb837")}
+            type="submit"
+          >
             <b>Setujui</b>
           </Button>
         </DialogActions>
@@ -122,7 +225,7 @@ function PenaltyRow(props) {
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Batas Waktu : </div>
-          {date}
+          {formatDate(date)}
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Status : </div>
