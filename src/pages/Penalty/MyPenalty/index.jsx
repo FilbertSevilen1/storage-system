@@ -65,8 +65,6 @@ function MyPenalty() {
       endDate: searchEndDate.current.value,
     };
 
-    console.log()
-
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios

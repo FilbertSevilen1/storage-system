@@ -211,8 +211,9 @@ function MyPenaltyRow(props) {
         setSnackbar(true);
         closeApprovalDialog();
         setTimeout(() => {
+          window.location.reload()
           setSnackbar(false);
-        }, 3000);
+        }, 1000);
         return setSnackbarMessage("Berhasil menyimpan data");
       })
       .catch((err) => {
@@ -298,7 +299,7 @@ function MyPenaltyRow(props) {
           {status}
         </div>
         <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
-          {status != false ? (
+          {status != "Disetujui" ? (
             <div
               onClick={() => openProofDialog()}
               className="mx-1 p-2 bg-gray-200 rounded-md cursor-pointer transition-all active:scale-100 hover:scale-110 hover:shadow-md"

@@ -16,9 +16,12 @@ import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
 import { useLocation, useNavigate } from "react-router";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function KerusakanDetail() {
+  const user = useSelector((state)=>state.user)
+
   const path = useLocation().pathname;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -446,13 +449,17 @@ function KerusakanDetail() {
                   </div>
                 </div>
                 <div className="w-full md:w-64">
-                  <Button
-                    onClick={() => openPenaltyDialog()}
-                    variant="contained"
-                    fullWidth
-                  >
-                    Lihat Bukti Penalti
-                  </Button>
+                  {user.role != "User" ? (
+                    <Button
+                      onClick={() => openPenaltyDialog()}
+                      variant="contained"
+                      fullWidth
+                    >
+                      Lihat Bukti Penalti
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
             ) : (
@@ -471,14 +478,18 @@ function KerusakanDetail() {
         </div>
         <div className="w-full flex justify-end mb-8">
           <div className="md:ml-2">
-            <Button
-              onClick={() => onSubmit()}
-              disabled={!isApproved}
-              variant="contained"
-              size="large"
-            >
-              Selesaikan Laporan
-            </Button>
+            {reportStatus == "Disetujui" ? (
+              <></>
+            ) : (
+              <Button
+                onClick={() => onSubmit()}
+                disabled={!isApproved}
+                variant="contained"
+                size="large"
+              >
+                Selesaikan Laporan
+              </Button>
+            )}
           </div>
         </div>
       </div>
