@@ -568,16 +568,13 @@ function ReturnPinjaman() {
       bodyPeralatan.push({
         peralatanId: item.id,
         peralatanReturnCount: item.count,
-        peralatanDetailId: bodyPeralatanDetails,
+        peralatanDetails: bodyPeralatanDetails,
       });
     });
 
     const body = {
-      id: id,
       reason: returnReason.current.value,
-      startDate: startDate,
-      endDate: endDate,
-      peralatan: bodyPeralatan,
+      peralatans: bodyPeralatan,
     };
     console.log(body);
 

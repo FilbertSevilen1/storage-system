@@ -226,15 +226,13 @@ function MyPenaltyRow(props) {
   };
 
   const onSubmit = () => {
-    console.log("1",originalImage);
-    console.log("2", uploadImage);
 
-    if (showImage && uploadImage) {
+    if (originalImage && uploadImage) {
       updatePeralatanImageToFirebase();
-    } else if (!showImage && uploadImage) {
+    } else if (!originalImage && uploadImage) {
       uploadPeralatanImageToFirebase();
     } else {
-      updateResolution(showImage);
+      updateResolution(originalImage);
     }
   };
 

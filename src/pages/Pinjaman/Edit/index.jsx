@@ -57,22 +57,23 @@ function EditPinjaman() {
 
   const [id, setId] = useState(pathname.pathname.substring(13));
   const [name, setName] = useState("User");
-  const [startDate, setStartDate] = useState("01/01/2024");
-  const [endDate, setEndDate] = useState("01/12/2024");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [reason, setReason] = useState("Testing");
   const [statusId, setStatusId] = useState("");
   const [statusName, setStatusName] = useState("");
 
   const [listAddPeralatan, setListAddPeralatan] = useState([]);
 
-  const getDataPeralatanAvailable = () => {
+  const getDataPeralatanAvailable = (start, end) => {
     if (!startDate || !endDate) {
       return;
     }
+    console.log(startDate, endDate);
 
     const body = {
-      startDate: createStartDate.current.value,
-      endDate: createEndDate.current.value,
+      startDate: startDate,
+      endDate: endDate,
       peralatanName: searchAddNama.current.value,
       peralatanDetailName: searchAddDetailNama.current.value,
     };
@@ -160,7 +161,6 @@ function EditPinjaman() {
         setEndDate(res.data.borrow.endDate);
         setReason(res.data.borrow.reason);
         setStatusName(res.data.borrow.statusName);
-
         getDetailPeralatan(res.data.borrow.peralatans);
       })
       .catch((err) => {
@@ -178,8 +178,11 @@ function EditPinjaman() {
   };
 
   useEffect(() => {
+    getDataPeralatanAvailable();
+  }, [startDate, endDate]);
+
+  useEffect(() => {
     getDetailPinjaman();
-    getPeralatanAvailable();
   }, []);
 
   const [listSearchAddPeralatan, setListSearchAddPeralatan] = useState([]);
@@ -423,7 +426,6 @@ function EditPinjaman() {
         if (peralatan.peralatanBorrowCount) {
           peralatan.available -= peralatan.peralatanBorrowCount;
         }
-        
 
         if (!peralatan.count && peralatan.peralatanBorrowCount) {
           peralatan.count = peralatan.peralatanBorrowCount;

@@ -156,6 +156,7 @@ function UserRow(props) {
       ktp: editUserCitizenId.current.value,
       birthDate: editUserBirthdate.current.value,
       roleId: editUserRole,
+      isActive: editUserStatus
     };
     console.log(body);
 

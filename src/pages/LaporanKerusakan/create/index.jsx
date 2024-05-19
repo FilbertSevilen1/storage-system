@@ -85,7 +85,7 @@ function BuatLaporan() {
           .then((res) => {
             let detail = res.data.peralatanDetails;
             detail.forEach((element) => {
-              element.detailName = element.description;
+              element.detailName = element.name;
               element.status = element.statusName;
             });
             item.peralatanDetails = res.data.peralatanDetails;
@@ -469,6 +469,16 @@ function BuatLaporan() {
   };
 
   const changeIsPenalty = () => {
+    if(penaltyUser.roleName != "User"){
+      setIsPenalty(false);
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      setLoading(false);
+      return setSnackbarMessage("Admin dan Super Admin tidak dapat terkena penalti");
+    }
+
     setIsPenalty(!isPenalty);
   };
 
@@ -477,10 +487,12 @@ function BuatLaporan() {
   };
 
   const handlePenaltyUser = (event, newValue) => {
+    setIsPenalty(false)
     setPenaltyUser(newValue);
   };
 
   const onSubmit = () => {
+    setLoading(true)
     if (!penaltyUser) {
       setSnackbar(true);
       setTimeout(() => {
@@ -593,18 +605,19 @@ function BuatLaporan() {
       .then((res) => {
         setSnackbar(true);
         setTimeout(() => {
+          setLoading(false)
           setSnackbar(false);
           navigate("/");
         }, 1000);
-        setLoading(false);
+        
         return setSnackbarMessage("Buat Laporan Berhasil");
       })
       .catch((err) => {
         setSnackbar(true);
         setTimeout(() => {
+          setLoading(false);
           setSnackbar(false);
         }, 3000);
-        setLoading(false);
         return setSnackbarMessage("Buat Laporan Gagal");
       });
   };
@@ -671,7 +684,7 @@ function BuatLaporan() {
                 disablePortal
                 id="combo-box-demo"
                 options={listUser}
-                getOptionLabel={(option) => option.name || ""}
+                getOptionLabel={(option) => option.name + " - " + option.roleName || ""}
                 value={penaltyUser}
                 onChange={handlePenaltyUser}
                 renderInput={(params) => (
@@ -871,7 +884,7 @@ function BuatLaporan() {
             </Button>
           </div>
           <div className="md:ml-2">
-            <Button onClick={() => onSubmit()} variant="contained" size="large">
+            <Button disabled={loading} onClick={() => onSubmit()} variant="contained" size="large">
               Buat Laporan
             </Button>
           </div>

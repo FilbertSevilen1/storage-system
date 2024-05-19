@@ -39,7 +39,7 @@ function KerusakanDetail() {
   const [reportDate, setReportDate] = useState("01/01/2024");
   const [penaltyType, setPenaltyType] = useState(null);
   const [reportUser, setReportUser] = useState("Budi");
-  const [reportStatus, setReportStatus] = useState("Menunggu Approval");
+  const [reportStatus, setReportStatus] = useState("");
   const [reportPenaltyId, setReportPenaltyId] = useState("");
   const [reportPenaltyStatus, setReportPenaltyStatus] = useState("");
 

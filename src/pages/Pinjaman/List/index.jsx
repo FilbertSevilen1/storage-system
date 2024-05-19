@@ -74,7 +74,7 @@ function ListPinjaman() {
   const getDataPinjamanList = () => {
     setLoading(true);
     const body = {
-      userName: "",
+      userName: searchItem.current.value,
       statusBorrowId: searchStatus,
       startDate: searchStartDate.current.value,
       endDate: searchEndDate.current.value,
@@ -112,7 +112,7 @@ function ListPinjaman() {
 
   useEffect(() => {
     getPinjamanList();
-  }, [page]);
+  }, [searchStatus,searchStartDate,searchEndDate]);
 
   const getMaxPage = () => {
     if (listPinjaman.length % 5 === 0) {
@@ -176,6 +176,13 @@ function ListPinjaman() {
     getPinjamanList();
   };
 
+  const handleSearchNameKeyDown = (event) => {
+    if (event.key == "Enter") {
+      setPage(1);
+      getDataPinjamanList();
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
@@ -199,6 +206,7 @@ function ListPinjaman() {
             <div className="w-fit ml-4"></div>
             <Input
               inputRef={searchItem}
+              onKeyDown={handleSearchNameKeyDown}
               id=""
               label="Username"
               variant="standard"
@@ -222,7 +230,11 @@ function ListPinjaman() {
                   placeholder="Status"
                   fullWidth
                 >
-                  {generateMenuIemStatus()}
+                  <MenuItem value="faa77eff-50d4-4633-acce-78c0aae92cf0">Menunggu Persetujuan</MenuItem>
+                  <MenuItem value="de52b2d0-7cdd-4929-aed4-d09a1287b52f">Siap Dipinjam</MenuItem>
+                  <MenuItem value="5d4c9168-f08b-4a9c-b354-44a595168129">Dalam Peminjaman</MenuItem>
+                  <MenuItem value="73c03313-bfdb-467d-98bb-02dd4a93ff54">Selesai</MenuItem>
+                  <MenuItem value="781f0b17-7546-415d-a74b-162b4a67e8f9">Dibatalkan</MenuItem>
                 </Select>
               </FormControl>
             </div>

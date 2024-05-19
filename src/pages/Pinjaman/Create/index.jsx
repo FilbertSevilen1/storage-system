@@ -66,8 +66,8 @@ function CreatePinjaman() {
     const body = {
       startDate: createStartDate.current.value,
       endDate: createEndDate.current.value,
-      peralatanName: searchAddNama.current.value,
-      peralatanDetailName: searchAddDetailNama.current.value,
+      // peralatanName: searchAddNama.current.value,
+      // peralatanDetailName: searchAddDetailNama.current.value,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -85,11 +85,51 @@ function CreatePinjaman() {
   };
 
   const getPeralatanAvailable = () => {
+    setDisableAdd(true);
+    const selectedStartDate = new Date(createStartDate.current.value);
+    const selectedEndDate = new Date(createEndDate.current.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset the time part for comparison
+
+    if (selectedStartDate < today) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      setLoading(false);
+      return setSnackbarMessage(
+        "Tanggal Mulai tidak boleh tanggal yang sudah lewat!"
+      );
+    }
+
+    if (selectedEndDate < today) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      setLoading(false);
+      return setSnackbarMessage(
+        "Tanggal Berakhir tidak boleh tanggal yang sudah lewat!"
+      );
+    }
+
+    if (selectedEndDate < selectedStartDate) {
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      setLoading(false);
+      return setSnackbarMessage(
+        "Tanggal Berakhir tidak boleh sebelum Tanggal Mulai"
+      );
+    }
+
     if (createStartDate.current.value && createEndDate.current.value) {
       setDisableAdd(false);
     } else {
       setDisableAdd(true);
     }
+
     getDataPeralatanAvailable();
   };
 
@@ -533,9 +573,8 @@ function CreatePinjaman() {
                 fullWidth
                 variant="outlined"
                 inputRef={searchAddNama}
-                onChange={() => {
-                  getPeralatanAvailable();
-                }}
+                defaultValue={""}
+                onChange={getPeralatanAvailable}
               />
             </div>
             <div className="w-full md:w-[400px] md:ml-2">
@@ -548,10 +587,9 @@ function CreatePinjaman() {
                   type="text"
                   fullWidth
                   variant="outlined"
+                  defaultValue={""}
                   inputRef={searchAddDetailNama}
-                  onChange={() => {
-                    getPeralatanAvailable();
-                  }}
+                  onChange={getPeralatanAvailable}
                 />
               </FormControl>
             </div>

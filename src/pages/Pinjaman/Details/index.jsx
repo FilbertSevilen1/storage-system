@@ -36,12 +36,14 @@ function DetailPinjaman() {
 
   const [id, setId] = useState(path);
   const [name, setName] = useState("User");
-  const [startDate, setStartDate] = useState("01/01/2024");
-  const [endDate, setEndDate] = useState("01/12/2024");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [reason, setReason] = useState("Testing");
   const [statusId, setStatusId] = useState("");
   const [statusName, setStatusName] = useState();
   const [approval, setApproval] = useState();
+
+  const [errorItemMessage, setErrorItemMessage] = useState("");
 
   const formatDate = (date) => {
     const dateformat = new Date(date);
@@ -83,9 +85,29 @@ function DetailPinjaman() {
           if (i == borrowperalatan.length - 1) {
             setListPinjamPeralatan(borrowperalatan);
           }
+          let notReadyItem = "";
+          borrowperalatan.forEach((item) => {
+            if (item.peralatanDetails) {
+              item.peralatanDetails.forEach((subitem) => {
+                if (subitem.peralatanDetailStatusName != "Siap Dipinjam") {
+                  if (notReadyItem != "") notReadyItem += ",";
+                  notReadyItem +=
+                    item.peralatanName +
+                    " - " +
+                    subitem.peralatanDetailName +
+                    "<br>";
+                }
+              });
+            }
+          });
+          if (notReadyItem != "") {
+            notReadyItem += " Tidak siap dipinjam!";
+          }
+
+          setErrorItemMessage(notReadyItem);
         })
         .catch((err) => {
-          setLoading(false);
+          console.log(err);
           setSnackbar(true);
           setTimeout(() => {
             setSnackbar(false);
@@ -111,6 +133,26 @@ function DetailPinjaman() {
         setReason(res.data.borrow.reason);
         setStatusName(res.data.borrow.statusName);
         setApproval(res.data.borrow.approval);
+
+        const date = new Date();
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, "0");
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+
+        const now = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+        const date1 = new Date(now);
+        const date2 = new Date(res.data.borrow.startDate);
+
+        console.log(date1, date2);
+
+        if (date1 < date2) {
+          setCheckStartBorrow(true);
+        }
 
         getDetailPeralatan(res.data.borrow.peralatans);
       })
@@ -324,6 +366,8 @@ function DetailPinjaman() {
 
   const startReason = useRef("");
   const [startConfirmationDialog, setStartConfirmationDialog] = useState(false);
+
+  const [checkStartBorrow, setCheckStartBorrow] = useState(false);
 
   return (
     <div className="w-full">
@@ -569,7 +613,11 @@ function DetailPinjaman() {
                     </svg>
                     <div className="ml-2">
                       <b>Status Persetujuan Mulai</b>
-                      <div>{approval.approvalStartStatusName?approval.approvalStartStatusName:"Tidak ada Data"}</div>
+                      <div>
+                        {approval.approvalStartStatusName
+                          ? approval.approvalStartStatusName
+                          : "Tidak ada Data"}
+                      </div>
                     </div>
                   </div>
                   <div className="flex w-full md:w-1/2 xl:w-1/4 items-center h-16">
@@ -586,7 +634,11 @@ function DetailPinjaman() {
                     </svg>
                     <div className="ml-2">
                       <b>Alasan Persetujuan Mulai</b>
-                      <div>{approval.approvalStartReason?approval.approvalStartReason:"Tidak ada Data"}</div>
+                      <div>
+                        {approval.approvalStartReason
+                          ? approval.approvalStartReason
+                          : "Tidak ada Data"}
+                      </div>
                     </div>
                   </div>
                   <div className="flex w-full md:w-1/2 xl:w-1/4 items-center h-16">
@@ -603,7 +655,11 @@ function DetailPinjaman() {
                     </svg>
                     <div className="ml-2">
                       <b>Waktu Persetujuan Mulai</b>
-                      <div>{approval.approvalStartDate?formatDate(approval.approvalStartDate):"Tidak ada Data"}</div>
+                      <div>
+                        {approval.approvalStartDate
+                          ? formatDate(approval.approvalStartDate)
+                          : "Tidak ada Data"}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -622,7 +678,11 @@ function DetailPinjaman() {
                     </svg>
                     <div className="ml-2">
                       <b>Status Persetujuan Selesai</b>
-                      <div>{approval.approvalEndStatusName?approval.approvalEndStatusName:"Tidak ada Data"}</div>
+                      <div>
+                        {approval.approvalEndStatusName
+                          ? approval.approvalEndStatusName
+                          : "Tidak ada Data"}
+                      </div>
                     </div>
                   </div>
                   <div className="flex w-full md:w-1/2 xl:w-1/4 items-center h-16">
@@ -639,7 +699,11 @@ function DetailPinjaman() {
                     </svg>
                     <div className="ml-2">
                       <b>Alasan Persetujuan Selesai</b>
-                      <div>{approval.approvalEndReason?approval.approvalEndReason:"Tidak ada Data"}</div>
+                      <div>
+                        {approval.approvalEndReason
+                          ? approval.approvalEndReason
+                          : "Tidak ada Data"}
+                      </div>
                     </div>
                   </div>
 
@@ -657,7 +721,11 @@ function DetailPinjaman() {
                     </svg>
                     <div className="ml-2">
                       <b>Waktu Persetujuan Selesai</b>
-                      <div>{approval.approvalEndDate?formatDate(approval.approvalEndDate):"Tidak ada Data"}</div>
+                      <div>
+                        {approval.approvalEndDate
+                          ? formatDate(approval.approvalEndDate)
+                          : "Tidak ada Data"}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -691,6 +759,15 @@ function DetailPinjaman() {
           <div className="w-full max-h-[400px] sm:max-h-[600px] overflow-y-scroll">
             {loading ? <></> : <>{generatePinjamPeralatan()}</>}
           </div>
+          {statusName == "Menunggu Persetujuan" ||
+          statusName == "Siap Dipinjam" ? (
+            <div
+              className="w-full mt-8 text-xl text-red-500"
+              dangerouslySetInnerHTML={{ __html: errorItemMessage }}
+            ></div>
+          ) : (
+            <></>
+          )}
 
           <div className="w-full justify-end items-center mt-4 flex"></div>
         </div>
@@ -743,6 +820,7 @@ function DetailPinjaman() {
                     color="primary"
                     variant="contained"
                     size="large"
+                    // disabled={checkStartBorrow}
                   >
                     Mulai Pinjaman
                   </Button>
