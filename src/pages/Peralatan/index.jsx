@@ -23,6 +23,8 @@ import axios from "axios";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
+import LoadingFull from "../../components/base/LoadingFull";
+import NoData from "../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Peralatan() {
@@ -200,6 +202,11 @@ function Peralatan() {
         }
       });
     }
+    else{
+      return(
+        <NoData></NoData>
+      )
+    }
   };
 
   const generateSelectPeralatanCategoryList = () => {
@@ -306,11 +313,13 @@ function Peralatan() {
   };
 
   const onSubmit = async () => {
+    setLoading(true);
     if (!addPeralatanName.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
     if (!addPeralatanImage) {
@@ -325,6 +334,7 @@ function Peralatan() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Jenis Peralatan tidak boleh kosong");
     }
     if (!addPeralatanBrand) {
@@ -339,6 +349,7 @@ function Peralatan() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
     if (!addPeralatanDenda.current.value) {
@@ -346,6 +357,7 @@ function Peralatan() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Denda tidak boleh kosong");
     }
     await uploadPerlatanImageToFirebase();
@@ -376,6 +388,7 @@ function Peralatan() {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Perekaman Data Berhasil");
       })
       .catch((err) => {
@@ -383,16 +396,19 @@ function Peralatan() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Perekaman Data Gagal");
       });
   };
 
   const onSubmitRequest = () => {
+    setLoading(true);
     if (!requestPeralatanName.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
     if (!requestPeralatanCount.current.value) {
@@ -400,6 +416,7 @@ function Peralatan() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Jumlah tidak boleh kosong");
     }
     // if (!requestPeralatanCategory) {
@@ -414,6 +431,7 @@ function Peralatan() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Merek tidak boleh kosong");
     }
     if (!requestPeralatanDeskripsi.current.value) {
@@ -421,6 +439,7 @@ function Peralatan() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
 
@@ -447,6 +466,7 @@ function Peralatan() {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Pembuatan Pengajuan Berhasil");
       })
       .catch((err) => {
@@ -455,6 +475,7 @@ function Peralatan() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Pembuatan Pengajuan Gagal");
       });
   };
@@ -499,6 +520,8 @@ function Peralatan() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
+
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

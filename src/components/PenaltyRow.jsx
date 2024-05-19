@@ -13,8 +13,11 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useRef, useState } from "react";
+import LoadingFull from "./base/LoadingFull";
 const API_URL = process.env.REACT_APP_API_URL;
 function PenaltyRow(props) {
+  const [loading, setLoading] = useState(false);
+
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
@@ -65,6 +68,7 @@ function PenaltyRow(props) {
   };
 
   const getDataResolution = () => {
+    setLoading(true);
     let body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -78,13 +82,15 @@ function PenaltyRow(props) {
       .then((res) => {
         setImage(res.data.resolution.image);
         setDescription(res.data.resolution.description);
-        approvalReason.current.value = res.data.resolution.approvalReason
+        approvalReason.current.value = res.data.resolution.approvalReason;
+        setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal mendapatkan data");
       });
   };
@@ -107,11 +113,13 @@ function PenaltyRow(props) {
   };
 
   const onSubmit = (statusId) => {
+    setLoading(true);
     if (!approvalReason.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Alasan tidak boleh kosong!");
     }
 
@@ -141,9 +149,10 @@ function PenaltyRow(props) {
         closeApprovalDialog();
         getDataResolution();
         setTimeout(() => {
-          window.location.reload()
+          window.location.reload();
           setSnackbar(false);
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage(successMessage);
       })
       .catch((err) => {
@@ -151,12 +160,14 @@ function PenaltyRow(props) {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal mengubah data");
       });
   };
 
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

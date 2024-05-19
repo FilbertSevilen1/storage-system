@@ -25,9 +25,13 @@ import SubHeading from "../../components/base/SubHeading";
 import PenaltyRow from "../../components/PenaltyRow";
 import PenaltyHeader from "../../components/PenaltyHeader";
 import axios from "axios";
+import NoData from "../../components/base/NoData";
+import Loading from "../../components/base/Loading";
+import LoadingFull from "../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Penalty() {
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
 
@@ -47,10 +51,10 @@ function Penalty() {
   const searchEndDate = useRef();
   const [listReport, setlistReport] = useState([]);
 
-  const [listPunishment, setListPunishment] = useState([
-  ]);
+  const [listPunishment, setListPunishment] = useState([]);
 
   const getDataPenalty = () => {
+    setLoading(true);
     let body = {
       statusId: searchStatus,
       startDate: searchStartDate.current.value,
@@ -70,12 +74,14 @@ function Penalty() {
         if (res.data.punishments.length % 5 == 0) {
           setMaxPage(Math.floor(res.data.punishments.length / 5));
         } else setMaxPage(Math.floor(res.data.punishments.length / 5) + 1);
+        setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal mendapatkan data");
       });
   };
@@ -112,6 +118,8 @@ function Penalty() {
             ></PenaltyRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -198,6 +206,7 @@ function Penalty() {
 
   return (
     <div className="w-full">
+      {Loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

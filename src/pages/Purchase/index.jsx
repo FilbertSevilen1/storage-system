@@ -19,10 +19,12 @@ import { useDispatch, useSelector } from "react-redux";
 import PurchaseHeader from "../../components/PurchaseHeader";
 import PurchaseRow from "../../components/PurchaseRow";
 import axios from "axios";
+import LoadingFull from "../../components/base/LoadingFull";
+import NoData from "../../components/base/NoData";
 
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = process.env.REACT_APP_API_URL;
 function Purchase() {
-  const[loading, setLoading] = useState();
+  const [loading, setLoading] = useState();
   const user = useSelector((state) => state.user);
 
   const [page, setPage] = useState(1);
@@ -48,16 +50,15 @@ function Purchase() {
   const searchItem = useRef();
   const searchStartDate = useRef();
   const searchEndDate = useRef();
-  const [listPurchase, setlistPurchase] = useState([
-  ]);
+  const [listPurchase, setlistPurchase] = useState([]);
 
   useEffect(() => {
     getPembelianList();
   }, [searchStartDate, searchEndDate]);
 
-  useEffect(()=>{
-    getMaxPage()
-  },[listPurchase])
+  useEffect(() => {
+    getMaxPage();
+  }, [listPurchase]);
 
   const handleSearchNameKeyDown = (event) => {
     if (event.key == "Enter") {
@@ -66,44 +67,45 @@ function Purchase() {
     }
   };
 
-  const getDataPembelianList = () =>{
+  const getDataPembelianList = () => {
     setLoading(true);
     const body = {
-      startDate:searchStartDate.current.value,
-      endDate:searchEndDate.current.value
-    }
+      startDate: searchStartDate.current.value,
+      endDate: searchEndDate.current.value,
+    };
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
-    axios.post(API_URL + "/purchase/list", body, {
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-      },
-    })
-    .then((res)=>{
-      setlistPurchase(res.data.purchases)
-      setLoading(false);
-    })
-    .catch((err)=>{
-      setLoading(false);
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-      }, 3000);
-      return setSnackbarMessage("Gagal mendapatkan data");
-    })
-  }
+    axios
+      .post(API_URL + "/purchase/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setlistPurchase(res.data.purchases);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        return setSnackbarMessage("Gagal mendapatkan data");
+      });
+  };
 
-  const resetFilter = () =>{
-    searchStartDate.current.value = ""
-    searchEndDate.current.value = ""
+  const resetFilter = () => {
+    searchStartDate.current.value = "";
+    searchEndDate.current.value = "";
     getDataPembelianList();
-  }
+  };
 
-  const getMaxPage = () =>{
+  const getMaxPage = () => {
     if (listPurchase.length % 5 === 0) {
       setMaxPage(Math.floor(listPurchase.length / 5));
     } else setMaxPage(Math.floor(listPurchase.length / 5) + 1);
-  }
+  };
 
   const getPembelianList = () => {
     getDataPembelianList();
@@ -132,6 +134,8 @@ function Purchase() {
             ></PurchaseRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -146,6 +150,7 @@ function Purchase() {
   };
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
           <Heading title="List Pembelian"></Heading>
@@ -204,7 +209,7 @@ function Purchase() {
             </div>
             <div className="w-full mt-8">
               <Button
-                onClick={()=>resetFilter()}
+                onClick={() => resetFilter()}
                 variant="contained"
                 size="large"
                 fullWidth

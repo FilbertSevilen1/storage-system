@@ -17,10 +17,12 @@ import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
 import { useLocation, useNavigate } from "react-router";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import NoData from "../../../components/base/NoData";
+import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function KerusakanDetail() {
-  const user = useSelector((state)=>state.user)
+  const user = useSelector((state) => state.user);
 
   const path = useLocation().pathname;
   const navigate = useNavigate();
@@ -55,6 +57,7 @@ function KerusakanDetail() {
   }, []);
 
   const getDataPinjamPeralatan = () => {
+    setLoading(true);
     let body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -89,6 +92,7 @@ function KerusakanDetail() {
         ) {
           setIsApproved(true);
         }
+        setLoading(false);
       })
 
       .catch((err) => {
@@ -156,6 +160,8 @@ function KerusakanDetail() {
             ></PinjamPeralatanRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -174,6 +180,7 @@ function KerusakanDetail() {
   const [defaultApprovalReason, setDefaultApprovalReason] = useState("");
 
   const getDataResolution = () => {
+    setLoading(true);
     let body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -189,22 +196,26 @@ function KerusakanDetail() {
         setProofImage(res.data.resolution.image);
         setPenaltyDescription(res.data.resolution.description);
         setPenaltyDialog(true);
+        setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal mendapatkan data");
       });
   };
 
   const onPenaltySubmit = (statusId) => {
+    setLoading(true);
     if (!approvalReason.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Alasan tidak boleh kosong!");
     }
 
@@ -237,6 +248,7 @@ function KerusakanDetail() {
           window.location.reload();
           setSnackbar(false);
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage(successMessage);
       })
       .catch((err) => {
@@ -244,11 +256,13 @@ function KerusakanDetail() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal mengubah data");
       });
   };
 
   const onSubmit = () => {
+    setLoading(true);
     const body = {};
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
@@ -283,6 +297,7 @@ function KerusakanDetail() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

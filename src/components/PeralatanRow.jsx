@@ -16,9 +16,11 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import LoadingFull from "./base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PeralatanRow(props) {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let [showAdd, setShowAdd] = useState(props.showAdd || false);
@@ -31,7 +33,7 @@ function PeralatanRow(props) {
   let [stock, setStock] = useState(props.peralatanStock);
   let [available, setAvailable] = useState(props.peralatanAvailable);
   let [hasIdentifier, setHasIdentifier] = useState(props.hasIdentifier);
-  let [brandId, setBrandId] = useState(props.peralatanBrandId)
+  let [brandId, setBrandId] = useState(props.peralatanBrandId);
   let [brandName, setBrandName] = useState(props.peralatanBrand);
 
   const [snackbar, setSnackbar] = useState(false);
@@ -95,11 +97,13 @@ function PeralatanRow(props) {
   };
 
   const onSubmit = () => {
+    setLoading(true);
     if (addPeralatanNama.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
 
@@ -108,6 +112,7 @@ function PeralatanRow(props) {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Deskripsi tidak boleh kosong");
     }
     if (!addPeralatanNomorSeri.current.value && addDialogType == true) {
@@ -115,6 +120,7 @@ function PeralatanRow(props) {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Nomor Seri tidak boleh kosong");
     }
     if (!addPeralatanCount.current.value && addDialogType == false) {
@@ -122,6 +128,7 @@ function PeralatanRow(props) {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Jumlah tidak boleh kosong");
     }
 
@@ -147,6 +154,7 @@ function PeralatanRow(props) {
             setSnackbar(false);
             window.location.reload();
           }, 1000);
+          setLoading(false);
           return setSnackbarMessage("Tambah Stok Berhasil");
         })
         .catch((err) => {
@@ -154,13 +162,14 @@ function PeralatanRow(props) {
           setTimeout(() => {
             setSnackbar(false);
           }, 3000);
+          setLoading(false);
           return setSnackbarMessage("Tambah Stok Gagal");
         });
     } else {
       const body = {
         id: id,
         count: addPeralatanCount.current.value,
-        totalPrice: addPeralatanPrice.current.value
+        totalPrice: addPeralatanPrice.current.value,
       };
 
       const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -177,6 +186,7 @@ function PeralatanRow(props) {
             setSnackbar(false);
             window.location.reload();
           }, 1000);
+          setLoading(false);
           return setSnackbarMessage("Tambah Stok Berhasil");
         })
         .catch((err) => {
@@ -184,18 +194,20 @@ function PeralatanRow(props) {
           setTimeout(() => {
             setSnackbar(false);
           }, 3000);
+          setLoading(false);
           return setSnackbarMessage("Tambah Stok Gagal");
         });
     }
   };
 
   const onSubmitRequest = () => {
-    console.log(brandId)
+    setLoading(true)
     if (!requestPeralatanNama.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Nama Peralatan tidak boleh kosong");
     }
     if (!requestPeralatanCount.current.value) {
@@ -203,6 +215,7 @@ function PeralatanRow(props) {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Jumlah Peralatan tidak boleh kosong");
     }
     if (!requestPeralatanReason.current.value) {
@@ -210,11 +223,12 @@ function PeralatanRow(props) {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Alasan tidak boleh kosong");
     }
 
     const body = {
-      itemName:requestPeralatanNama.current.value,
+      itemName: requestPeralatanNama.current.value,
       itemDescription: description,
       itemCount: requestPeralatanCount.current.value,
       reason: requestPeralatanReason.current.value,
@@ -236,6 +250,7 @@ function PeralatanRow(props) {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Pengajuan Stok Berhasil");
       })
       .catch((err) => {
@@ -243,15 +258,16 @@ function PeralatanRow(props) {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Pengajuan Stok Gagal");
       });
-
   };
 
   const [requestDialog, setRequestDialog] = useState(false);
 
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

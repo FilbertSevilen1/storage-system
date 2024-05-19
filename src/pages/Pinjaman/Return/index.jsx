@@ -26,6 +26,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import ReturnPinjamanRow from "../../../components/ReturnPinjamanRow";
 import ReturnPinjamanHeader from "../../../components/ReturnPinjamanHeader";
+import NoData from "../../../components/base/NoData";
+import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function ReturnPinjaman() {
@@ -107,6 +109,7 @@ function ReturnPinjaman() {
   };
 
   const getDetailPeralatan = (borrowperalatan) => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     for (let i = 0; i < borrowperalatan.length; i++) {
@@ -133,6 +136,7 @@ function ReturnPinjaman() {
           if (i == borrowperalatan.length - 1) {
             setListAddPeralatan(borrowperalatan);
           }
+          setLoading(false);
         })
         .catch((err) => {
           setLoading(false);
@@ -146,6 +150,7 @@ function ReturnPinjaman() {
   };
 
   const getDataDetailPinjaman = () => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
@@ -177,9 +182,8 @@ function ReturnPinjaman() {
           }
         }
 
-        console.log(res.data.borrow.peralatans);
-
         getDetailPeralatan(res.data.borrow.peralatans);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -496,6 +500,8 @@ function ReturnPinjaman() {
           ></ReturnPinjamanRow>
         );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -540,10 +546,13 @@ function ReturnPinjaman() {
           );
         }
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
   const onSubmitReturn = () => {
+    setLoading(true);
     const bodyPeralatan = [];
     listAddPeralatan.forEach((item) => {
       let bodyPeralatanDetails = [];
@@ -609,6 +618,7 @@ function ReturnPinjaman() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

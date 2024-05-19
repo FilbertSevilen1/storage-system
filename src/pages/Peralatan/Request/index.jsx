@@ -19,6 +19,8 @@ import PengajuanPeralatanHeader from "../../../components/PengajuanPeralatanHead
 import PengajuanPeralatanRow from "../../../components/PengajuanPeralatanRow";
 import SubHeading from "../../../components/base/SubHeading";
 import axios from "axios";
+import LoadingFull from "../../../components/base/LoadingFull";
+import NoData from "../../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PengajuanPeralatan() {
@@ -40,8 +42,7 @@ function PengajuanPeralatan() {
     setSearchStatus(event.target.value);
   };
 
-  const [listRequest, setListRequest] = useState([
-  ]);
+  const [listRequest, setListRequest] = useState([]);
 
   useEffect(() => {
     getRequestList();
@@ -69,15 +70,15 @@ function PengajuanPeralatan() {
         },
       })
       .then((res) => {
-        setListRequest(res.data.requests)
+        setListRequest(res.data.requests);
         setLoading(false);
       })
       .catch((err) => {
-        setLoading(false);
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal mendapatkan data");
       });
   };
@@ -111,8 +112,6 @@ function PengajuanPeralatan() {
     "Selesai",
   ]);
 
-
-
   const prevPage = () => {
     if (page <= 1) return;
     setPage(page - 1);
@@ -130,29 +129,35 @@ function PengajuanPeralatan() {
   };
 
   const generateRequestData = () => {
-    return listRequest.map((item, index) => {
-      return (
-        <PengajuanPeralatanRow
-          key={item.id}
-          requestIndex = {index+1}
-          requestId={item.id}
-          userId={item.userId}
-          userName={item.userName}
-          brandId={item.brandId}
-          brandName={item.brandName}
-          requestItemName={item.itemName}
-          requestItemCount={item.itemCount}
-          requestItemDescription={item.itemDescription}
-          requestDate={item.date}
-          approvalId={item.approvalId}
-          approvalStatus={item.approvalStatus}
-          requestReason={item.reason}
-        ></PengajuanPeralatanRow>
-      );
-    });
+    if (listRequest) {
+      return listRequest.map((item, index) => {
+        if((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
+        return (
+          <PengajuanPeralatanRow
+            key={item.id}
+            requestIndex={index + 1}
+            requestId={item.id}
+            userId={item.userId}
+            userName={item.userName}
+            brandId={item.brandId}
+            brandName={item.brandName}
+            requestItemName={item.itemName}
+            requestItemCount={item.itemCount}
+            requestItemDescription={item.itemDescription}
+            requestDate={item.date}
+            approvalId={item.approvalId}
+            approvalStatus={item.approvalStatus}
+            requestReason={item.reason}
+          ></PengajuanPeralatanRow>
+        );
+      });
+    } else {
+      return <NoData></NoData>
+    }
   };
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}
@@ -206,9 +211,15 @@ function PengajuanPeralatan() {
                     placeholder="Status"
                     fullWidth
                   >
-                    <MenuItem value={"e3946b09-fb28-4d97-89e2-d2a2a54ba9a7"}>Menunggu Persetujuan</MenuItem>
-                    <MenuItem value={"6344d1b5-6b9b-4cd8-b612-f6a3e64fb837"}>Disetujui</MenuItem>
-                    <MenuItem value={"5fcc9739-cbdc-4dec-866d-5f7b059213f1"}>Ditolak</MenuItem>
+                    <MenuItem value={"e3946b09-fb28-4d97-89e2-d2a2a54ba9a7"}>
+                      Menunggu Persetujuan
+                    </MenuItem>
+                    <MenuItem value={"6344d1b5-6b9b-4cd8-b612-f6a3e64fb837"}>
+                      Disetujui
+                    </MenuItem>
+                    <MenuItem value={"5fcc9739-cbdc-4dec-866d-5f7b059213f1"}>
+                      Ditolak
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </div>

@@ -24,6 +24,8 @@ import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
 import AddPeralatanRow from "../../../components/AddPeralatanRow";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import NoData from "../../../components/base/NoData";
+import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function EditPinjaman() {
@@ -66,7 +68,9 @@ function EditPinjaman() {
   const [listAddPeralatan, setListAddPeralatan] = useState([]);
 
   const getDataPeralatanAvailable = (start, end) => {
+    setLoading(true);
     if (!startDate || !endDate) {
+      setLoading(false);
       return;
     }
     console.log(startDate, endDate);
@@ -88,6 +92,7 @@ function EditPinjaman() {
       })
       .then((res) => {
         setListSearchAddPeralatan(res.data.peralatanAvailables);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -109,6 +114,7 @@ function EditPinjaman() {
   };
 
   const getDetailPeralatan = (borrowperalatan) => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     for (let i = 0; i < borrowperalatan.length; i++) {
@@ -134,6 +140,7 @@ function EditPinjaman() {
           if (i == borrowperalatan.length - 1) {
             setListAddPeralatan(borrowperalatan);
           }
+          setLoading(false);
         })
         .catch((err) => {
           setLoading(false);
@@ -147,6 +154,7 @@ function EditPinjaman() {
   };
 
   const getDataDetailPinjaman = () => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
@@ -162,6 +170,7 @@ function EditPinjaman() {
         setReason(res.data.borrow.reason);
         setStatusName(res.data.borrow.statusName);
         getDetailPeralatan(res.data.borrow.peralatans);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -457,6 +466,8 @@ function EditPinjaman() {
           ></PinjamPeralatanRow>
         );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -521,10 +532,13 @@ function EditPinjaman() {
           );
         }
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
   const onSubmitEdit = () => {
+    setLoading(true);
     const bodyPeralatan = [];
     listAddPeralatan.forEach((item) => {
       let bodyPeralatanDetails = [];
@@ -588,6 +602,7 @@ function EditPinjaman() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}
@@ -745,6 +760,7 @@ function EditPinjaman() {
                 onClick={() => openAddDialog()}
                 variant="contained"
                 size="large"
+                disabled={loading}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -773,6 +789,7 @@ function EditPinjaman() {
               color="error"
               variant="contained"
               size="large"
+              disabled={loading}
             >
               Batal
             </Button>
@@ -782,6 +799,7 @@ function EditPinjaman() {
               onClick={() => onSubmitEdit()}
               variant="contained"
               size="large"
+              disabled={loading}
             >
               Edit Pinjaman
             </Button>

@@ -13,6 +13,8 @@ import PinjamanHeader from "../../../components/PinjamanHeader";
 import PinjamanRow from "../../../components/PinjamanRow";
 import SubHeading from "../../../components/base/SubHeading";
 import axios from "axios";
+import NoData from "../../../components/base/NoData";
+import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function ListPinjaman() {
@@ -29,47 +31,7 @@ function ListPinjaman() {
   const searchStartDate = useRef();
   const searchEndDate = useRef();
   const [searchStatus, setSearchStatus] = useState("");
-  const [listPinjaman, setListPinjaman] = useState([
-    {
-      borrow_id: "1",
-      user_id: "1",
-      user_name: "Anton",
-      approval_start_id: "1",
-      approval_end_id: "2",
-      borrow_start_date: "2024/01/01",
-      borrow_end_date: "2024/01/02",
-      borrow_duration: "1 Minggu",
-      borrow_count: "6",
-      status_borrow_id: "4",
-      status_borrow_name: "Selesai",
-    },
-    {
-      borrow_id: "2",
-      user_id: "1",
-      user_name: "Anton",
-      approval_start_id: "3",
-      approval_end_id: "4",
-      borrow_start_date: "2024/01/01",
-      borrow_end_date: "2024/01/02",
-      borrow_duration: "1 Minggu",
-      borrow_count: "6",
-      status_borrow_id: "2",
-      status_borrow_name: "Menunggu Approval",
-    },
-    {
-      borrow_id: "3",
-      user_id: "1",
-      user_name: "Anton",
-      approval_start_id: "3",
-      approval_end_id: "4",
-      borrow_start_date: "2024/01/01",
-      borrow_end_date: "2024/01/02",
-      borrow_duration: "1 Minggu",
-      borrow_count: "3",
-      status_borrow_id: "3",
-      status_borrow_name: "Dalam Peminjaman",
-    },
-  ]);
+  const [listPinjaman, setListPinjaman] = useState([]);
 
   const getDataPinjamanList = () => {
     setLoading(true);
@@ -112,7 +74,7 @@ function ListPinjaman() {
 
   useEffect(() => {
     getPinjamanList();
-  }, [searchStatus,searchStartDate,searchEndDate]);
+  }, [searchStatus, searchStartDate, searchEndDate]);
 
   const getMaxPage = () => {
     if (listPinjaman.length % 5 === 0) {
@@ -140,6 +102,8 @@ function ListPinjaman() {
             ></PinjamanRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -185,6 +149,7 @@ function ListPinjaman() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
           <Heading title="List Pinjaman"></Heading>
@@ -230,11 +195,21 @@ function ListPinjaman() {
                   placeholder="Status"
                   fullWidth
                 >
-                  <MenuItem value="faa77eff-50d4-4633-acce-78c0aae92cf0">Menunggu Persetujuan</MenuItem>
-                  <MenuItem value="de52b2d0-7cdd-4929-aed4-d09a1287b52f">Siap Dipinjam</MenuItem>
-                  <MenuItem value="5d4c9168-f08b-4a9c-b354-44a595168129">Dalam Peminjaman</MenuItem>
-                  <MenuItem value="73c03313-bfdb-467d-98bb-02dd4a93ff54">Selesai</MenuItem>
-                  <MenuItem value="781f0b17-7546-415d-a74b-162b4a67e8f9">Dibatalkan</MenuItem>
+                  <MenuItem value="faa77eff-50d4-4633-acce-78c0aae92cf0">
+                    Menunggu Persetujuan
+                  </MenuItem>
+                  <MenuItem value="de52b2d0-7cdd-4929-aed4-d09a1287b52f">
+                    Siap Dipinjam
+                  </MenuItem>
+                  <MenuItem value="5d4c9168-f08b-4a9c-b354-44a595168129">
+                    Dalam Peminjaman
+                  </MenuItem>
+                  <MenuItem value="73c03313-bfdb-467d-98bb-02dd4a93ff54">
+                    Selesai
+                  </MenuItem>
+                  <MenuItem value="781f0b17-7546-415d-a74b-162b4a67e8f9">
+                    Dibatalkan
+                  </MenuItem>
                 </Select>
               </FormControl>
             </div>

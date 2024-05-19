@@ -17,6 +17,7 @@ import PinjamPeralatanRow from "../../../components/PinjamPeralatanRow";
 import { useLocation, useNavigate } from "react-router";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function DetailPinjaman() {
@@ -211,6 +212,7 @@ function DetailPinjaman() {
   };
 
   const onRejectBorrow = () => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     if (!rejectReason.current.value) {
@@ -218,6 +220,7 @@ function DetailPinjaman() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Alasan tidak boleh kosong");
     }
 
@@ -236,6 +239,7 @@ function DetailPinjaman() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Berhasil menolak pinjaman");
       })
       .catch((err) => {
@@ -244,10 +248,12 @@ function DetailPinjaman() {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Tolak pinjaman gagal");
       });
   };
   const onApproveBorrow = () => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     const body = {};
@@ -264,6 +270,7 @@ function DetailPinjaman() {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Berhasil menyetujui pinjaman");
       })
       .catch((err) => {
@@ -271,11 +278,13 @@ function DetailPinjaman() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Setujui pinjaman gagal");
       });
   };
 
   const onCancelBorrow = () => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     if (!cancelReason.current.value) {
@@ -283,6 +292,7 @@ function DetailPinjaman() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Alasan tidak boleh kosong");
     }
 
@@ -302,6 +312,7 @@ function DetailPinjaman() {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Berhasil membatalkan pinjaman");
       })
       .catch((err) => {
@@ -309,21 +320,13 @@ function DetailPinjaman() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Pembatalan pinjaman gagal");
       });
   };
 
   const onStartBorrow = () => {
-    console.log(listPinjamPeralatan);
-
-    // let flag = false
-    // listPinjamPeralatan.forEach(item => {
-    //   if(item.peralatanDetails){
-    //     item.peralatanDetails.forEach(subitem => {
-
-    //     });
-    //   }
-    // });
+    setLoading(true)
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
@@ -343,6 +346,7 @@ function DetailPinjaman() {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Pinjaman dimulai");
       })
       .catch((err) => {
@@ -350,6 +354,7 @@ function DetailPinjaman() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Setujui pinjaman gagal");
       });
   };
@@ -371,6 +376,7 @@ function DetailPinjaman() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}
@@ -745,6 +751,7 @@ function DetailPinjaman() {
                 <Button
                   variant="contained"
                   size="large"
+                  disabled={loading}
                   onClick={() => navigate(`/borrow/edit/${id}`)}
                 >
                   Edit
@@ -783,6 +790,7 @@ function DetailPinjaman() {
                     color="error"
                     variant="contained"
                     size="large"
+                    disabled={loading}
                   >
                     Tolak Peminjaman
                   </Button>
@@ -793,6 +801,7 @@ function DetailPinjaman() {
                     color="success"
                     variant="contained"
                     size="large"
+                    disabled={loading}
                   >
                     Setujui Peminjaman
                   </Button>
@@ -810,6 +819,7 @@ function DetailPinjaman() {
                     color="error"
                     variant="contained"
                     size="large"
+                    disabled={loading}
                   >
                     Batalkan Pinjaman
                   </Button>
@@ -820,6 +830,7 @@ function DetailPinjaman() {
                     color="primary"
                     variant="contained"
                     size="large"
+                    disabled={loading}
                     // disabled={checkStartBorrow}
                   >
                     Mulai Pinjaman
@@ -838,6 +849,7 @@ function DetailPinjaman() {
                     color="primary"
                     variant="contained"
                     size="large"
+                    disabled={loading}
                   >
                     Penyelesaian Pinjaman
                   </Button>

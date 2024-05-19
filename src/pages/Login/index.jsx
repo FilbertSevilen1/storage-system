@@ -6,9 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import Snackbar from "@mui/material/Snackbar";
 import axios from "axios";
+import LoadingFull from "../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Login() {
+  const [loading,setLoading] = useState(false);
+
   const vertical = "top";
   const horizontal = "center";
 
@@ -24,8 +27,11 @@ function Login() {
   const user = useSelector((state) => state.user);
 
   const login = () => {
+    setLoading(true)
+    
     if (!email.current.value) {
       setSnackbar(true);
+      setLoading(false)
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
@@ -33,6 +39,7 @@ function Login() {
     }
     if (!password.current.value) {
       setSnackbar(true);
+      setLoading(false)
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
@@ -87,10 +94,12 @@ function Login() {
             role: user.roleName,
           },
         });
+        setLoading(false)
         navigate("/home");
       })
       .catch((err) => {
         setSnackbar(true);
+        setLoading(false)
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
@@ -106,6 +115,15 @@ function Login() {
 
   return (
     <div className="bg-login w-full h-full flex flex-col items-center">
+      {
+        loading?
+        <LoadingFull>
+
+        </LoadingFull>
+        :
+        <>
+        </>
+      }
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

@@ -22,6 +22,8 @@ import KategoriRow from "../../components/KategoriRow";
 import MerekRow from "../../components/MerekRow";
 import MerekHeader from "../../components/Merekheader";
 import axios from "axios";
+import LoadingFull from "../../components/base/LoadingFull";
+import NoData from "../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Merek() {
@@ -72,16 +74,15 @@ function Merek() {
       })
       .then((res) => {
         setListMerek(res.data.brands);
-
         setLoading(false);
       })
       .catch((err) => {
-        setLoading(false);
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
-        return setSnackbarMessage("Gagal Mendapatkan Data");
+        setLoading(false);
+        return setSnackbarMessage("Gagal menyimpan Data");
       });
   };
 
@@ -115,6 +116,8 @@ function Merek() {
             ></MerekRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -179,6 +182,7 @@ function Merek() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

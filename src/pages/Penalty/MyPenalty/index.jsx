@@ -28,6 +28,7 @@ import MyPenaltyRow from "../../../components/MyPenaltyRow";
 import MyPenaltyHeader from "../../../components/MyPenaltyHeader";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import NoData from "../../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function MyPenalty() {
@@ -55,7 +56,9 @@ function MyPenalty() {
   const [listPunishment, setListPunishment] = useState([]);
 
   const getDataPenalty = () => {
+    setLoading(true);
     if (!user.name) {
+      setLoading(false);
       return;
     }
     let body = {
@@ -78,6 +81,7 @@ function MyPenalty() {
         if (res.data.punishments.length % 5 == 0) {
           setMaxPage(Math.floor(res.data.punishments.length / 5));
         } else setMaxPage(Math.floor(res.data.punishments.length / 5) + 1);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -85,6 +89,7 @@ function MyPenalty() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal mendapatkan data");
       });
   };
@@ -121,6 +126,8 @@ function MyPenalty() {
             ></MyPenaltyRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 

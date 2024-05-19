@@ -17,6 +17,8 @@ import MyPinjamanHeader from "../../../components/MyPinjamanHeader";
 import MyPinjamanRow from "../../../components/MyPinjamanRow";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import NoData from "../../../components/base/NoData";
+import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PinjamanSaya() {
@@ -52,7 +54,7 @@ function PinjamanSaya() {
   }, [searchStatus, searchStartDate, searchEndDate]);
 
   const getDataPinjamanList = () => {
-    setLoading(true)
+    setLoading(true);
     const body = {
       userName: "",
       statusBorrowId: searchStatus,
@@ -73,18 +75,17 @@ function PinjamanSaya() {
         setListPinjaman(res.data.borrows);
         if (res.data.borrows.length % 5 === 0) {
           setMaxPage(Math.floor(res.data.borrows.length / 5));
-        }
-        else setMaxPage(Math.floor(res.data.borrows.length / 5) + 1);
-        setLoading(false)
+        } else setMaxPage(Math.floor(res.data.borrows.length / 5) + 1);
+        setLoading(false);
       })
-      .catch((err)=>{
+      .catch((err) => {
         setLoading(false);
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
         return setSnackbarMessage("Gagal Mendapatkan Data");
-      })
+      });
   };
 
   const getPinjamanList = () => {
@@ -116,6 +117,8 @@ function PinjamanSaya() {
             ></MyPinjamanRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -133,11 +136,12 @@ function PinjamanSaya() {
     setSearchStatus();
     searchStartDate.current.value = null;
     searchEndDate.current.value = null;
-    getPinjamanList()
+    getPinjamanList();
   };
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div className="mb-4">
           <Heading title="Pinjaman Saya"></Heading>
@@ -145,7 +149,12 @@ function PinjamanSaya() {
         <div className="w-full flex flex-col xl:flex-row mb-12 mt-4">
           <div className="bg-white w-full h-fit xl:w-1/4 p-4 md:p-4 shadow-md">
             <div className="w-full mb-4">
-              <Button onClick={()=>navigate('/borrow/create')} variant="contained" size="large" fullWidth>
+              <Button
+                onClick={() => navigate("/borrow/create")}
+                variant="contained"
+                size="large"
+                fullWidth
+              >
                 + Buat Pinjaman
               </Button>
             </div>

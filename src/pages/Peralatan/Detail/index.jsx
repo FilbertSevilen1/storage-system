@@ -19,6 +19,7 @@ import axios from "axios";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
+import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PeralatanDetail() {
@@ -58,6 +59,8 @@ function PeralatanDetail() {
   const [listPeralatanDetail, setListPeralatanDetail] = useState([]);
 
   const getDataKategoriList = () => {
+    setLoading(true);
+
     let body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -70,17 +73,20 @@ function PeralatanDetail() {
       })
       .then((res) => {
         setListKategori(res.data.categories);
+        setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal Mendapatkan Data");
       });
   };
 
   const getDataBrandList = () => {
+    setLoading(true);
     let body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -93,12 +99,14 @@ function PeralatanDetail() {
       })
       .then((res) => {
         setListBrand(res.data.brands);
+        setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal Mendapatkan Data");
       });
   };
@@ -138,7 +146,7 @@ function PeralatanDetail() {
         setPeralatanType(data.hasIdentifier);
         setEditPeralatanCategory(data.categoryId);
         setEditPeralatanBrand(data.brandId);
-        setPeralatanDenda(data.fine)
+        setPeralatanDenda(data.fine);
 
         if (data.hasIdentifier) {
           getDataPeralatanDetails();
@@ -157,6 +165,7 @@ function PeralatanDetail() {
   };
 
   const getDataPeralatanDetails = () => {
+    setLoading(true);
     const id = pathname.pathname.substring(11);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
@@ -168,6 +177,7 @@ function PeralatanDetail() {
       })
       .then((res) => {
         setListPeralatanDetail(res.data.peralatanDetails);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -212,7 +222,7 @@ function PeralatanDetail() {
     useState(peralatanCategoryId);
   const [editPeralatanBrand, setEditPeralatanBrand] =
     useState(peralatanBrandId);
-  const editPeralatanDenda = useRef("")
+  const editPeralatanDenda = useRef("");
 
   const generateSelectPeralatanCategoryList = () => {
     if (listKategori) {
@@ -270,7 +280,7 @@ function PeralatanDetail() {
       return setSnackbarMessage("Merek tidak boleh kosong");
     }
 
-    if(editPeralatanDenda.current.value ==""){
+    if (editPeralatanDenda.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -289,7 +299,7 @@ function PeralatanDetail() {
       brandId: editPeralatanBrand,
       borrowCount: peralatanBorrowCount,
       id: peralatanId,
-      peralatanFine: parseFloat(editPeralatanDenda.current.value)
+      peralatanFine: parseFloat(editPeralatanDenda.current.value),
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -396,6 +406,7 @@ function PeralatanDetail() {
 
   return (
     <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}
@@ -436,6 +447,7 @@ function PeralatanDetail() {
                           variant="contained"
                           size="large"
                           fullWidth
+                          disabled={loading}
                           className=""
                           color="error"
                         >
@@ -448,6 +460,7 @@ function PeralatanDetail() {
                           variant="contained"
                           size="large"
                           fullWidth
+                          disabled={loading}
                           className=""
                           color="success"
                         >
@@ -462,6 +475,7 @@ function PeralatanDetail() {
                     variant="contained"
                     size="large"
                     fullWidth
+                    disabled={loading}
                     className=""
                   >
                     Edit Peralatan
@@ -469,7 +483,8 @@ function PeralatanDetail() {
                 )}
               </div>
               {/* <div className="w-full mt-4 flex flex-col items-center">
-                <Button variant="contained" size="large" fullWidth className="">
+                <Button variant="contained" size="large" fullWidth
+                disabled={loading} className="">
                   Delete Peralatan
                 </Button>
               </div> */}
@@ -525,7 +540,8 @@ function PeralatanDetail() {
             <b>Kategori: </b>
             {edit ? (
               <div className="w-64 ml-2">
-                <FormControl fullWidth>
+                <FormControl fullWidth
+                disabled={loading}>
                   <InputLabel id="demo-simple-select-label">
                     Kategori
                   </InputLabel>
@@ -550,7 +566,8 @@ function PeralatanDetail() {
             <b>Merek: </b>
             {edit ? (
               <div className="w-64 ml-2">
-                <FormControl fullWidth>
+                <FormControl fullWidth
+                disabled={loading}>
                   <InputLabel id="demo-simple-select-label">Merek</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -587,7 +604,9 @@ function PeralatanDetail() {
                 />
               </div>
             ) : (
-              <div className="ml-2">Rp. {peralatanDenda.toLocaleString("id-ID")}</div>
+              <div className="ml-2">
+                Rp. {peralatanDenda.toLocaleString("id-ID")}
+              </div>
             )}
           </div>
 

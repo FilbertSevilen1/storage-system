@@ -15,9 +15,13 @@ import Chart from "react-apexcharts";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Snackbar } from "@mui/material";
+import Loading from "../components/base/Loading";
+import NoData from "../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Dashboard() {
+  const [loading, setloading] = useState(false);
+
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
@@ -42,15 +46,15 @@ function Dashboard() {
   const generatePinjamanCard = () => {
     if (listPinjamanCard) {
       return listPinjamanCard.map((card, index) => {
-        if(index<5)
-        return (
-          <PinjamanCard
-            title={card.userName}
-            startDate={formatDate(card.startDate)}
-            endDate={formatDate(card.endDate)}
-            status={card.statusName}
-          ></PinjamanCard>
-        );
+        if (index < 5)
+          return (
+            <PinjamanCard
+              title={card.userName}
+              startDate={formatDate(card.startDate)}
+              endDate={formatDate(card.endDate)}
+              status={card.statusName}
+            ></PinjamanCard>
+          );
       });
     }
   };
@@ -112,52 +116,10 @@ function Dashboard() {
     },
   ]);
 
-  const [popularPeralatan, setPopularPeralatan] = useState([]);
-
-  const getPopularKerusakan = () => {
-    const body = {};
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
-    axios
-      .get(API_URL + "/dashboard/popular/broken", {
-        headers: {
-          Authorization: `Bearer ${token.token}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        let popularSeries = [{ name: "series-1", data: [] }];
-        let popularName = [];
-        res.data.popularBroken.forEach((item) => {
-          popularSeries[0].data.push(item.count);
-          popularName.push(item.name);
-        });
-        setSeriesKerusakan(popularSeries);
-
-        setOptionsKerusakan({
-          chart: {
-            id: "basic-bar",
-            width: "100%",
-          },
-          plotOptions: {
-            bar: {
-              horizontal: true,
-            },
-          },
-          xaxis: {
-            categories: popularName,
-          },
-        });
-      })
-      .catch((err) => {
-        setSnackbar(true);
-        setTimeout(() => {
-          setSnackbar(false);
-        }, 1000);
-        return setSnackbarMessage("Gagal Mendapatkan Data");
-      });
-  };
+  const [loadingMostBorrow, setLoadingMostBorrow] = useState(false);
 
   const getPopularPeralatan = () => {
+    setLoadingMostBorrow(true);
     const body = {};
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
@@ -190,9 +152,11 @@ function Dashboard() {
             categories: popularName,
           },
         });
+        setLoadingMostBorrow(false);
       })
       .catch((err) => {
         setSnackbar(true);
+        setLoadingMostBorrow(false);
         setTimeout(() => {
           setSnackbar(false);
         }, 1000);
@@ -200,9 +164,58 @@ function Dashboard() {
       });
   };
 
+  const [loadingMostBroken, setLoadingMostBroken] = useState(false);
+
+  const getPopularKerusakan = () => {
+    setLoadingMostBroken(true);
+    const body = {};
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+    axios
+      .get(API_URL + "/dashboard/popular/broken", {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        let popularSeries = [{ name: "series-1", data: [] }];
+        let popularName = [];
+        res.data.popularBroken.forEach((item) => {
+          popularSeries[0].data.push(item.count);
+          popularName.push(item.name);
+        });
+        setSeriesKerusakan(popularSeries);
+
+        setOptionsKerusakan({
+          chart: {
+            id: "basic-bar",
+            width: "100%",
+          },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+            },
+          },
+          xaxis: {
+            categories: popularName,
+          },
+        });
+        setLoadingMostBroken(false);
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setLoadingMostBroken(false);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 1000);
+        return setSnackbarMessage("Gagal Mendapatkan Data");
+      });
+  };
+
+  const [loadingPendingRequest, setLoadingPendingRequest] = useState(false);
   const [pendingRequest, setPendingRequest] = useState([]);
 
   const getPendingRequest = () => {
+    setLoadingPendingRequest(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/pending/request", {
@@ -212,9 +225,11 @@ function Dashboard() {
       })
       .then((res) => {
         setPendingRequest(res.data.pendingRequest);
+        setLoadingPendingRequest(false);
       })
       .catch((err) => {
         setSnackbar(true);
+        setLoadingPendingRequest(false);
         setTimeout(() => {
           setSnackbar(false);
         }, 1000);
@@ -225,20 +240,22 @@ function Dashboard() {
   const generatePendingRequest = () => {
     if (pendingRequest) {
       return pendingRequest.map((req, index) => {
-        if(index < 5)
-        return (
-          <Card
-            title={`${req.peralatanName} - ${req.itemCount} Buah`}
-            description={`${formatDate(req.date)}`}
-          ></Card>
-        );
+        if (index < 5)
+          return (
+            <Card
+              title={`${req.peralatanName} - ${req.itemCount} Buah`}
+              description={`${formatDate(req.date)}`}
+            ></Card>
+          );
       });
     }
   };
 
   const [recentPurchase, setRecentPurchase] = useState([]);
+  const [loadingRecentPurchase, setLoadingRecentPurchase] = useState(false);
 
   const getRecentPurchase = () => {
+    setLoadingRecentPurchase(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/recent/purchase", {
@@ -248,9 +265,11 @@ function Dashboard() {
       })
       .then((res) => {
         setRecentPurchase(res.data.recentPurchase);
+        setLoadingRecentPurchase(false);
       })
       .catch((err) => {
         setSnackbar(true);
+        setLoadingRecentPurchase(false);
         setTimeout(() => {
           setSnackbar(false);
         }, 1000);
@@ -261,23 +280,25 @@ function Dashboard() {
   const generateRecentPurchase = () => {
     if (recentPurchase) {
       return recentPurchase.map((req, index) => {
-        if(index < 5)
-        return (
-          <Card
-            title={`${req.peralatanName} ${
-              req.peralatanDetailName ? " - " + req.peralatanDetailName : ""
-            }`}
-            description={`${formatDate(
-              req.purchaseDate
-            )} - Rp. ${req.totalPrice.toLocaleString("id-ID")}`}
-          ></Card>
-        );
+        if (index < 5)
+          return (
+            <Card
+              title={`${req.peralatanName} ${
+                req.peralatanDetailName ? " - " + req.peralatanDetailName : ""
+              }`}
+              description={`${formatDate(
+                req.purchaseDate
+              )} - Rp. ${req.totalPrice.toLocaleString("id-ID")}`}
+            ></Card>
+          );
       });
     }
   };
 
   const [myBorrow, setMyBorrow] = useState("");
+  const [loadingMyBorrow, setLoadingMyBorrow] = useState(false);
   const getMyBorrow = () => {
+    setLoadingMyBorrow(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/me/borrow", {
@@ -287,9 +308,11 @@ function Dashboard() {
       })
       .then((res) => {
         setMyBorrow(res.data.borrows);
+        setLoadingMyBorrow(false);
       })
       .catch((err) => {
         setSnackbar(true);
+        setLoadingMyBorrow(false);
         setTimeout(() => {
           setSnackbar(false);
         }, 1000);
@@ -300,20 +323,23 @@ function Dashboard() {
   const generateMyBorrow = () => {
     if (myBorrow) {
       return myBorrow.map((borrow, index) => {
-        if(index < 5)
-        return (
-          <PinjamanCard
-            title={borrow.reason}
-            startDate={formatDate(borrow.startDate)}
-            endDate={formatDate(borrow.endDate)}
-            status={borrow.statusName}
-          ></PinjamanCard>
-        );
+        if (index < 5)
+          return (
+            <PinjamanCard
+              title={borrow.reason}
+              startDate={formatDate(borrow.startDate)}
+              endDate={formatDate(borrow.endDate)}
+              status={borrow.statusName}
+            ></PinjamanCard>
+          );
       });
     }
   };
   const [borrowHistory, setBorrowHistory] = useState("");
+  const [loadingBorrowHistory, setLoadingBorrowHistory] = useState(false);
+
   const getBorrowHistory = () => {
+    setLoadingBorrowHistory(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/me/history-borrow", {
@@ -323,9 +349,11 @@ function Dashboard() {
       })
       .then((res) => {
         setBorrowHistory(res.data.borrow);
+        setLoadingBorrowHistory(false);
       })
       .catch((err) => {
         setSnackbar(true);
+        setLoadingBorrowHistory(false);
         setTimeout(() => {
           setSnackbar(false);
         }, 1000);
@@ -336,15 +364,15 @@ function Dashboard() {
   const generateBorrowHistory = () => {
     if (borrowHistory) {
       return borrowHistory.map((borrow, index) => {
-        if(index < 5)
-        return (
-          <PinjamanCard
-            title={borrow.reason}
-            startDate={formatDate(borrow.startDate)}
-            endDate={formatDate(borrow.endDate)}
-            status={borrow.statusName}
-          ></PinjamanCard>
-        );
+        if (index < 5)
+          return (
+            <PinjamanCard
+              title={borrow.reason}
+              startDate={formatDate(borrow.startDate)}
+              endDate={formatDate(borrow.endDate)}
+              status={borrow.statusName}
+            ></PinjamanCard>
+          );
       });
     }
   };
@@ -405,12 +433,18 @@ function Dashboard() {
           <Heading title="Pinjaman Terbanyak"></Heading>
         </div>
         <div className="w-full bg-white p-2 md:p-8 flex items-center rounded-2xl shadow-xl">
-          <Chart
-            options={optionsPeralatan}
-            series={series}
-            type="bar"
-            height="300px"
-          />
+          {loadingMostBorrow ? (
+            <div className="w-full flex justify-center items-center h-60 my-10">
+              <Loading></Loading>
+            </div>
+          ) : (
+            <Chart
+              options={optionsPeralatan}
+              series={series}
+              type="bar"
+              height="300px"
+            />
+          )}
         </div>
         <div className="w-full my-8">
           <Button
@@ -427,12 +461,18 @@ function Dashboard() {
           <Heading title="Kerusakan Terbanyak"></Heading>
         </div>
         <div className="w-full bg-white p-2 md:p-8 flex items-center rounded-2xl shadow-xl">
-          <Chart
-            options={optionsKerusakan}
-            series={seriesKerusakan}
-            type="bar"
-            height="300px"
-          />
+          {loadingMostBroken ? (
+            <div className="w-full flex justify-center items-center h-60 my-10">
+              <Loading></Loading>
+            </div>
+          ) : (
+            <Chart
+              options={optionsKerusakan}
+              series={seriesKerusakan}
+              type="bar"
+              height="300px"
+            />
+          )}
         </div>
         <div className="w-full my-8">
           <Button
@@ -449,10 +489,12 @@ function Dashboard() {
           <div className="mb-8">
             <Heading title="Pengajuan Penambahaan Peralatan"></Heading>
           </div>
-          {pendingRequest ? (
-            generatePendingRequest()
+          {loadingPendingRequest ? (
+            <div className="w-full flex justify-center items-center my-8">
+              <Loading></Loading>
+            </div>
           ) : (
-            <div className="w-full text-xl my-8">Tidak ada data...</div>
+            <>{pendingRequest ? generatePendingRequest() : <NoData></NoData>}</>
           )}
 
           <div className="w-full my-8">
@@ -472,10 +514,31 @@ function Dashboard() {
         <div className="mb-8">
           <Heading title="Pengadaan Terbaru"></Heading>
         </div>
-        {recentPurchase ? (
-          generateRecentPurchase()
+        {loadingRecentPurchase ? (
+          <div className="w-full flex justify-center items-center my-8">
+            <Loading></Loading>
+          </div>
         ) : (
-          <div className="w-full text-xl my-8">Tidak ada data...</div>
+          <>
+            {recentPurchase ? (
+              generateRecentPurchase()
+            ) : (
+              <div className="flex flex-col justify-center items-center h-full w-full text-xl my-8">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="96"
+                  height="96"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M20 17.175L7.4 4.6L10 2h8q.825 0 1.413.588T20 4zm.5 6.125L15.2 18l1.425-1.4L20 19.975V20q0 .825-.587 1.413T18 22H6q-.825 0-1.412-.587T4 20V8l.6-.6L.7 3.5l1.425-1.4L21.9 21.875z"
+                  />
+                </svg>
+                <div className="mt-4">Tidak ada data...</div>
+              </div>
+            )}
+          </>
         )}
 
         <div className="w-full my-8">
@@ -496,11 +559,14 @@ function Dashboard() {
           <div className="mb-8">
             <Heading title="Pinjaman Saya"></Heading>
           </div>
-          {myBorrow ? (
-            <>{generateMyBorrow()}</>
+          {loadingMyBorrow ? (
+            <div className="w-full flex justify-center items-center my-8">
+              <Loading></Loading>
+            </div>
           ) : (
-            <div className="w-full text-xl my-8">Tidak ada data...</div>
+            <>{myBorrow ? <>{generateMyBorrow()}</> : <NoData></NoData>}</>
           )}
+
           <div className="w-full my-8">
             <Button
               variant="contained"
@@ -534,11 +600,20 @@ function Dashboard() {
           <div className="mb-8">
             <Heading title="Riwayat Pinjaman"></Heading>
           </div>
-          {borrowHistory ? (
-            <>{generateBorrowHistory()}</>
+          {loadingBorrowHistory ? (
+            <div className="w-full flex justify-center items-center my-8">
+              <Loading></Loading>
+            </div>
           ) : (
-            <div className="w-full text-xl my-8">Tidak ada data...</div>
+            <>
+              {borrowHistory ? (
+                <>{generateBorrowHistory()}</>
+              ) : (
+                <NoData></NoData>
+              )}
+            </>
           )}
+
           <div className="w-full my-8">
             <Button
               variant="contained"

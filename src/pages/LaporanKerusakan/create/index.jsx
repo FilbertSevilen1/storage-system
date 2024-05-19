@@ -25,6 +25,7 @@ import SubHeading from "../../../components/base/SubHeading";
 import PinjamPeralatanHeader from "../../../components/PinjamPeralatanHeader";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import NoData from "../../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function BuatLaporan() {
@@ -72,6 +73,7 @@ function BuatLaporan() {
   ]);
 
   const getPeralatanDetails = (peralatan) => {
+    setLoading(true)
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     peralatan.forEach((item) => {
@@ -92,6 +94,7 @@ function BuatLaporan() {
             item.available = item.count - item.borrowCount;
             const list = listSearchAddPeralatan;
             list.push(item);
+            setLoading(false)
             setListSearchAddPeralatan(list);
           })
           .catch((err) => {
@@ -113,6 +116,7 @@ function BuatLaporan() {
   };
 
   const getDataPeralatanAvailable = () => {
+    setLoading(true);
     const body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -125,6 +129,7 @@ function BuatLaporan() {
       })
       .then((res) => {
         getPeralatanDetails(res.data.peralatans);
+        setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
@@ -141,6 +146,7 @@ function BuatLaporan() {
   };
 
   const getDataUser = () => {
+    setLoading(true);
     const body = {};
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -157,6 +163,7 @@ function BuatLaporan() {
         //   data.push(item.name);
         // });
         setListUser(res.data.users);
+        setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
@@ -386,6 +393,8 @@ function BuatLaporan() {
           ></PinjamPeralatanRow>
         );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -445,6 +454,8 @@ function BuatLaporan() {
           ></AddPeralatanRow>
         );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -469,14 +480,16 @@ function BuatLaporan() {
   };
 
   const changeIsPenalty = () => {
-    if(penaltyUser.roleName != "User"){
+    if (penaltyUser.roleName != "User") {
       setIsPenalty(false);
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
       setLoading(false);
-      return setSnackbarMessage("Admin dan Super Admin tidak dapat terkena penalti");
+      return setSnackbarMessage(
+        "Admin dan Super Admin tidak dapat terkena penalti"
+      );
     }
 
     setIsPenalty(!isPenalty);
@@ -487,12 +500,12 @@ function BuatLaporan() {
   };
 
   const handlePenaltyUser = (event, newValue) => {
-    setIsPenalty(false)
+    setIsPenalty(false);
     setPenaltyUser(newValue);
   };
 
   const onSubmit = () => {
-    setLoading(true)
+    setLoading(true);
     if (!penaltyUser) {
       setSnackbar(true);
       setTimeout(() => {
@@ -605,11 +618,11 @@ function BuatLaporan() {
       .then((res) => {
         setSnackbar(true);
         setTimeout(() => {
-          setLoading(false)
+          setLoading(false);
           setSnackbar(false);
           navigate("/");
         }, 1000);
-        
+
         return setSnackbarMessage("Buat Laporan Berhasil");
       })
       .catch((err) => {
@@ -684,7 +697,9 @@ function BuatLaporan() {
                 disablePortal
                 id="combo-box-demo"
                 options={listUser}
-                getOptionLabel={(option) => option.name + " - " + option.roleName || ""}
+                getOptionLabel={(option) =>
+                  option.name + " - " + option.roleName || ""
+                }
                 value={penaltyUser}
                 onChange={handlePenaltyUser}
                 renderInput={(params) => (
@@ -884,7 +899,12 @@ function BuatLaporan() {
             </Button>
           </div>
           <div className="md:ml-2">
-            <Button disabled={loading} onClick={() => onSubmit()} variant="contained" size="large">
+            <Button
+              disabled={loading}
+              onClick={() => onSubmit()}
+              variant="contained"
+              size="large"
+            >
               Buat Laporan
             </Button>
           </div>

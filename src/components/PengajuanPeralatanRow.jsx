@@ -13,9 +13,12 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useRef, useState } from "react";
+import LoadingFull from "./base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PengajuanPeralatanRow(props) {
+  const [loading, setLoading] = useState(false);
+
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
@@ -48,7 +51,7 @@ function PengajuanPeralatanRow(props) {
   );
   let [requestReason, setRequestReason] = useState(props.requestReason);
   const editKategoriNama = useRef("");
-  
+
   let [requestStatus, setRequestStatus] = useState(props.approvalStatus);
 
   const [rejectDialog, setRejectDialog] = useState(false);
@@ -56,6 +59,7 @@ function PengajuanPeralatanRow(props) {
   const inputReason = useRef("");
 
   const onRejectSubmit = () => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     let body = {};
     axios
@@ -70,6 +74,7 @@ function PengajuanPeralatanRow(props) {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Tolak Pengajuan Berhasil");
       })
       .catch((err) => {
@@ -77,11 +82,13 @@ function PengajuanPeralatanRow(props) {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Tolak Pengajuan Gagal");
       });
   };
 
   const onApproveSubmit = () => {
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     let body = {};
     axios
@@ -96,6 +103,7 @@ function PengajuanPeralatanRow(props) {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Setujui Pengajuan Berhasil");
       })
       .catch((err) => {
@@ -103,12 +111,14 @@ function PengajuanPeralatanRow(props) {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Setujui Pengajuan Gagal");
       });
   };
 
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Dialog open={rejectDialog} onClose={() => setRejectDialog(false)}>
         <DialogTitle>Tolak Pengajuan {requestItemName}</DialogTitle>
         {/* <DialogContent>
@@ -133,7 +143,7 @@ function PengajuanPeralatanRow(props) {
         <DialogActions>
           <Button onClick={() => setRejectDialog(false)}>Batal</Button>
           <Button onClick={onRejectSubmit} type="submit">
-            <b>Buat Penolakan</b>
+            <b>Tolak Pengajuan</b>
           </Button>
         </DialogActions>
       </Dialog>
@@ -161,7 +171,7 @@ function PengajuanPeralatanRow(props) {
         <DialogActions>
           <Button onClick={() => setApproveDialog(false)}>Batal</Button>
           <Button onClick={onApproveSubmit} type="submit">
-            <b>Buat Penolakan</b>
+            <b>Setujui Pengajuan</b>
           </Button>
         </DialogActions>
       </Dialog>
@@ -204,8 +214,7 @@ function PengajuanPeralatanRow(props) {
           {requestStatus}
         </div>
         <div className=" w-full md:w-3/12 flex mx-2 p-2 rounded-xl flex justify-center items-center">
-          {
-            requestStatus == "Menunggu Persetujuan" ?
+          {requestStatus == "Menunggu Persetujuan" ? (
             <>
               <button
                 onClick={() => setRejectDialog(true)}
@@ -242,10 +251,9 @@ function PengajuanPeralatanRow(props) {
                 </svg>
               </button>
             </>
-            :
-            <>
-            </>
-          }
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

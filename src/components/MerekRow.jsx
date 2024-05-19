@@ -13,10 +13,13 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useRef, useState } from "react";
+import LoadingFull from "./base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function MerekRow(props) {
+  const [loading, setLoading] = useState(false);
+
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
@@ -69,6 +72,7 @@ function MerekRow(props) {
   };
 
   const onSubmit = () => {
+    setLoading(true);
     if (editBrandNama.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
@@ -79,36 +83,40 @@ function MerekRow(props) {
 
     let body = {
       id: id,
-      name: editBrandNama.current.value
+      name: editBrandNama.current.value,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
-    axios.put(API_URL + "/brand/update", body, {
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-      },
-    })
-    .then((res)=>{
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-        window.location.reload()
-      }, 1000);
-      return setSnackbarMessage("Ubah Merek Berhasil");
-    })
-    .catch((err)=>{
-      setSnackbar(true);
-      setTimeout(() => {
-        setSnackbar(false);
-      }, 3000);
-      return setSnackbarMessage("Ubah Merek Gagal");
-    })
+    axios
+      .put(API_URL + "/brand/update", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+          window.location.reload();
+        }, 1000);
+        setLoading(false);
+        return setSnackbarMessage("Ubah Merek Berhasil");
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Ubah Merek Gagal");
+      });
 
     return closeEditDialog();
   };
 
   return (
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

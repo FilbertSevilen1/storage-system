@@ -20,6 +20,8 @@ import Heading from "../../components/base/Heading";
 import KategoriHeader from "../../components/KategoriHeader";
 import KategoriRow from "../../components/KategoriRow";
 import axios from "axios";
+import LoadingFull from "../../components/base/LoadingFull";
+import NoData from "../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Kategori() {
@@ -112,6 +114,8 @@ function Kategori() {
             ></KategoriRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -154,11 +158,13 @@ function Kategori() {
   };
 
   const onSubmit = () => {
+    setLoading(true);
     if (addKategoriName.current.value == "") {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Nama Kategori tidak boleh kosong");
     }
     if (addKategoriType == null) {
@@ -166,6 +172,7 @@ function Kategori() {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
+      setLoading(false);
       return setSnackbarMessage("Tipe Kategori tidak boleh kosong");
     }
 
@@ -187,6 +194,7 @@ function Kategori() {
           setSnackbar(false);
           window.location.reload();
         }, 1000);
+        setLoading(false);
         return setSnackbarMessage("Berhasil Merekam Data");
       })
       .catch((err) => {
@@ -194,6 +202,7 @@ function Kategori() {
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
+        setLoading(false);
         return setSnackbarMessage("Gagal Merekam Data");
       });
 
@@ -202,6 +211,7 @@ function Kategori() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}

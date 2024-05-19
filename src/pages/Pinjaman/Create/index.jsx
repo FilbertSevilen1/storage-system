@@ -24,10 +24,12 @@ import AddPeralatanHeader from "../../../components/AddPeralatanHeader";
 import AddPeralatanRow from "../../../components/AddPeralatanRow";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import LoadingFull from "../../../components/base/LoadingFull";
+import NoData from "../../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function CreatePinjaman() {
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
 
   const [addDialog, setAddDialog] = useState(false);
   const [confirmationDialog, setConfirmationDialog] = useState(false);
@@ -59,15 +61,17 @@ function CreatePinjaman() {
   const [listAddPeralatan, setListAddPeralatan] = useState([]);
 
   const getDataPeralatanAvailable = () => {
+    setLoading(true);
     if (!createStartDate.current.value || !createEndDate.current.value) {
+      setLoading(false);
       return;
     }
 
     const body = {
       startDate: createStartDate.current.value,
       endDate: createEndDate.current.value,
-      // peralatanName: searchAddNama.current.value,
-      // peralatanDetailName: searchAddDetailNama.current.value,
+      peralatanName: searchAddNama.current.value,
+      peralatanDetailName: searchAddDetailNama.current.value,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -80,11 +84,20 @@ function CreatePinjaman() {
       })
       .then((res) => {
         setListSearchAddPeralatan(res.data.peralatanAvailables);
+        setLoading(false);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Gagal mendapatkan data");
+      });
   };
 
   const getPeralatanAvailable = () => {
+    setLoading(true);
     setDisableAdd(true);
     const selectedStartDate = new Date(createStartDate.current.value);
     const selectedEndDate = new Date(createEndDate.current.value);
@@ -130,7 +143,93 @@ function CreatePinjaman() {
       setDisableAdd(true);
     }
 
+    setLoading(false);
     getDataPeralatanAvailable();
+  };
+
+  useEffect(() => {
+    getDataPeralatanAvailable();
+  }, [searchAddNama, searchAddDetailNama]);
+
+  const formatDate = (date) => {
+    const dateformat = new Date(date);
+
+    const year = dateformat.getFullYear();
+    const month = String(dateformat.getMonth() + 1).padStart(2, "0"); // Month is zero-based, so add 1
+    const day = String(dateformat.getDate()).padStart(2, "0");
+    const hours = String(dateformat.getHours()).padStart(2, "0");
+    const minutes = String(dateformat.getMinutes()).padStart(2, "0");
+    const seconds = String(dateformat.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
+  };
+
+  const getUserPunishment = () => {
+    setLoading(true);
+    if (!user.name) {
+      setLoading(false);
+      return;
+    }
+    let body = {
+      userName: user.name,
+    };
+
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/punishment/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        let data = res.data.punishments;
+        data.forEach((item) => {
+          if (item.approvalStatusName != "Disetujui") {
+            setSnackbar(true);
+            setTimeout(() => {
+              navigate("/");
+              setSnackbar(false);
+            }, 1000);
+            setLoading(false);
+            return setSnackbarMessage(
+              "Anda tidak dapat meminjam alat karena terkena penalti."
+            );
+          }
+
+          let deadlineDate = new Date(item.deadline);
+          deadlineDate.setDate(deadlineDate.getDate() + item.timeoutDuration);
+          let newDeadline = new Date(deadlineDate);
+
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Reset the time part for comparison
+
+          console.log(deadlineDate, today);
+
+          if (today < newDeadline) {
+            setSnackbar(true);
+            setTimeout(() => {
+              navigate("/");
+              setSnackbar(false);
+            }, 1000);
+            setLoading(false);
+            return setSnackbarMessage(
+              `Anda tidak dapat meminjam hingga ${formatDate(newDeadline)}`
+            );
+          }
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        setSnackbar(true);
+        setTimeout(() => {
+          setSnackbar(false);
+        }, 3000);
+        setLoading(false);
+        return setSnackbarMessage("Get Data Gagal");
+      });
   };
 
   useEffect(() => {
@@ -138,7 +237,9 @@ function CreatePinjaman() {
     if (user.role != "User" && user.role != "") {
       navigate("/");
     }
-  }, []);
+
+    getUserPunishment();
+  }, [user]);
 
   useEffect(() => {
     generatePinjamPeralatan();
@@ -404,6 +505,8 @@ function CreatePinjaman() {
             ></PinjamPeralatanRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -466,6 +569,8 @@ function CreatePinjaman() {
           );
         }
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -548,6 +653,7 @@ function CreatePinjaman() {
 
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}
@@ -609,8 +715,13 @@ function CreatePinjaman() {
         <DialogTitle>Konfirmasi Pembuatan Pinjaman</DialogTitle>
         <DialogContent>Apakah Anda yakin ingin membuat pinjaman?</DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmationDialog(false)}>Tidak</Button>
-          <Button onClick={() => onSubmit()} type="submit">
+          <Button
+            disabled={loading}
+            onClick={() => setConfirmationDialog(false)}
+          >
+            Tidak
+          </Button>
+          <Button disabled={loading} onClick={() => onSubmit()} type="submit">
             <b>Ya</b>
           </Button>
         </DialogActions>
@@ -718,6 +829,7 @@ function CreatePinjaman() {
                 </div>
               ) : (
                 <Button
+                  disabled={loading}
                   onClick={() => openAddDialog()}
                   variant="contained"
                   size="large"
@@ -745,6 +857,7 @@ function CreatePinjaman() {
         <div className="w-full flex justify-end mb-8">
           <div>
             <Button
+              disabled={loading}
               onClick={() => resetPage()}
               color="error"
               variant="contained"
@@ -755,6 +868,7 @@ function CreatePinjaman() {
           </div>
           <div className="md:ml-2">
             <Button
+              disabled={loading}
               onClick={() => setConfirmationDialog(true)}
               variant="contained"
               size="large"

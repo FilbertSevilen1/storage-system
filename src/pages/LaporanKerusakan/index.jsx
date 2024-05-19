@@ -18,6 +18,8 @@ import LaporanRow from "../../components/LaporanList";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import LoadingFull from "../../components/base/LoadingFull";
+import NoData from "../../components/base/NoData";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function LaporanKerusakan() {
@@ -51,10 +53,11 @@ function LaporanKerusakan() {
   const [listReport, setlistReport] = useState([]);
 
   const getReportData = () => {
+    setLoading(true);
     const body = {
-      startDate:searchStartDate.current.value,
-      endDate:searchEndDate.current.value,
-      peralatanName: searchItem.current.value
+      startDate: searchStartDate.current.value,
+      endDate: searchEndDate.current.value,
+      peralatanName: searchItem.current.value,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -70,6 +73,7 @@ function LaporanKerusakan() {
         if (res.data.brokens.length % 5 === 0) {
           setMaxPage(Math.floor(res.data.brokens.length / 5));
         } else setMaxPage(Math.floor(res.data.brokens.length / 5) + 1);
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -110,6 +114,8 @@ function LaporanKerusakan() {
             ></LaporanRow>
           );
       });
+    } else {
+      return <NoData></NoData>;
     }
   };
 
@@ -131,13 +137,14 @@ function LaporanKerusakan() {
   };
 
   const resetFilter = () => {
-    searchItem.current.value = ""
-    searchStartDate.current.value = ""
-    searchEndDate.current.value = ""
-    getReportData()
+    searchItem.current.value = "";
+    searchStartDate.current.value = "";
+    searchEndDate.current.value = "";
+    getReportData();
   };
   return (
     <div className="w-full">
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>
           <Heading title="List laporan"></Heading>
