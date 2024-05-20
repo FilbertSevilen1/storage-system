@@ -73,7 +73,7 @@ function BuatLaporan() {
   ]);
 
   const getPeralatanDetails = (peralatan) => {
-    setLoading(true)
+    setLoading(true);
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     peralatan.forEach((item) => {
@@ -92,9 +92,13 @@ function BuatLaporan() {
             });
             item.peralatanDetails = res.data.peralatanDetails;
             item.available = item.count - item.borrowCount;
-            const list = listSearchAddPeralatan;
-            list.push(item);
-            setLoading(false)
+            const list = peralatan;
+            console.log(list, peralatan);
+            if (list != peralatan) {
+              list.push(item);
+            }
+
+            setLoading(false);
             setListSearchAddPeralatan(list);
           })
           .catch((err) => {
@@ -108,7 +112,7 @@ function BuatLaporan() {
       } else {
         item.peralatanDetails = [];
         item.available = item.count - item.borrowCount;
-        const list = listSearchAddPeralatan;
+        const list = peralatan;
         list.push(item);
         setListSearchAddPeralatan(list);
       }
@@ -117,7 +121,21 @@ function BuatLaporan() {
 
   const getDataPeralatanAvailable = () => {
     setLoading(true);
-    const body = {};
+    let searchNama = "";
+    let searchNamaDetail = "";
+
+    if (searchAddNama.current != null) {
+      searchNama = searchAddNama.current.value;
+    }
+
+    if (searchAddDetailNama.current != null) {
+      searchNamaDetail = searchAddDetailNama.current.value;
+    }
+
+    const body = {
+      name: searchNama,
+      peralatanDetailName: searchNamaDetail,
+    };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
@@ -128,21 +146,21 @@ function BuatLaporan() {
         },
       })
       .then((res) => {
-        getPeralatanDetails(res.data.peralatans);
+        setListSearchAddPeralatan("");
+        let data = res.data.peralatans;
+        getPeralatanDetails(data);
+        console.log(data);
         setLoading(false);
       })
       .catch((err) => {
         setSnackbar(true);
+        console.log(err);
         setTimeout(() => {
           setSnackbar(false);
         }, 3000);
         setLoading(false);
         return setSnackbarMessage("Get Data Gagal");
       });
-  };
-
-  const getPeralatanAvailable = () => {
-    getDataPeralatanAvailable();
   };
 
   const getDataUser = () => {
@@ -158,10 +176,6 @@ function BuatLaporan() {
         },
       })
       .then((res) => {
-        // let data = [];
-        // res.data.users.forEach((item) => {
-        //   data.push(item.name);
-        // });
         setListUser(res.data.users);
         setLoading(false);
       })
@@ -177,7 +191,7 @@ function BuatLaporan() {
 
   useEffect(() => {
     getDataUser();
-    getPeralatanAvailable();
+    getDataPeralatanAvailable();
   }, []);
 
   useEffect(() => {
@@ -699,7 +713,6 @@ function BuatLaporan() {
                 options={listUser}
                 getOptionLabel={(option) =>
                   `${option.name || ""} - ${option.roleName || ""}`
-                  
                 }
                 value={penaltyUser}
                 onChange={handlePenaltyUser}

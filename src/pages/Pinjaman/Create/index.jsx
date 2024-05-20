@@ -67,11 +67,24 @@ function CreatePinjaman() {
       return;
     }
 
+    console.log("DATA", searchAddNama, searchAddDetailNama);
+
+    let searchNama = "";
+    let searchNamaDetail = "";
+
+    if (searchAddNama.current != null) {
+      searchNama = searchAddNama.current.value;
+    }
+
+    if (searchAddDetailNama.current != null) {
+      searchNamaDetail = searchAddDetailNama.current.value;
+    }
+
     const body = {
       startDate: createStartDate.current.value,
       endDate: createEndDate.current.value,
-      peralatanName: searchAddNama.current.value,
-      peralatanDetailName: searchAddDetailNama.current.value,
+      peralatanName: searchNama,
+      peralatanDetailName: searchNamaDetail,
     };
 
     const token = JSON.parse(localStorage.getItem("bearer_token"));
@@ -99,6 +112,13 @@ function CreatePinjaman() {
   const getPeralatanAvailable = () => {
     setLoading(true);
     setDisableAdd(true);
+
+    console.log(
+      "Date",
+      createStartDate.current.value,
+      createEndDate.current.value
+    );
+
     const selectedStartDate = new Date(createStartDate.current.value);
     const selectedEndDate = new Date(createEndDate.current.value);
     const today = new Date();
