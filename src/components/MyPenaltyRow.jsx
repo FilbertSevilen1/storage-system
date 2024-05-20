@@ -227,6 +227,22 @@ function MyPenaltyRow(props) {
 
   const onSubmit = () => {
 
+    if(!originalImage && !uploadImage){
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Gambar tidak boleh kosong!");
+    }
+
+    if(!uploadDescription.current.value){
+      setSnackbar(true);
+      setTimeout(() => {
+        setSnackbar(false);
+      }, 3000);
+      return setSnackbarMessage("Deskripsi tidak boleh kosong!");
+    }
+
     if (originalImage && uploadImage) {
       updatePeralatanImageToFirebase();
     } else if (!originalImage && uploadImage) {

@@ -698,7 +698,8 @@ function BuatLaporan() {
                 id="combo-box-demo"
                 options={listUser}
                 getOptionLabel={(option) =>
-                  option.name + " - " + option.roleName || ""
+                  `${option.name || ""} - ${option.roleName || ""}`
+                  
                 }
                 value={penaltyUser}
                 onChange={handlePenaltyUser}
