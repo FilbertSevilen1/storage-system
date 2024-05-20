@@ -238,7 +238,8 @@ function Dashboard() {
   };
 
   const generatePendingRequest = () => {
-    if (pendingRequest) {
+    console.log(pendingRequest)
+    if (pendingRequest.length>0) {
       return pendingRequest.map((req, index) => {
         if (index < 5)
           return (

@@ -1,7 +1,7 @@
 import React from "react";
 function NoData() {
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full text-xl my-8">
+    <div className="flex flex-col justify-center items-center w-full text-xl my-16">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="96"

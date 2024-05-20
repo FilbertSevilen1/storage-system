@@ -70,11 +70,12 @@ function Penalty() {
         },
       })
       .then((res) => {
+        setLoading(false);
         setListPunishment(res.data.punishments);
         if (res.data.punishments.length % 5 == 0) {
           setMaxPage(Math.floor(res.data.punishments.length / 5));
         } else setMaxPage(Math.floor(res.data.punishments.length / 5) + 1);
-        setLoading(false);
+        
       })
       .catch((err) => {
         setSnackbar(true);
@@ -206,7 +207,7 @@ function Penalty() {
 
   return (
     <div className="w-full">
-      {Loading ? <LoadingFull></LoadingFull> : <></>}
+      {loading ? <LoadingFull></LoadingFull> : <></>}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={snackbar}
