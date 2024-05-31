@@ -121,8 +121,8 @@ function Dashboard() {
   const getPopularPeralatan = () => {
     setLoadingMostBorrow(true);
     const body = {};
+
     if (localStorage.getItem("bearer_token") == null) return navigate("/");
-    
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/popular/peralatan", {

@@ -20,7 +20,8 @@ function Navbar() {
       const {user, timestamp} = JSON.parse(logindata)
       userdata = user
     }
-    if (path.pathname != "/" && userdata.role == "") {
+    if (path.pathname != "/" && !userdata ) {
+      
       navigate("/");
     }
   });
