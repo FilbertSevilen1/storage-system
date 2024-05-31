@@ -64,7 +64,8 @@ function DetailPinjaman() {
   const [listPinjamPeralatan, setListPinjamPeralatan] = useState([]);
 
   const getDetailPeralatan = (borrowperalatan) => {
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     for (let i = 0; i < borrowperalatan.length; i++) {
       axios
@@ -119,7 +120,8 @@ function DetailPinjaman() {
   };
 
   const getDataDetailPinjaman = () => {
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .get(API_URL + `/borrow/get/${id}`, {
@@ -213,7 +215,8 @@ function DetailPinjaman() {
 
   const onRejectBorrow = () => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     if (!rejectReason.current.value) {
       setSnackbar(true);
@@ -254,7 +257,8 @@ function DetailPinjaman() {
   };
   const onApproveBorrow = () => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     const body = {};
 
@@ -285,7 +289,8 @@ function DetailPinjaman() {
 
   const onCancelBorrow = () => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     if (!cancelReason.current.value) {
       setSnackbar(true);
@@ -328,7 +333,8 @@ function DetailPinjaman() {
   const onStartBorrow = () => {
     setLoading(true)
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     const body = {
       reason: startReason.current.value,
@@ -801,7 +807,7 @@ function DetailPinjaman() {
                     color="success"
                     variant="contained"
                     size="large"
-                    disabled={loading}
+                    disabled={loading || errorItemMessage}
                   >
                     Setujui Peminjaman
                   </Button>

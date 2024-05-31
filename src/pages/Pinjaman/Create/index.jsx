@@ -87,7 +87,8 @@ function CreatePinjaman() {
       peralatanDetailName: searchNamaDetail,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/peralatan/available", body, {
@@ -196,7 +197,8 @@ function CreatePinjaman() {
       userName: user.name,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/punishment/list", body, {
@@ -644,7 +646,8 @@ function CreatePinjaman() {
     };
     console.log(body);
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/borrow/create", body, {
@@ -709,7 +712,7 @@ function CreatePinjaman() {
                   margin="dense"
                   id="peralatanName"
                   name="peralatanName"
-                  label="Nomor Seri"
+                  label="Kode Asset"
                   type="text"
                   fullWidth
                   variant="outlined"

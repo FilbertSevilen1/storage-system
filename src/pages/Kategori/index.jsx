@@ -22,9 +22,11 @@ import KategoriRow from "../../components/KategoriRow";
 import axios from "axios";
 import LoadingFull from "../../components/base/LoadingFull";
 import NoData from "../../components/base/NoData";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Kategori() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -62,7 +64,8 @@ function Kategori() {
       name: searchItem.current.value,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     await axios
       .post(API_URL + "/category/list", body, {
@@ -180,7 +183,8 @@ function Kategori() {
       name: addKategoriName.current.value,
       hasIdentifier: addKategoriType,
     };
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/category/create", body, {

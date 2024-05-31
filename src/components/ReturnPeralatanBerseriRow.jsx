@@ -75,7 +75,7 @@ function ReturnPeralatanBerseriRow({
     <div className="my-2 w-full h-auto md:h-24 bg-white shadow-xl flex flex-col sm:flex-row sm:justify-between rounded-xl">
       <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
         <div className="w-full md:w-4/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Nomor Seri : </div>
+          <div className="flex md:hidden mr-2 font-bold">Kode Asset : </div>
           <div>{detail.detailName}</div>
         </div>
         <div className="w-full md:w-4/12 flex flex-wrap justify-start mx-2 md:justify-center">

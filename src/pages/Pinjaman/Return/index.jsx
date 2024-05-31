@@ -85,7 +85,8 @@ function ReturnPinjaman() {
       peralatanDetailName: searchAddNamaDetailInput,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/peralatan/available", body, {
@@ -110,7 +111,8 @@ function ReturnPinjaman() {
 
   const getDetailPeralatan = (borrowperalatan) => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     for (let i = 0; i < borrowperalatan.length; i++) {
       axios
@@ -151,7 +153,8 @@ function ReturnPinjaman() {
 
   const getDataDetailPinjaman = () => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .get(API_URL + `/borrow/get/${id}`, {
@@ -587,7 +590,8 @@ function ReturnPinjaman() {
     };
     console.log(body);
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .put(API_URL + `/borrow/update/finish/${id}`, body, {

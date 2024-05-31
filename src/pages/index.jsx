@@ -121,6 +121,8 @@ function Dashboard() {
   const getPopularPeralatan = () => {
     setLoadingMostBorrow(true);
     const body = {};
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/popular/peralatan", {
@@ -169,6 +171,7 @@ function Dashboard() {
   const getPopularKerusakan = () => {
     setLoadingMostBroken(true);
     const body = {};
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/popular/broken", {
@@ -216,6 +219,7 @@ function Dashboard() {
 
   const getPendingRequest = () => {
     setLoadingPendingRequest(true);
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/pending/request", {
@@ -238,8 +242,8 @@ function Dashboard() {
   };
 
   const generatePendingRequest = () => {
-    console.log(pendingRequest)
-    if (pendingRequest.length>0) {
+    console.log(pendingRequest);
+    if (pendingRequest.length > 0) {
       return pendingRequest.map((req, index) => {
         if (index < 5)
           return (
@@ -259,6 +263,7 @@ function Dashboard() {
 
   const getRecentPurchase = () => {
     setLoadingRecentPurchase(true);
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/recent/purchase", {
@@ -302,6 +307,7 @@ function Dashboard() {
   const [loadingMyBorrow, setLoadingMyBorrow] = useState(false);
   const getMyBorrow = () => {
     setLoadingMyBorrow(true);
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/me/borrow", {
@@ -343,6 +349,7 @@ function Dashboard() {
 
   const getBorrowHistory = () => {
     setLoadingBorrowHistory(true);
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .get(API_URL + "/dashboard/me/history-borrow", {
@@ -389,6 +396,7 @@ function Dashboard() {
       me: false,
     };
 
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios

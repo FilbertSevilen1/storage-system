@@ -60,7 +60,8 @@ function LaporanKerusakan() {
       peralatanName: searchItem.current.value,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/broken/list", body, {

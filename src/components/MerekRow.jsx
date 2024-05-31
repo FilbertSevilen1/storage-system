@@ -14,10 +14,12 @@ import {
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import LoadingFull from "./base/LoadingFull";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function MerekRow(props) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [snackbar, setSnackbar] = useState(false);
@@ -86,7 +88,8 @@ function MerekRow(props) {
       name: editBrandNama.current.value,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
     axios
       .put(API_URL + "/brand/update", body, {
         headers: {

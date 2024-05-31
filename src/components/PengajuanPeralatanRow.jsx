@@ -14,9 +14,11 @@ import {
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import LoadingFull from "./base/LoadingFull";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PengajuanPeralatanRow(props) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [snackbar, setSnackbar] = useState(false);
@@ -60,7 +62,8 @@ function PengajuanPeralatanRow(props) {
 
   const onRejectSubmit = () => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
     let body = {};
     axios
       .put(API_URL + `/request/reject/${id}`, body, {
@@ -89,7 +92,8 @@ function PengajuanPeralatanRow(props) {
 
   const onApproveSubmit = () => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
     let body = {};
     axios
       .put(API_URL + `/request/approve/${id}`, body, {

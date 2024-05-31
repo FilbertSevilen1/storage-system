@@ -15,9 +15,11 @@ import SubHeading from "../../../components/base/SubHeading";
 import axios from "axios";
 import NoData from "../../../components/base/NoData";
 import LoadingFull from "../../../components/base/LoadingFull";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function ListPinjaman() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -43,7 +45,8 @@ function ListPinjaman() {
       me: false,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/borrow/list", body, {

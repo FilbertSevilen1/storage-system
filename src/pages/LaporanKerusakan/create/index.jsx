@@ -74,7 +74,8 @@ function BuatLaporan() {
 
   const getPeralatanDetails = (peralatan) => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     peralatan.forEach((item) => {
       if (item.hasIdentifier && item.count > 0) {
@@ -137,7 +138,8 @@ function BuatLaporan() {
       peralatanDetailName: searchNamaDetail,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/peralatan/list", body, {
@@ -167,7 +169,8 @@ function BuatLaporan() {
     setLoading(true);
     const body = {};
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/user/list", body, {
@@ -606,6 +609,17 @@ function BuatLaporan() {
       description = "Penggantian Barang Serupa atau Sejenis";
     }
 
+    let date = null;
+    console.log(deadlineDate);
+    if (deadlineDate.current != null) {
+      date = deadlineDate.current.value;
+    }
+
+    let dayTimeout = "";
+    if (timeout.current != null) {
+      dayTimeout = timeout.current.value;
+    }
+
     const body = {
       description: laporanKeterangan.current.value,
       count: listAddPeralatan[0].count,
@@ -615,13 +629,12 @@ function BuatLaporan() {
       usePenalty: isPenalty,
       punishmentTypeId: penaltyType,
       punishmentDescription: description,
-      punishmentDeadline: deadlineDate.current.value,
-      punishmentTimeoutDuration: parseInt(timeout.current.value),
+      punishmentDeadline: date,
+      punishmentTimeoutDuration: parseInt(dayTimeout),
     };
 
-    console.log(body);
-
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/broken/create", body, {
@@ -685,7 +698,7 @@ function BuatLaporan() {
                   margin="dense"
                   id="peralatanName"
                   name="peralatanName"
-                  label="Nomor Seri"
+                  label="Kode Asset"
                   type="text"
                   fullWidth
                   variant="outlined"

@@ -21,9 +21,11 @@ import PurchaseRow from "../../components/PurchaseRow";
 import axios from "axios";
 import LoadingFull from "../../components/base/LoadingFull";
 import NoData from "../../components/base/NoData";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Purchase() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState();
   const user = useSelector((state) => state.user);
 
@@ -73,7 +75,8 @@ function Purchase() {
       startDate: searchStartDate.current.value,
       endDate: searchEndDate.current.value,
     };
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/purchase/list", body, {

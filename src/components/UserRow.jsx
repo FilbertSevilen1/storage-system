@@ -13,9 +13,11 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function UserRow(props) {
+  const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
@@ -160,7 +162,8 @@ function UserRow(props) {
     };
     console.log(body);
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
     console.log(token.token)
     axios
       .put(API_URL + "/user/update", body, {

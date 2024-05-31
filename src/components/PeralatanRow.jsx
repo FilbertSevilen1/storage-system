@@ -121,7 +121,7 @@ function PeralatanRow(props) {
         setSnackbar(false);
       }, 3000);
       setLoading(false);
-      return setSnackbarMessage("Nomor Seri tidak boleh kosong");
+      return setSnackbarMessage("Kode Asset tidak boleh kosong");
     }
     if (!addPeralatanCount.current.value && addDialogType == false) {
       setSnackbar(true);
@@ -140,7 +140,8 @@ function PeralatanRow(props) {
         totalPrice: addPeralatanPrice.current.value,
       };
 
-      const token = JSON.parse(localStorage.getItem("bearer_token"));
+     if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
       axios
         .post(API_URL + "/peralatan-detail/create", body, {
@@ -172,7 +173,8 @@ function PeralatanRow(props) {
         totalPrice: addPeralatanPrice.current.value,
       };
 
-      const token = JSON.parse(localStorage.getItem("bearer_token"));
+     if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
       axios
         .put(API_URL + "/peralatan/update/count", body, {
@@ -236,7 +238,8 @@ function PeralatanRow(props) {
       peralatanId: id,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/request/create", body, {
@@ -298,9 +301,9 @@ function PeralatanRow(props) {
                 <div>
                   <TextField
                     margin="dense"
-                    id="Nomor Seri"
+                    id="Kode Asset"
                     name="name"
-                    label="Nomor Seri"
+                    label="Kode Asset"
                     type="text"
                     fullWidth
                     variant="outlined"

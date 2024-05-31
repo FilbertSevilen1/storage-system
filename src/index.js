@@ -29,6 +29,7 @@ function reducers(state = initialState, action) {
       }
     case 'LOGOUT':
       localStorage.removeItem('ss_token')
+      localStorage.removeItem('bearer_token');
       return initialState
       
     default:

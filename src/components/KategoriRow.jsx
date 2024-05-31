@@ -14,8 +14,10 @@ import {
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import LoadingFull from "./base/LoadingFull";
+import { useNavigate } from "react-router";
 const API_URL = process.env.REACT_APP_API_URL;
 function KategoriRow(props) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [snackbar, setSnackbar] = useState(false);
@@ -86,7 +88,8 @@ function KategoriRow(props) {
       name: editKategoriNama.current.value,
       hasIdentifier: editKategoriType,
     };
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .put(API_URL + "/category/update", body, {

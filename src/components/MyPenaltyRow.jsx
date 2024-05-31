@@ -16,9 +16,12 @@ import React, { useEffect, useRef, useState } from "react";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function MyPenaltyRow(props) {
+  const navigate = useNavigate();
+
   const [snackbar, setSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const vertical = "top";
@@ -61,6 +64,7 @@ function MyPenaltyRow(props) {
   const getDataResolution = () => {
     let body = {};
 
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
@@ -71,7 +75,7 @@ function MyPenaltyRow(props) {
       })
       .then((res) => {
         setShowImage(res.data.resolution.image);
-        setOriginalImage(res.data.resolution.image)
+        setOriginalImage(res.data.resolution.image);
         uploadDescription.current.value = res.data.resolution.description;
       })
       .catch((err) => {
@@ -199,6 +203,7 @@ function MyPenaltyRow(props) {
 
     console.log(body);
 
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
@@ -211,7 +216,7 @@ function MyPenaltyRow(props) {
         setSnackbar(true);
         closeApprovalDialog();
         setTimeout(() => {
-          window.location.reload()
+          window.location.reload();
           setSnackbar(false);
         }, 1000);
         return setSnackbarMessage("Berhasil menyimpan data");
@@ -226,8 +231,7 @@ function MyPenaltyRow(props) {
   };
 
   const onSubmit = () => {
-
-    if(!originalImage && !uploadImage){
+    if (!originalImage && !uploadImage) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -235,7 +239,7 @@ function MyPenaltyRow(props) {
       return setSnackbarMessage("Gambar tidak boleh kosong!");
     }
 
-    if(!uploadDescription.current.value){
+    if (!uploadDescription.current.value) {
       setSnackbar(true);
       setTimeout(() => {
         setSnackbar(false);
@@ -302,7 +306,7 @@ function MyPenaltyRow(props) {
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Jenis Hukuman : </div>
-          {type}
+          {description}
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Batas Waktu : </div>

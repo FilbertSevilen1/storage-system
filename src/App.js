@@ -32,7 +32,6 @@ function App() {
   useEffect(()=>{
     if(localStorage.getItem('ss_token')){
       const logindata = localStorage.getItem('ss_token');
-      console.log(logindata)
       if(logindata){
         const {user, timestamp} = JSON.parse(logindata)
         const currentTime = new Date().getTime();

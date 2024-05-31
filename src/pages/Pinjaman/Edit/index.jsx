@@ -82,7 +82,8 @@ function EditPinjaman() {
       peralatanDetailName: searchAddDetailNama.current.value,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/peralatan/available", body, {
@@ -115,7 +116,8 @@ function EditPinjaman() {
 
   const getDetailPeralatan = (borrowperalatan) => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     for (let i = 0; i < borrowperalatan.length; i++) {
       axios
@@ -155,7 +157,8 @@ function EditPinjaman() {
 
   const getDataDetailPinjaman = () => {
     setLoading(true);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .get(API_URL + `/borrow/get/${id}`, {
@@ -573,7 +576,8 @@ function EditPinjaman() {
     };
     console.log(body);
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .put(API_URL + "/borrow/update/peralatan", body, {
@@ -637,7 +641,7 @@ function EditPinjaman() {
                   margin="dense"
                   id="peralatanName"
                   name="peralatanName"
-                  label="Nomor Seri"
+                  label="Kode Asset"
                   type="text"
                   fullWidth
                   variant="outlined"

@@ -9,9 +9,12 @@ import {
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PeralatanDetailRow(props) {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState(props.role);
   const [snackbar, setSnackbar] = useState(false);
@@ -40,7 +43,7 @@ function PeralatanDetailRow(props) {
       setTimeout(() => {
         setSnackbar(false);
       }, 3000);
-      return setSnackbarMessage("Angka Seri tidak boleh kosong");
+      return setSnackbarMessage("Kode Asset tidak boleh kosong");
     }
     if (editDescription.current.value == "") {
       setSnackbar(true);
@@ -87,6 +90,7 @@ function PeralatanDetailRow(props) {
       default:
         break;
     }
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
@@ -131,13 +135,13 @@ function PeralatanDetailRow(props) {
           <div>{index + 1}</div>
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
-          <div className="flex md:hidden mr-2 font-bold">Angka Seri : </div>
+          <div className="flex md:hidden mr-2 font-bold">Kode Asset : </div>
           {edit ? (
             <div>
               <TextField
                 type="text"
                 id="jumlahMinimum"
-                label="Angka Seri"
+                label="Kode Asset"
                 variant="outlined"
                 defaultValue={serialNumber}
                 inputRef={editAngkaSeri}

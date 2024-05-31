@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import PeralatanDetailHeader from "../../../components/PeralatanDetailHeader";
 import HorizontalDivider from "../../../components/base/HorizontalDivider";
 import PeralatanDetailRow from "../../../components/PeralatanDetailRow";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import axios from "axios";
 
 import firebase from "firebase/compat/app";
@@ -23,6 +23,7 @@ import LoadingFull from "../../../components/base/LoadingFull";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PeralatanDetail() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const pathname = useLocation();
 
@@ -63,7 +64,8 @@ function PeralatanDetail() {
 
     let body = {};
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/category/list", body, {
@@ -89,7 +91,8 @@ function PeralatanDetail() {
     setLoading(true);
     let body = {};
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/brand/list", body, {
@@ -122,7 +125,8 @@ function PeralatanDetail() {
     setLoading(true);
 
     const id = pathname.pathname.substring(11);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .get(API_URL + `/peralatan/get/${id}`, {
@@ -167,7 +171,8 @@ function PeralatanDetail() {
   const getDataPeralatanDetails = () => {
     setLoading(true);
     const id = pathname.pathname.substring(11);
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .get(API_URL + `/peralatan-detail/list/${id}`, {
@@ -302,7 +307,8 @@ function PeralatanDetail() {
       peralatanFine: parseFloat(editPeralatanDenda.current.value),
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .put(API_URL + "/peralatan/update", body, {

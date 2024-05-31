@@ -28,9 +28,12 @@ import axios from "axios";
 import NoData from "../../components/base/NoData";
 import Loading from "../../components/base/Loading";
 import LoadingFull from "../../components/base/LoadingFull";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Penalty() {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -61,7 +64,8 @@ function Penalty() {
       endDate: searchEndDate.current.value,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/punishment/list", body, {
@@ -115,6 +119,7 @@ function Penalty() {
               punishmentType={punishment.typeName}
               punishmentDate={punishment.deadline}
               punishmentStatus={punishment.approvalStatusName}
+              punishmentDescription={punishment.description}
               page={page}
             ></PenaltyRow>
           );

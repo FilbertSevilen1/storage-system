@@ -29,9 +29,11 @@ import MyPenaltyHeader from "../../../components/MyPenaltyHeader";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import NoData from "../../../components/base/NoData";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function MyPenalty() {
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
 
@@ -68,7 +70,8 @@ function MyPenalty() {
       endDate: searchEndDate.current.value,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/punishment/list", body, {
@@ -122,6 +125,7 @@ function MyPenalty() {
               punishmentType={punishment.description}
               punishmentDate={punishment.deadline}
               punishmentStatus={punishment.approvalStatusName}
+              punishmentDescription={punishment.description}
               page={page}
             ></MyPenaltyRow>
           );

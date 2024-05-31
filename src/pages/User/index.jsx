@@ -66,7 +66,8 @@ function User() {
       roleId: searchUserRole,
       gender: searchUserGender,
     };
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
     
     await axios
       .post(API_URL + "/user/list", body, {
@@ -261,7 +262,8 @@ function User() {
       roleId: "54013ecf-d55e-4588-9a64-f93cdba97267",
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/user/register", body, {

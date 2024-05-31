@@ -25,9 +25,11 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 import LoadingFull from "../../components/base/LoadingFull";
 import NoData from "../../components/base/NoData";
+import { useNavigate } from "react-router";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Peralatan() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user);
 
@@ -81,7 +83,8 @@ function Peralatan() {
   const getDataKategoriList = () => {
     let body = {};
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/category/list", body, {
@@ -104,7 +107,8 @@ function Peralatan() {
   const getDataBrandList = () => {
     let body = {};
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/brand/list", body, {
@@ -133,7 +137,8 @@ function Peralatan() {
       minimumCount: searchCount.current.value,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     await axios
       .post(API_URL + "/peralatan/list", body, {
@@ -374,7 +379,8 @@ function Peralatan() {
       brandId: addPeralatanBrand,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/peralatan/create", body, {
@@ -451,7 +457,8 @@ function Peralatan() {
       brandId: requestPeralatanBrand,
       peralatanId: null,
     };
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/request/create", body, {

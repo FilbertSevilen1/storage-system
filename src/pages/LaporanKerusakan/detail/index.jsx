@@ -60,7 +60,8 @@ function KerusakanDetail() {
     setLoading(true);
     let body = {};
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .get(API_URL + `/broken/get/${reportId}`, {
@@ -183,7 +184,8 @@ function KerusakanDetail() {
     setLoading(true);
     let body = {};
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + `/resolution/get/${penaltyId}`, body, {
@@ -225,7 +227,8 @@ function KerusakanDetail() {
       approvalStatusId: statusId,
     };
 
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     let successMessage = "";
     if (statusId == "6344d1b5-6b9b-4cd8-b612-f6a3e64fb837") {
@@ -264,7 +267,8 @@ function KerusakanDetail() {
   const onSubmit = () => {
     setLoading(true);
     const body = {};
-    const token = JSON.parse(localStorage.getItem("bearer_token"));
+   if (localStorage.getItem("bearer_token") == null) return navigate("/")
+const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .put(API_URL + `/broken/finish/${reportId}`, body, {
@@ -326,28 +330,33 @@ function KerusakanDetail() {
                   inputRef={approvalReason}
                   defaultValue={defaultApprovalReason}
                   label="Alasan Tolak/Setuju"
+                  disabled={reportStatus == "Disetujui"}
                 ></TextField>
               </div>
             </div>
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() =>
-              onPenaltySubmit("5fcc9739-cbdc-4dec-866d-5f7b059213f1")
-            }
-          >
-            Tolak
-          </Button>
-          <Button
-            onClick={() =>
-              onPenaltySubmit("6344d1b5-6b9b-4cd8-b612-f6a3e64fb837")
-            }
-            type="submit"
-          >
-            <b>Setujui</b>
-          </Button>
-        </DialogActions>
+        {reportStatus == "Disetujui" ? (
+          <></>
+        ) : (
+          <DialogActions>
+            <Button
+              onClick={() =>
+                onPenaltySubmit("5fcc9739-cbdc-4dec-866d-5f7b059213f1")
+              }
+            >
+              Tolak
+            </Button>
+            <Button
+              onClick={() =>
+                onPenaltySubmit("6344d1b5-6b9b-4cd8-b612-f6a3e64fb837")
+              }
+              type="submit"
+            >
+              <b>Setujui</b>
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
       <div className="w-11/12 md:w-10/12 mx-auto flex flex-row flex-wrap justify-between mt-20">
         <div>

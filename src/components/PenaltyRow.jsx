@@ -14,8 +14,10 @@ import {
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import LoadingFull from "./base/LoadingFull";
+import { useNavigate } from "react-router";
 const API_URL = process.env.REACT_APP_API_URL;
 function PenaltyRow(props) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [snackbar, setSnackbar] = useState(false);
@@ -71,6 +73,7 @@ function PenaltyRow(props) {
     setLoading(true);
     let body = {};
 
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
@@ -129,6 +132,7 @@ function PenaltyRow(props) {
       approvalStatusId: statusId,
     };
 
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
     const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     let successMessage = "";
@@ -232,7 +236,7 @@ function PenaltyRow(props) {
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Jenis Hukuman : </div>
-          {type}
+          {description}
         </div>
         <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Batas Waktu : </div>
