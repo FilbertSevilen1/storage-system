@@ -193,6 +193,15 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
   };
 
   useEffect(() => {
+    let userdata = "";
+    if (localStorage.getItem("ss_token")) {
+      const logindata = localStorage.getItem("ss_token");
+      const { user, timestamp } = JSON.parse(logindata);
+      userdata = user;
+    }
+    if (userdata.role == "User") {
+      return navigate("/");
+    }
     getDataUser();
     getDataPeralatanAvailable();
   }, []);

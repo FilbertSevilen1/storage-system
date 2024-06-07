@@ -22,10 +22,12 @@ import axios from "axios";
 import LoadingFull from "../../../components/base/LoadingFull";
 import NoData from "../../../components/base/NoData";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function PengajuanPeralatan() {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -47,6 +49,17 @@ function PengajuanPeralatan() {
   const [listRequest, setListRequest] = useState([]);
 
   useEffect(() => {
+    let userdata = "";
+    if (localStorage.getItem("ss_token")) {
+      const logindata = localStorage.getItem("ss_token");
+      const { user, timestamp } = JSON.parse(logindata);
+      userdata = user;
+    }
+
+    if (userdata.role == "User") {
+      return navigate("/");
+    }
+
     getRequestList();
   }, [searchStartDate, searchEndDate, searchStatus]);
 
@@ -63,8 +76,8 @@ function PengajuanPeralatan() {
       endDate: searchEndDate.current.value,
     };
 
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/request/list", body, {
@@ -134,28 +147,28 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
   const generateRequestData = () => {
     if (listRequest) {
       return listRequest.map((item, index) => {
-        if((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
-        return (
-          <PengajuanPeralatanRow
-            key={item.id}
-            requestIndex={index + 1}
-            requestId={item.id}
-            userId={item.userId}
-            userName={item.userName}
-            brandId={item.brandId}
-            brandName={item.brandName}
-            requestItemName={item.itemName}
-            requestItemCount={item.itemCount}
-            requestItemDescription={item.itemDescription}
-            requestDate={item.date}
-            approvalId={item.approvalId}
-            approvalStatus={item.approvalStatus}
-            requestReason={item.reason}
-          ></PengajuanPeralatanRow>
-        );
+        if ((page - 1) * 5 < index + 1 && index + 1 <= page * 5)
+          return (
+            <PengajuanPeralatanRow
+              key={item.id}
+              requestIndex={index + 1}
+              requestId={item.id}
+              userId={item.userId}
+              userName={item.userName}
+              brandId={item.brandId}
+              brandName={item.brandName}
+              requestItemName={item.itemName}
+              requestItemCount={item.itemCount}
+              requestItemDescription={item.itemDescription}
+              requestDate={item.date}
+              approvalId={item.approvalId}
+              approvalStatus={item.approvalStatus}
+              requestReason={item.reason}
+            ></PengajuanPeralatanRow>
+          );
       });
     } else {
-      return <NoData></NoData>
+      return <NoData></NoData>;
     }
   };
   return (

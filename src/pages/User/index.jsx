@@ -48,16 +48,15 @@ function User() {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(()=>{
-    getMaxPage()
+  useEffect(() => {
+    getMaxPage();
+  }, [listUser]);
 
-  },[listUser])
-
-  const getMaxPage = () =>{
+  const getMaxPage = () => {
     if (listUser.length % 5 == 0) {
       setMaxPage(Math.floor(listUser.length / 5));
     } else setMaxPage(Math.floor(listUser.length / 5) + 1);
-  }
+  };
 
   const getDataUserList = async () => {
     setLoading(true);
@@ -66,9 +65,9 @@ function User() {
       roleId: searchUserRole,
       gender: searchUserGender,
     };
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
-    
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
     await axios
       .post(API_URL + "/user/list", body, {
         headers: {
@@ -115,8 +114,6 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
     setPage(page + 1);
   };
 
-
-  
   const generateUserData = () => {
     if (listUser) {
       return listUser.map((user, index) => {
@@ -171,26 +168,26 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
   const addUserCitizenId = useRef("");
 
   const handleInputGender = (event) => {
-    setPage(1)
+    setPage(1);
     setAddUserGender(event.target.value);
   };
 
   const handleInputSearchJabatan = (event) => {
-    setPage(1)
+    setPage(1);
     setSearchUserRole(event.target.value);
   };
 
   const handleInputSearchGender = (event) => {
-    setPage(1)
+    setPage(1);
     setSearchUserGender(event.target.value);
   };
 
-  const handleSearchNameKeyDown = (event) =>{
-    if (event.key == 'Enter') {
-      setPage(1)
+  const handleSearchNameKeyDown = (event) => {
+    if (event.key == "Enter") {
+      setPage(1);
       getDataUserList();
     }
-  }
+  };
 
   const resetFilter = () => {
     setSearchUserRole("");
@@ -262,8 +259,8 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
       roleId: "54013ecf-d55e-4588-9a64-f93cdba97267",
     };
 
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/user/register", body, {
@@ -291,8 +288,14 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
   };
 
   useEffect(() => {
-    if (user.role != "Super Admin" && user.role != "") {
-      navigate("/");
+    let userdata = "";
+    if (localStorage.getItem("ss_token")) {
+      const logindata = localStorage.getItem("ss_token");
+      const { user, timestamp } = JSON.parse(logindata);
+      userdata = user;
+    }
+    if (userdata.role == "User") {
+      return navigate("/");
     }
     getUserList();
   }, [searchUserGender, searchUserRole]);

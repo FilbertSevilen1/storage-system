@@ -16,9 +16,11 @@ import axios from "axios";
 import NoData from "../../../components/base/NoData";
 import LoadingFull from "../../../components/base/LoadingFull";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function ListPinjaman() {
+  const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -76,6 +78,15 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
   };
 
   useEffect(() => {
+    let userdata = "";
+    if (localStorage.getItem("ss_token")) {
+      const logindata = localStorage.getItem("ss_token");
+      const { user, timestamp } = JSON.parse(logindata);
+      userdata = user;
+    }
+    if (userdata.role == "User") {
+      return navigate("/");
+    }
     getPinjamanList();
   }, [searchStatus, searchStartDate, searchEndDate]);
 

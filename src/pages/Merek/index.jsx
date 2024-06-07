@@ -25,9 +25,11 @@ import axios from "axios";
 import LoadingFull from "../../components/base/LoadingFull";
 import NoData from "../../components/base/NoData";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Merek() {
+  const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -48,6 +50,16 @@ function Merek() {
   const [listMerek, setListMerek] = useState("");
 
   useEffect(() => {
+    let userdata = "";
+    if (localStorage.getItem("ss_token")) {
+      const logindata = localStorage.getItem("ss_token");
+      const { user, timestamp } = JSON.parse(logindata);
+      userdata = user;
+    }
+
+    if (userdata.role == "User") {
+      return navigate("/");
+    }
     getMerekList();
   }, []);
 

@@ -23,10 +23,12 @@ import axios from "axios";
 import LoadingFull from "../../components/base/LoadingFull";
 import NoData from "../../components/base/NoData";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const API_URL = process.env.REACT_APP_API_URL;
 function Kategori() {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState("");
@@ -51,6 +53,15 @@ function Kategori() {
   };
 
   useEffect(() => {
+    let userdata = "";
+    if (localStorage.getItem("ss_token")) {
+      const logindata = localStorage.getItem("ss_token");
+      const { user, timestamp } = JSON.parse(logindata);
+      userdata = user;
+    }
+    if (userdata.role == "User") {
+      return navigate("/");
+    }
     getKategoriList();
   }, [page]);
 
