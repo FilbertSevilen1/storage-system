@@ -54,9 +54,9 @@ import { useNavigate } from "react-router";
           key={"top" + "center"}
         />
         <div className="w-full md:w-fill flex flex-col md:flex-row p-2 items-start md:items-center justify-evenly">
-          <div className="w-full md:w-1/12 flex flex-wrap justify-start mx-2 md:justify-center">
-            <div className="flex md:hidden mr-2 font-bold">Noo : </div>
-            {index}
+          <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
+            <div className="flex md:hidden mr-2 font-bold">Id : </div>
+            {id}
           </div>
           <div className="w-full md:w-2/12 flex flex-wrap justify-start mx-2 md:justify-center">
             <div className="flex md:hidden mr-2 font-bold">Nama : </div>
