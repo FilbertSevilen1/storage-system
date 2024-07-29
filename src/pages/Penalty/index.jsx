@@ -64,8 +64,8 @@ function Penalty() {
       endDate: searchEndDate.current.value,
     };
 
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/punishment/list", body, {
@@ -79,7 +79,6 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
         if (res.data.punishments.length % 5 == 0) {
           setMaxPage(Math.floor(res.data.punishments.length / 5));
         } else setMaxPage(Math.floor(res.data.punishments.length / 5) + 1);
-        
       })
       .catch((err) => {
         setSnackbar(true);

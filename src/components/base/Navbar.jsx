@@ -16,6 +16,7 @@ function Navbar() {
   const [listBrokenCount, setListBrokenCount] = useState(0);
   const [listPenaltyCount, setListPenaltyCount] = useState(0);
   const [listLaporanCount, setListLaporanCount] = useState(0);
+  const [listRequestCount, setListRequestCount] = useState(0);
 
   const getDataPinjamanList = () => {
     let body = {};
@@ -71,14 +72,12 @@ function Navbar() {
         const data = res.data.brokens;
 
         for (let i = 0; i < data.length; i++) {
-          
           if (data[i].approvalStatus == "Disetujui") {
             data.splice(i, 1);
             i--;
           }
         }
         setListBrokenCount(data.length);
-        
       })
       .catch((err) => {});
   };
@@ -98,13 +97,36 @@ function Navbar() {
       .then((res) => {
         const data = res.data.punishments;
         for (let i = 0; i < data.length; i++) {
-          if (data[i].punishmentResolutionStatus == "Disetujui" || data[i].punishmentId == null) {
+          if (
+            data[i].punishmentResolutionStatus == "Disetujui" ||
+            data[i].punishmentId == null
+          ) {
             data.splice(i, 1);
             i--;
           }
           setListPenaltyCount(data.length);
-          
         }
+      })
+      .catch((err) => {});
+  };
+
+  const getDataRequestList = () => {
+    const body = {
+      statusId: "e3946b09-fb28-4d97-89e2-d2a2a54ba9a7",
+    };
+
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/request/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.requests;
+        listRequestCount(data.length);
       })
       .catch((err) => {});
   };
@@ -140,8 +162,15 @@ function Navbar() {
       {user.name ? (
         <div className="items-center hidden md:flex">
           <div className="dropdown">
-            <button className="dropbtn w-[200px] text-xl xl:text-2xl">
+            <button className="flex justify-center dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl">
               Penyimpanan
+              {listRequestCount > 0 ? (
+                <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                  {listRequestCount}
+                </p>
+              ) : (
+                <></>
+              )}
             </button>
             <div className="dropdown-content">
               <div
@@ -158,6 +187,13 @@ function Navbar() {
                   }}
                 >
                   Pengajuan Penambahan
+                  {listRequestCount > 0 ? (
+                    <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                      {listRequestCount}
+                    </p>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               ) : (
                 <></>
