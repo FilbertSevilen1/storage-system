@@ -35,6 +35,7 @@ function MyPenaltyRow(props) {
   let [status, setStatus] = useState(props.punishmentStatus);
   let [image, setImage] = useState(props.punishmentImage);
   let [description, setDescription] = useState(props.punishmentDescription);
+  let [item, setItem] = useState(props.punishmentItem);
   let defaultUploadDescription = useRef("");
   const [approvalDialog, setApprovalDialog] = useState(false);
 
@@ -306,7 +307,9 @@ function MyPenaltyRow(props) {
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Jenis Hukuman : </div>
-          {description}
+          {description == "Penggantian Barang Serupa atau Sejenis"
+            ? description + " - " + item
+            : description}
         </div>
         <div className="w-full md:w-3/12 flex flex-wrap justify-start mx-2 md:justify-center">
           <div className="flex md:hidden mr-2 font-bold">Batas Waktu : </div>

@@ -126,6 +126,7 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
               punishmentDate={punishment.deadline}
               punishmentStatus={punishment.approvalStatusName}
               punishmentDescription={punishment.description}
+              punishmentItem={punishment.peralatan.peralatanName}
               page={page}
             ></MyPenaltyRow>
           );
