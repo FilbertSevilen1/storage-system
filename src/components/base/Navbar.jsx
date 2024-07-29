@@ -1,30 +1,74 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/navbar.css";
 import "../../css/dropdown.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_API_URL;
 function Navbar() {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const path = useLocation();
 
+  const [listPinjamanCount, setListPinjamanCount] = useState(0);
+
+  const getDataPinjamanList = () => {
+    let body = {};
+    let flag = false;
+    if (user.role == "user") {
+      flag = true;
+    }
+    body = {
+      me: flag,
+    };
+
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    let count = 0;
+    setListPinjamanCount(0);
+    axios
+      .post(API_URL + "/borrow/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.borrows;
+        for (let i = 0; i < data.length; i++) {
+          if (
+            data[i].statusId == "73c03313-bfdb-467d-98bb-02dd4a93ff54" ||
+            data[i].statusId == "781f0b17-7546-415d-a74b-162b4a67e8f9"
+          ) {
+            data.splice(i, 1);
+            i--;
+          }
+        }
+
+        setListPinjamanCount(data.length);
+      })
+      .catch((err) => {});
+  };
+
   const logout = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/");
   };
   useEffect(() => {
-    let userdata = ""
-    if(localStorage.getItem('ss_token')){
-      const logindata = localStorage.getItem('ss_token');
-      const {user, timestamp} = JSON.parse(logindata)
-      userdata = user
+    let userdata = "";
+    if (localStorage.getItem("ss_token")) {
+      const logindata = localStorage.getItem("ss_token");
+      const { user, timestamp } = JSON.parse(logindata);
+      userdata = user;
     }
-    if (path.pathname != "/" && !userdata ) {
-      
+    if (path.pathname != "/" && !userdata) {
       navigate("/");
     }
-  });
+
+    getDataPinjamanList();
+  }, []);
   return (
     <div className="top-0 w-full h-16 shadow-2xl fixed px-4 md:px-8 flex justify-between bg-white z-50">
       <div
@@ -80,7 +124,7 @@ function Navbar() {
               ) : (
                 <></>
               )}
-               {user.role == "Admin" || user.role == "Super Admin" ? (
+              {user.role == "Admin" || user.role == "Super Admin" ? (
                 <div
                   onClick={() => {
                     navigate("/purchase");
@@ -94,8 +138,15 @@ function Navbar() {
             </div>
           </div>
           <div className="dropdown">
-            <button className="dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl">
+            <button className="flex justify-center dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl">
               Peminjaman
+              {listPinjamanCount > 0 ? (
+                <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                  {listPinjamanCount}
+                </p>
+              ) : (
+                <></>
+              )}
             </button>
             <div className="dropdown-content">
               {user.role == "User" ? (
@@ -106,14 +157,32 @@ function Navbar() {
                 <></>
               )}
               {user.role == "User" ? (
-                <div onClick={() => navigate("/myborrow")}>Pinjaman Saya</div>
+                <div className="flex" onClick={() => navigate("/myborrow")}>
+                  Pinjaman Saya
+                  {listPinjamanCount > 0 ? (
+                    <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                      {listPinjamanCount}
+                    </p>
+                  ) : (
+                    <></>
+                  )}
+                </div>
               ) : (
                 <></>
               )}
               {user.role == "Admin" || user.role == "Super Admin" ? (
-                <div onClick={() => navigate("/borrow")}>
-                  Lihat List Pinjaman
-                </div>
+                <>
+                  <div className="flex" onClick={() => navigate("/borrow")}>
+                    Lihat List Pinjaman
+                    {listPinjamanCount > 0 ? (
+                      <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                        {listPinjamanCount}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </>
               ) : (
                 <></>
               )}
@@ -260,6 +329,13 @@ function Navbar() {
                   onClick={() => navigate("/myborrow")}
                 >
                   Pinjaman Saya
+                  {listPinjamanCount > 0 ? (
+                    <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                      {listPinjamanCount}
+                    </p>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               ) : (
                 <></>
@@ -270,6 +346,13 @@ function Navbar() {
                   onClick={() => navigate("/borrow")}
                 >
                   Lihat List Pinjaman
+                  {listPinjamanCount > 0 ? (
+                    <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                      {listPinjamanCount}
+                    </p>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               ) : (
                 <></>
@@ -294,6 +377,19 @@ function Navbar() {
               ) : (
                 <></>
               )}
+
+              <>
+                {user.role == "User" ? (
+                  <div
+                    className="border-b-[0.5px] border-gray-300"
+                    onClick={() => navigate("/penalty/mypenalty")}
+                  >
+                    Pinalti Saya
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </>
 
               {user.role == "Super Admin" ? (
                 <div
