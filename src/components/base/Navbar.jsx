@@ -13,6 +13,9 @@ function Navbar() {
   const path = useLocation();
 
   const [listPinjamanCount, setListPinjamanCount] = useState(0);
+  const [listBrokenCount, setListBrokenCount] = useState(0);
+  const [listPenaltyCount, setListPenaltyCount] = useState(0);
+  const [listLaporanCount, setListLaporanCount] = useState(0);
 
   const getDataPinjamanList = () => {
     let body = {};
@@ -52,6 +55,60 @@ function Navbar() {
       .catch((err) => {});
   };
 
+  const getReportData = () => {
+    const body = {};
+
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/broken/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.brokens;
+
+        for (let i = 0; i < data.length; i++) {
+          
+          if (data[i].approvalStatus == "Disetujui") {
+            data.splice(i, 1);
+            i--;
+          }
+        }
+        setListBrokenCount(data.length);
+        
+      })
+      .catch((err) => {});
+  };
+
+  const getDataPenalty = () => {
+    let body = {};
+
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
+
+    axios
+      .post(API_URL + "/punishment/list", body, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      })
+      .then((res) => {
+        const data = res.data.punishments;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].punishmentResolutionStatus == "Disetujui" || data[i].punishmentId == null) {
+            data.splice(i, 1);
+            i--;
+          }
+          setListPenaltyCount(data.length);
+          
+        }
+      })
+      .catch((err) => {});
+  };
+
   const logout = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/");
@@ -68,6 +125,9 @@ function Navbar() {
     }
 
     getDataPinjamanList();
+    getReportData();
+    getDataPenalty();
+    setListLaporanCount(listPenaltyCount + listBrokenCount);
   }, []);
   return (
     <div className="top-0 w-full h-16 shadow-2xl fixed px-4 md:px-8 flex justify-between bg-white z-50">
@@ -189,8 +249,15 @@ function Navbar() {
             </div>
           </div>
           <div className="dropdown">
-            <button className="dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl">
+            <button className="flex justify-center dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl">
               Laporan
+              {listLaporanCount > 0 ? (
+                <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                  {listLaporanCount}
+                </p>
+              ) : (
+                <></>
+              )}
             </button>
             <div className="dropdown-content">
               <>
@@ -204,8 +271,15 @@ function Navbar() {
               </>
               <>
                 {/* {user.role == "Admin" || user.role == "Super Admin" ? ( */}
-                <div onClick={() => navigate("/report")}>
+                <div className="flex" onClick={() => navigate("/report")}>
                   List Laporan Kerusakan
+                  {listBrokenCount > 0 ? (
+                    <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                      {listBrokenCount}
+                    </p>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 {/* ) : (
                   <></>
@@ -213,7 +287,16 @@ function Navbar() {
               </>
               <>
                 {user.role == "Admin" || user.role == "Super Admin" ? (
-                  <div onClick={() => navigate("/penalty")}>List Pinalty</div>
+                  <div onClick={() => navigate("/penalty")}>
+                    List Pinalty
+                    {listPenaltyCount > 0 ? (
+                      <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
+                        {listPenaltyCount}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 ) : (
                   <></>
                 )}
