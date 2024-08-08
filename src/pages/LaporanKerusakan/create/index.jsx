@@ -74,9 +74,11 @@ function BuatLaporan() {
 
   const getPeralatanDetails = (peralatan) => {
     setLoading(true);
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
+    
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
+    console.log(peralatan)
     peralatan.forEach((item) => {
       if (item.hasIdentifier && item.count > 0) {
         axios
@@ -94,11 +96,9 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
             item.peralatanDetails = res.data.peralatanDetails;
             item.available = item.count - item.borrowCount;
             const list = peralatan;
-            console.log(list, peralatan);
             if (list != peralatan) {
               list.push(item);
             }
-
             setLoading(false);
             setListSearchAddPeralatan(list);
           })
@@ -113,7 +113,7 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
       } else {
         item.peralatanDetails = [];
         item.available = item.count - item.borrowCount;
-        const list = peralatan;
+        const list = [{...peralatan}];
         list.push(item);
         setListSearchAddPeralatan(list);
       }
@@ -138,8 +138,8 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
       peralatanDetailName: searchNamaDetail,
     };
 
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/peralatan/list", body, {
@@ -151,7 +151,6 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
         setListSearchAddPeralatan("");
         let data = res.data.peralatans;
         getPeralatanDetails(data);
-        console.log(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -169,8 +168,8 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
     setLoading(true);
     const body = {};
 
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/user/list", body, {
@@ -642,8 +641,8 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
       punishmentTimeoutDuration: parseInt(dayTimeout),
     };
 
-   if (localStorage.getItem("bearer_token") == null) return navigate("/")
-const token = JSON.parse(localStorage.getItem("bearer_token"));
+    if (localStorage.getItem("bearer_token") == null) return navigate("/");
+    const token = JSON.parse(localStorage.getItem("bearer_token"));
 
     axios
       .post(API_URL + "/broken/create", body, {

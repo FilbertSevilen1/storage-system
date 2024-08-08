@@ -49,6 +49,7 @@ function Dashboard() {
         if (index < 5)
           return (
             <PinjamanCard
+              item={card}
               title={card.userName}
               startDate={formatDate(card.startDate)}
               endDate={formatDate(card.endDate)}
@@ -77,7 +78,6 @@ function Dashboard() {
   const [optionsPeralatan, setOptionsPeralatan] = useState({
     chart: {
       id: "basic-bar",
-      width: "100%",
     },
     plotOptions: {
       bar: {
@@ -98,7 +98,6 @@ function Dashboard() {
   const [optionsKerusakan, setOptionsKerusakan] = useState({
     chart: {
       id: "basic-bar",
-      width: "100%",
     },
     plotOptions: {
       bar: {
@@ -461,7 +460,7 @@ function Dashboard() {
           <Button
             variant="contained"
             size="large"
-            onClick={() => navigate("/borrow")}
+            onClick={() => navigate("/peralatan")}
           >
             <b>Lihat Selengkapnya</b>
           </Button>

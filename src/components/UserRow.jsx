@@ -358,11 +358,11 @@ const token = JSON.parse(localStorage.getItem("bearer_token"));
           <div className="flex md:hidden mr-2  md:mr-0 font-bold">Role : </div>
           {role}
         </div>
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start md:justify-center">
+        <div className="w-full md:w-3/12 flex flex-wrap justify-start md:justify-center">
           <div className="flex md:hidden mr-2  md:mr-0 font-bold">Email : </div>
           {email}
         </div>
-        <div className="w-full md:w-2/12 flex flex-wrap justify-start md:justify-center">
+        <div className="w-full md:w-3/12 flex flex-wrap justify-start md:justify-center">
           <div className="flex md:hidden mr-2  md:mr-0 font-bold">
             Status :{" "}
           </div>

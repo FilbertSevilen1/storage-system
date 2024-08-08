@@ -5,7 +5,7 @@ function Footer() {
     <div className="w-full background-footer flex justify-center">
       <div className="container w-full flex flex-col items-center text-white py-12 px-4 md:px-0">
         <div className="w-full font-bold text-2xl md:text-3xl mb-12">
-          Xyz Company
+          Company
         </div>
         <div className="w-full flex justify-between flex-wrap">
           <div className="w-80 text-l md:text-xl mb-12">

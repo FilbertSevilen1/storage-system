@@ -340,8 +340,8 @@ function User() {
             <div className="p-2 w-1/2">
               <TextField
                 margin="dense"
-                id="name"
-                name="name"
+                id="Email"
+                name="Email"
                 label="Email"
                 type="text"
                 fullWidth
@@ -353,8 +353,8 @@ function User() {
               <TextField
                 InputLabelProps={{ shrink: true }}
                 margin="dense"
-                id="name"
-                name="name"
+                id="tgllahir"
+                name="tgllahir"
                 label="Tanggal Lahir"
                 type="date"
                 fullWidth
@@ -383,8 +383,8 @@ function User() {
             <div className="p-2 w-1/2">
               <TextField
                 margin="dense"
-                id="name"
-                name="name"
+                id="telp"
+                name="telp"
                 label="Nomor Telepon"
                 type="text"
                 fullWidth
@@ -396,7 +396,7 @@ function User() {
               <TextField
                 margin="dense"
                 id="ktp"
-                name="name"
+                name="ktp"
                 label="Nomor KTP"
                 type="text"
                 fullWidth

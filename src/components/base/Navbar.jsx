@@ -126,7 +126,7 @@ function Navbar() {
       })
       .then((res) => {
         const data = res.data.requests;
-        listRequestCount(data.length);
+        setListRequestCount(data.length);
       })
       .catch((err) => {});
   };
@@ -149,6 +149,7 @@ function Navbar() {
     getDataPinjamanList();
     getReportData();
     getDataPenalty();
+    getDataRequestList();
     setListLaporanCount(listPenaltyCount + listBrokenCount);
   }, []);
   return (
@@ -166,7 +167,7 @@ function Navbar() {
               Penyimpanan
               {listRequestCount > 0 ? (
                 <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
-                  {listRequestCount}
+                  !
                 </p>
               ) : (
                 <></>
@@ -238,7 +239,7 @@ function Navbar() {
               Peminjaman
               {listPinjamanCount > 0 ? (
                 <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
-                  {listPinjamanCount}
+                  !
                 </p>
               ) : (
                 <></>
@@ -287,13 +288,13 @@ function Navbar() {
           <div className="dropdown">
             <button className="flex justify-center dropbtn w-[130px] xl:w-[200px] text-xl xl:text-2xl">
               Laporan
-              {listLaporanCount > 0 ? (
+              {/* {listLaporanCount > 0 || listBrokenCount >0 || listPenaltyCount >0? (
                 <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
-                  {listLaporanCount}
+                  !
                 </p>
               ) : (
                 <></>
-              )}
+              )} */}
             </button>
             <div className="dropdown-content">
               <>
@@ -309,13 +310,6 @@ function Navbar() {
                 {/* {user.role == "Admin" || user.role == "Super Admin" ? ( */}
                 <div className="flex" onClick={() => navigate("/report")}>
                   List Laporan Kerusakan
-                  {listBrokenCount > 0 ? (
-                    <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
-                      {listBrokenCount}
-                    </p>
-                  ) : (
-                    <></>
-                  )}
                 </div>
                 {/* ) : (
                   <></>
@@ -324,14 +318,7 @@ function Navbar() {
               <>
                 {user.role == "Admin" || user.role == "Super Admin" ? (
                   <div onClick={() => navigate("/penalty")}>
-                    List Pinalty
-                    {listPenaltyCount > 0 ? (
-                      <p className="w-4 h-4 px-1 rounded-full bg-red-500 text-sm flex items-center justify-center text-white">
-                        {listPenaltyCount}
-                      </p>
-                    ) : (
-                      <></>
-                    )}
+                    List Penalti
                   </div>
                 ) : (
                   <></>
